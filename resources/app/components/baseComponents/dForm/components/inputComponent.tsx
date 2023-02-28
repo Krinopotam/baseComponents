@@ -1,6 +1,6 @@
 /**
  * @InputComponent
- * @version 0.0.29.9
+ * @version 0.0.29.12
  * @link omegatester@gmail.com
  * @author Maksim Zaytsev
  * @license MIT
@@ -39,9 +39,7 @@ export const InputComponent = ({formApi, formProps, fieldName}: IDFormComponentP
     }, [fieldName, formApi.model]);
 
     useEffect(() => {
-
-        setTimeout(() => {formApi.model.setReady(fieldName, true);}, 5000)
-        
+        formApi.model.setReady(fieldName, true);
     }, [fieldName, formApi.model]);
 
     return (

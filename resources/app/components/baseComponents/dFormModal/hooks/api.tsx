@@ -63,7 +63,7 @@ const useApiFormOpen = (formApi: IDFormModalApi) => {
             const clonedDataSet = dataSet ? cloneObject(dataSet) : undefined;
             const clonedParentData = parentDataSet ? parentDataSet : undefined;
             const modalFormProps = formApi.getFormProps();
-            if (modalFormProps?.callbacks?.onOpen?.(formApi, formMode, clonedDataSet, clonedParentData) === false) return;
+            if (modalFormProps?.callbacks?.onOpen?.(formApi, clonedDataSet, clonedParentData) === false) return;
 
             formApi.setFormProps({
                 isOpened: true,
@@ -72,7 +72,7 @@ const useApiFormOpen = (formApi: IDFormModalApi) => {
                 parentDataSet: clonedParentData,
             });
 
-            modalFormProps?.callbacks?.onOpened?.(formApi, formMode, clonedDataSet, clonedParentData);
+            modalFormProps?.callbacks?.onOpened?.(formApi, clonedDataSet, clonedParentData);
         },
         [formApi]
     );
@@ -83,10 +83,10 @@ const useApiFormForceClose = (formApi: IDFormModalApi) => {
     return useCallback(() => {
         const modalFormProps = formApi.getFormProps();
 
-        if (modalFormProps.callbacks?.onClosing?.(formApi, modalFormProps.formMode) === false) return false;
+        if (modalFormProps.callbacks?.onClosing?.(formApi) === false) return false;
 
         formApi.setFormProps({isOpened: false});
-        modalFormProps.callbacks?.onClosed?.(formApi, modalFormProps.formMode);
+        modalFormProps.callbacks?.onClosed?.(formApi);
     }, [formApi]);
 };
 
@@ -94,7 +94,7 @@ const useApiFormForceClose = (formApi: IDFormModalApi) => {
 const useApiTryToCloseForm = (formApi: IDFormModalApi) => {
     return useCallback(() => {
         const modalFormProps = formApi.getFormProps();
-        if (modalFormProps?.callbacks?.onClosing?.(formApi, modalFormProps.formMode) === false) return;
+        if (modalFormProps?.callbacks?.onClosing?.(formApi) === false) return;
 
         if (formApi.model.isFormDirty() && modalFormProps.confirmChanges) {
             MessageBox.confirm({

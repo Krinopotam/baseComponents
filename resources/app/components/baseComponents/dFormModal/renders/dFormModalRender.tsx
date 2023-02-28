@@ -39,7 +39,7 @@ interface IDFormModalRenderProps {
     onCancel?: (e: React.MouseEvent<HTMLButtonElement>) => void;
 }
 export const DFormModalRender = ({modalId, buttons, buttonsApi, callbacks, formApi, formProps, modalFormProps}: IDFormModalRenderProps): JSX.Element => {
-    const formMode = modalFormProps.formMode || 'create';
+    const formMode = modalFormProps.formMode || 'create'; //form model does not initialized yet
     const modalTitle = useFormTitle(formMode, modalFormProps.title);
 
     return (

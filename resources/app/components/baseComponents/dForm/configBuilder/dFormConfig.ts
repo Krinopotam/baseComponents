@@ -60,12 +60,6 @@ export class DFormConfig  {
         return this;
     }
 
-    /** Form data source (if given, controls will fetch data on open) */
-    dataSource(value: IDFormProps['dataSource']) {
-        this._config.dataSource = value;
-        return this;
-    }
-
     /** Fields properties */
     fieldsProps(value: IDFormProps['fieldsProps']) {
         this._config.fieldsProps = value;
@@ -105,12 +99,6 @@ export class DFormConfig  {
     /** Disable automatic hiding the fields if they depend on the fields for which the values are not set */
     noAutoHideDependedFields(value: IDFormProps['noAutoHideDependedFields']) {
         this._config.noAutoHideDependedFields = value;
-        return this;
-    }
-
-    /** Form submit data source (if given, for will sava data on submit) */
-    submitDataSource(value: IDFormProps['submitDataSource']) {
-        this._config.submitDataSource = value;
         return this;
     }
 

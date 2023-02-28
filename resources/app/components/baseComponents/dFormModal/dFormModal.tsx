@@ -1,6 +1,6 @@
 /**
  * @DynamicModalForm
- * @version 0.0.33.52
+ * @version 0.0.33.56
  * @link omegatester@gmail.com
  * @author Maksim Zaytsev
  * @license MIT
@@ -67,13 +67,12 @@ export interface IDFormModalProps extends IDFormProps {
 export interface IDFormModalCallbacks extends IDFormCallbacks {
     onOpen?: (
         formApi: IDFormModalApi,
-        mode: IDFormProps['formMode'],
         dataSet: IDFormDataSet | undefined,
         formParentData: IDFormDataSet | undefined
     ) => boolean | void;
-    onOpened?: (formApi: IDFormModalApi, mode: IDFormProps['formMode'], dataSet: IDFormDataSet | undefined, formParentData: IDFormDataSet | undefined) => void;
-    onClosing?: (formApi: IDFormModalApi, mode: IDFormProps['formMode']) => boolean | void;
-    onClosed?: (formApi: IDFormModalApi, mode: IDFormProps['formMode']) => void;
+    onOpened?: (formApi: IDFormModalApi, dataSet: IDFormDataSet | undefined, formParentData: IDFormDataSet | undefined) => void;
+    onClosing?: (formApi: IDFormModalApi) => boolean | void;
+    onClosed?: (formApi: IDFormModalApi) => void;
 }
 
 //endregion

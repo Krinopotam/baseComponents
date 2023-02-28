@@ -56,14 +56,14 @@ const formProps = new DFormModalConfig()
     .minWidth(200)
     .maxWidth(1000)
     .callbacks({
-      /*  onDataFetch: () => {
+        onDataFetch: () => {
             return new Promise((resolve, reject) => {
                 setTimeout(() => {
                     if (Math.random() < 0.5) reject({message: 'Ошибка загрузки данных', code: 400});
                     else resolve({data: {profess: 'Загружено Профессия', specialty: 'Загружено специализация'}});
                 }, 3000);
             });
-        },*/
+        },
         onSubmit: () => {
             return new Promise((resolve, reject) => {
                 setTimeout(() => {

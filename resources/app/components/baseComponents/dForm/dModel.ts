@@ -1,6 +1,6 @@
 /**
  * @DynamicFormModel
- * @version 0.0.37.95
+ * @version 0.0.38.3
  * @link omegatester@gmail.com
  * @author Maksim Zaytsev
  * @license MIT
@@ -802,7 +802,7 @@ export class DModel {
      * @returns Form read only status
      */
     public isFormReadOnly(): boolean {
-        return this._formMode === 'view' || this._formReadOnly;
+        return this.getFormMode() === 'view' || this._formReadOnly;
     }
 
     /**
@@ -962,6 +962,11 @@ export class DModel {
     /** Set the form component mounted status */
     public setFormMounted(value: boolean) {
         this._isFormMounted = value;
+    }
+
+    /** Get current form mode */
+    public getFormMode() {
+        return this._formMode;
     }
     //endregion
 

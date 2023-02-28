@@ -751,9 +751,9 @@ const useEditableInit = ({
         if (!props.bodyMinHeight) props.bodyMinHeight = 40;
         if (!props.callbacks) props.callbacks = {};
 
-        props.callbacks.onClosed = (formApi, formMode) => {
+        props.callbacks.onClosed = (formApi) => {
             setEditFormOpened(false);
-            editableFormProps.callbacks?.onClosed?.(formApi, formMode);
+            editableFormProps.callbacks?.onClosed?.(formApi);
         };
 
         props.callbacks.onBeforeDataSourceFetch = (source) => {

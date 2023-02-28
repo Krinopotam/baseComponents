@@ -1,6 +1,6 @@
 /**
  * @DynamicForm
- * @version 0.0.37.56
+ * @version 0.0.37.75
  * @link omegatester@gmail.com
  * @author Maksim Zaytsev
  * @license MIT
@@ -54,9 +54,6 @@ export interface IDFormProps {
     /** Parent form data */
     parentDataSet?: IDFormDataSet;
 
-    /** Form data source (if given, controls will fetch data on open) */
-    dataSource?: IDFormDataSourcePromise;
-
     /** Fields properties */
     fieldsProps: IDFormFieldsProps;
 
@@ -77,9 +74,6 @@ export interface IDFormProps {
 
     /** Disable automatic hiding the fields if they depend on the fields for which the values are not set */
     noAutoHideDependedFields?: boolean;
-
-    /** Form submit data source (if given, for will sava data on submit) */
-    submitDataSource?: IDFormDataSource;
 
     /** Tabs properties */
     tabsProps?: IDFormTabsProps;
@@ -237,7 +231,7 @@ export const DForm = (props: IDFormProps): JSX.Element => {
     const formModel = useFormModel(formProps, callbacks);
     useInitFormApi(formApi, formModel, formProps, buttonsApi, updateFormProps);
 
-    useInitialFetchData(props, formApi);
+    useInitialFetchData(formApi);
 
     useFormMounted(formApi);
 
@@ -260,9 +254,10 @@ const useFormMounted = (formApi: IDFormApi) => {
     });
 };
 
-const useInitialFetchData = (formProps: IDFormProps, formApi: IDFormApi) => {
+const useInitialFetchData = (formApi: IDFormApi) => {
     useEffect(() => {
-        if (formProps.formMode !== 'update' && formProps.formMode !== 'clone' && formProps.formMode !== 'view') return;
+        const formMode = formApi.model.getFormMode();
+        if (formMode !== 'update' && formMode !== 'clone' && formMode !== 'view') return;
         formApi.model.fetchData();
-    }, [formApi, formProps.dataSource, formProps.formMode]);
+    }, [formApi]);
 };

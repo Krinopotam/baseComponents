@@ -1,0 +1,10 @@
+/* Clear modal form content padding */
+.custom-antd-message-box .ant-modal-content {
+    padding: 0;
+}
+
+/* Override ant-modal-close button position */
+.custom-antd-message-box .ant-modal-close {
+    top: 6px;
+    right: 9px;
+}

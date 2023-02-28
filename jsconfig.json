@@ -1,0 +1,11 @@
+{
+    "compilerOptions": {
+        "baseUrl": ".",
+        "paths": {
+            "components/*": ["resources/app/components/*"],
+			"baseComponents/*": ["resources/app/components/baseComponents/*"],
+			"helpers/*": ["resources/app/components/baseComponents/libs/helpers/*"]
+        }
+    },
+    "exclude": ["node_modules", "public"]
+}

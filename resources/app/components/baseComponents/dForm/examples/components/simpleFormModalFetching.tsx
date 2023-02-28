@@ -32,9 +32,17 @@ export const SimpleFormModalFetching = (): JSX.Element => {
     }, []);
 
     return (
-        <div style={{maxWidth: 500}}>
-            <Button onClick={onClick}>Открыть форму</Button>
-            <DFormModal {...formProps} />
-        </div>
+        <>
+            {/*Description Start*/}
+            <h1>Пример загрузки данных при открытии формы</h1>
+            <p>Для обеспечения загрузки необходимо в калбэк onDataFetch передать функцию, возвращающую Promis, который при успешном ответе сервера (resolve) возвращает объект вида:</p>
+            <code>{`data:{имя_поля1: "значение", имя_поля2: "значение 2"...}`}</code>
+            <p></p>
+            {/*Description End*/}
+            <div style={{maxWidth: 500}}>
+                <Button onClick={onClick}>Открыть форму</Button>
+                <DFormModal {...formProps} />
+            </div>
+        </>
     );
 };

@@ -40,10 +40,12 @@ export const SimpleFormModalFetching = (): JSX.Element => {
     }, []);
 
     return (
-        <div style={{maxWidth: 500}}>
-            <Button onClick={onClick}>Открыть форму</Button>
-            <DFormModal {...formProps} />
-        </div>
+        <>
+            <div style={{maxWidth: 500}}>
+                <Button onClick={onClick}>Открыть форму</Button>
+                <DFormModal {...formProps} />
+            </div>
+        </>
     );
 };
 `

@@ -19,7 +19,7 @@
 export const ExamplesRoutes = () => {
     return (
         <Routes>
-            <Route path="/localreact.html" element={<ExamplesLayout />}>
+            <Route path="/" element={<ExamplesLayout />}>
                 <Route index element={<HomePage />} />
                 <Route path="FormDependedField" element={<FormDependedFieldPage />} />;
                 <Route path="Home" element={<HomePage />} />;

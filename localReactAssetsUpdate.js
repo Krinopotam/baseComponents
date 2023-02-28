@@ -1,4 +1,4 @@
-/** Update assets path in localreact.html for local testing */
+/** Update assets path in index.html for local testing */
 
 const fs = require('fs');
 
@@ -8,11 +8,11 @@ const localReactAssetsUpdate = function () {
 
         let manifestData = JSON.parse(data.toString());
         if (!manifestData) {
-            console.error("mix-manifest.json file not found. Can't update localreact.html assets");
+            console.error("mix-manifest.json file not found. Can't update index.html assets");
             return;
         }
 
-        fs.readFile(__dirname + '/public/localreact.html', 'utf8', function read(err, data) {
+        fs.readFile(__dirname + '/public/index.html', 'utf8', function read(err, data) {
             if (err) throw err;
 
             let fileContent = data.toString();
@@ -27,11 +27,11 @@ const localReactAssetsUpdate = function () {
                 fileContent = fileContent.replace(regExReplace, manifestData[assetName]);
             }
 
-            fs.writeFile(__dirname + '/public/localreact.html', fileContent, 'utf8', function (err) {
-                if (err) console.log('localreact.html assets updating error: ' + err);
+            fs.writeFile(__dirname + '/public/index.html', fileContent, 'utf8', function (err) {
+                if (err) console.log('index.html assets updating error: ' + err);
             });
 
-            console.error('localreact.html assets updated');
+            console.error('index.html assets updated');
         });
     });
 };

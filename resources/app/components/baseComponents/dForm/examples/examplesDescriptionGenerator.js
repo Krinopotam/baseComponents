@@ -88,7 +88,7 @@ ${imports}
 export const ExamplesRoutes = () => {
     return (
         <Routes>
-            <Route path="/localreact.html" element={<ExamplesLayout />}>
+            <Route path="/" element={<ExamplesLayout />}>
                 <Route index element={<HomePage />} />
 ${routers}
                 <Route path="*" element={<HomePage />} />

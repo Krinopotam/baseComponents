@@ -1,6 +1,6 @@
 /**
  * @DynamicFormModel
- * @version 0.0.36.97
+ * @version 0.0.37.95
  * @link omegatester@gmail.com
  * @author Maksim Zaytsev
  * @license MIT
@@ -64,8 +64,8 @@ export interface IDFormModelCallbacks {
     /** fires when the read only state of the form changed */
     onFormReadOnlyStateChanged?: (state: boolean, model: DModel) => void;
 
-    /** fires when the form initialized (rendered) */
-    onFormInitialized?: (model: DModel) => void;
+    /** fires when the form began initialization (renders for the first time) */
+    onFormInit?: (model: DModel) => void;
 
     /** fires when the form ready status changed (form ready means form is rendered, initialized and all fields data are loaded) */
     onFormReadyStateChanged?: (state: boolean, model: DModel) => void;
@@ -170,10 +170,7 @@ export class DModel {
     private _formDirty = false;
 
     /** the form ready status */
-    private _formReady = false;
-
-    /** the form initialization status (is form rendered or not) */
-    private _formInitialized = false;
+    private _formReady: boolean | undefined = undefined;
 
     /** the form component mounted status */
     private _isFormMounted = false;
@@ -189,6 +186,9 @@ export class DModel {
 
     /** The form is in fetching process now */
     private _isFetching = false;
+
+    /** Is form fetching failed */
+    private _isFetchingFailed = false;
 
     /** callbacks collection */
     private _callbacks: IDFormModelCallbacks;
@@ -826,26 +826,14 @@ export class DModel {
     }
 
     // Initialization
-    /**
-     * Gets the current ready status of the form (all fields are completely initialized, data are loaded)
-     * @returns Form ready status
-     */
-    public isFormInitialized(): boolean {
-        return this._formInitialized;
-    }
 
     /**
-     * Sets a ready status to the form  (all fields are completely initialized, data are loaded)
+     * The form began initialization (renders for the first time)
      * @param value - ready status
      */
-    public setFormInitialized(value: boolean) {
-        const prevValue = this.isFormInitialized();
-        this._formInitialized = value;
-
-        if (prevValue !== value) {
-            if (value) this._callbacks?.onFormInitialized?.(this);
-            this.setFormReady(value); //try to set form ready status
-        }
+    public setFormInit() {
+        this.setFormReady(false); //At the time of initialization, the form is not yet ready
+        this._callbacks?.onFormInit?.(this);
     }
 
     // Ready
@@ -853,7 +841,7 @@ export class DModel {
      * Gets the current ready status of the form (all fields are completely initialized, data are loaded)
      * @returns Form ready status
      */
-    public isFormReady(): boolean {
+    public isFormReady(): boolean | undefined {
         return this._formReady;
     }
 
@@ -864,29 +852,31 @@ export class DModel {
      * @param value - ready status
      */
     public setFormReady(value: boolean) {
-        const prevValue = this.isFormReady();
+        setTimeout(() => {
+            const prevValue = this.isFormReady();
 
-        if (!this.isFormInitialized()) value = false;
+            if (this.isFormFetching() || this.isFormFetchingFailed()) value = false;
 
-        if (!value) {
-            this._formReady = value;
-            if (prevValue !== value) this._callbacks?.onFormReadyStateChanged?.(value, this);
-            return;
-        }
-
-        const fieldsProps = this.getFieldsProps();
-        //set form ready status only if every visible field from fieldsProps has set ready status
-        for (const fieldName in fieldsProps) {
-            if (this.isHidden(fieldName)) continue;
-            if (!isObjectHasOwnProperty(this._ready, fieldName) || !this.isReady(fieldName)) {
-                value = false;
-                break;
+            if (!value) {
+                this._formReady = value;
+                if (prevValue !== value) this._callbacks?.onFormReadyStateChanged?.(value, this);
+                return;
             }
-        }
 
-        this._formReady = value;
+            const fieldsProps = this.getFieldsProps();
+            //set form ready status only if every visible field from fieldsProps has set ready status
+            for (const fieldName in fieldsProps) {
+                if (this.isHidden(fieldName)) continue;
+                if (!isObjectHasOwnProperty(this._ready, fieldName) || !this.isReady(fieldName)) {
+                    value = false;
+                    break;
+                }
+            }
 
-        if (prevValue !== value) this._callbacks?.onFormReadyStateChanged?.(value, this);
+            this._formReady = value;
+
+            if (prevValue !== value) this._callbacks?.onFormReadyStateChanged?.(value, this);
+        }, 0);
     }
 
     // Validation
@@ -935,6 +925,16 @@ export class DModel {
         if (prevValue !== value) this.emitFormRender();
     }
 
+    /** Set form fetching failed status */
+    public setFormFetchingFailed(value: boolean) {
+        this._isFetchingFailed = value;
+    }
+
+    /** Returns the status that means that the form tried to load the data, but it failed */
+    public isFormFetchingFailed() {
+        return this._isFetchingFailed;
+    }
+
     /**
      * @returns is the form has error
      */
@@ -974,6 +974,7 @@ export class DModel {
             (result) => {
                 if (!this.isFormMounted()) return;
                 this.setFormFetching(false);
+                this.setFormFetchingFailed(false);
                 this._callbacks.onDataFetchSuccess?.(result, this);
                 this._callbacks.onDataFetchComplete?.(this);
 
@@ -985,6 +986,7 @@ export class DModel {
             (error) => {
                 if (!this.isFormMounted()) return;
                 this.setFormFetching(false);
+                this.setFormFetchingFailed(true);
                 this._callbacks.onDataFetchError?.(error.message, error.code, this);
                 this._callbacks.onDataFetchComplete?.(this);
             }
@@ -992,6 +994,7 @@ export class DModel {
 
         this.setFormReady(false);
         this.setFormFetching(true);
+        this.setFormFetchingFailed(false);
     }
 
     /** Return fields properties collection */

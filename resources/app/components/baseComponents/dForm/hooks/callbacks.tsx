@@ -1,9 +1,9 @@
 import React, { useMemo } from 'react';
 
-import {IDFormApi} from 'baseComponents/dForm/hooks/api';
-import {IDFormModelCallbacks} from 'baseComponents/dForm/dModel';
-import {IDFormProps} from 'baseComponents/dForm/dForm';
-import {MessageBox} from 'baseComponents/messageBox';
+import { IDFormApi } from 'baseComponents/dForm/hooks/api';
+import { IDFormModelCallbacks } from 'baseComponents/dForm/dModel';
+import { IDFormProps } from 'baseComponents/dForm/dForm';
+import { MessageBox } from 'baseComponents/messageBox';
 
 /**
  * Preparing callbacks for redirection to the model
@@ -82,17 +82,15 @@ export const useCallbacks = (formProps: IDFormProps, formApi: IDFormApi) => {
                 formProps.callbacks?.onFormReadOnlyStateChanged?.(state, formApi);
             },
 
-            /** fires when a form completely initialized, all data loaded */
-            onFormInitialized: () => {
-                formApi.buttonsApi.disabled('ok', true);
-                formApi.buttonsApi.disabled('cancel', false);
-                formProps.callbacks?.onFormInitialized?.(formApi);
+            /** fires when the form began initialization (renders for the first time) */
+            onFormInit: () => {
+                formProps.callbacks?.onFormInit?.(formApi);
             },
 
-            /** fires when a form completely initialized, all data loaded */
+            /** fires when a form ready state changed */
             onFormReadyStateChanged: (state: boolean) => {
                 if (formProps.callbacks?.onFormReadyStateChanged?.(state, formApi) === false) return;
-                console.log('formReady: ' + state);
+                console.log('formReady: ' + state); //TODO: Remove after tests
                 if (state) formApi.buttonsApi.disabled('ok', false);
                 else formApi.buttonsApi.disabled('ok', true);
             },
@@ -126,14 +124,13 @@ export const useCallbacks = (formProps: IDFormProps, formApi: IDFormApi) => {
             /** fires when the form fetch success */
             onDataFetchSuccess: (result: {data: Record<string, unknown>}) => {
                 if (formProps.callbacks?.onDataFetchSuccess?.(result, formApi) === false) return;
-                formApi.buttonsApi.disabled('ok', false);
+                //formApi.buttonsApi.disabled('ok', false);
             },
 
             /** fires when the form fetch failed */
             onDataFetchError: (message: string, code: number) => {
                 if (formProps.callbacks?.onDataFetchError?.(message, code, formApi) === false) return;
 
-                formApi.buttonsApi.disabled('ok', true);
                 const box = MessageBox.confirm({
                     content: (
                         <>

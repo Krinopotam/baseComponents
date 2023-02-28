@@ -1,20 +1,20 @@
 /**
  * @RenderForm
- * @version 0.0.30.15
+ * @version 0.0.30.19
  * @link omegatester@gmail.com
  * @author Maksim Zaytsev
  * @license MIT
  */
 
-import {IButtonsRowApi, IFormButtons} from 'baseComponents/buttonsRow';
-import React, {useEffect, useSyncExternalStore} from 'react';
+import { IButtonsRowApi, IFormButtons } from 'baseComponents/buttonsRow';
+import React, { useEffect, useSyncExternalStore } from 'react';
 
-import {ButtonsRender} from 'baseComponents/modal/renders/buttonsRender';
-import {Form} from 'antd';
-import {FormBodyRender} from './formBodyRender';
-import {IDFormApi} from 'baseComponents/dForm/hooks/api';
-import {IDFormProps} from '../dForm';
-import {LoadingContainer} from 'baseComponents/loadingContainer/loadingContainer';
+import { ButtonsRender } from 'baseComponents/modal/renders/buttonsRender';
+import { Form } from 'antd';
+import { FormBodyRender } from './formBodyRender';
+import { IDFormApi } from 'baseComponents/dForm/hooks/api';
+import { IDFormProps } from '../dForm';
+import { LoadingContainer } from 'baseComponents/loadingContainer/loadingContainer';
 
 interface IFormRenderProps {
     /** form ID */
@@ -41,7 +41,6 @@ interface IFormRenderProps {
 
 export const FormRender = ({formId, formApi, formProps, buttonsApi, formButtons}: IFormRenderProps): JSX.Element => {
     useExternalRenderCall(formApi);
-    formApi.model.setFormInitialized(false);
 
     let labelCol = formProps.labelCol;
     if (!labelCol) labelCol = formProps.layout === 'horizontal' ? {span: 8} : {span: 0};
@@ -95,7 +94,7 @@ const useExternalRenderCall = (formApi: IDFormApi) => {
 /** Special component to fire onFormInit event before another events*/
 const FormInit = ({formApi}: {formApi: IDFormApi}): JSX.Element | null => {
     useEffect(() => {
-        formApi.model.setFormInitialized(true);
+        formApi.model.setFormInit();
     }, [formApi.model]);
 
     return null;

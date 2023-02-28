@@ -1,9 +1,9 @@
-import React, {useMemo} from 'react';
+import React, { useMemo } from 'react';
 
-import {IDFormCallbacks} from 'baseComponents/dForm/dForm';
-import {IDFormModalApi} from 'baseComponents/dFormModal/hooks/api';
-import {IDFormModalProps} from 'baseComponents/dFormModal/dFormModal';
-import {MessageBox} from 'baseComponents/messageBox';
+import { IDFormCallbacks } from 'baseComponents/dForm/dForm';
+import { IDFormModalApi } from 'baseComponents/dFormModal/hooks/api';
+import { IDFormModalProps } from 'baseComponents/dFormModal/dFormModal';
+import { MessageBox } from 'baseComponents/messageBox';
 
 /**
  * Preparing callbacks for redirection to the form
@@ -80,12 +80,12 @@ export const useCallbacks = (formModalApi: IDFormModalApi, modalFormProps: IDFor
                 return modalFormProps.callbacks?.onFormReadOnlyStateChanged?.(state, formModalApi);
             },
 
-            /** fires when a form completely initialized, all data loaded */
-            onFormInitialized: () => {
-                return modalFormProps.callbacks?.onFormInitialized?.(formModalApi);
+            /** fires when the form began initialization (renders for the first time) */
+            onFormInit: () => {
+                return modalFormProps.callbacks?.onFormInit?.(formModalApi);
             },
 
-            /** fires when a form completely initialized, all data loaded */
+            /** fires when a form ready state changed */
             onFormReadyStateChanged: (state: boolean) => {
                 return modalFormProps.callbacks?.onFormReadyStateChanged?.(state, formModalApi);
             },
@@ -124,7 +124,6 @@ export const useCallbacks = (formModalApi: IDFormModalApi, modalFormProps: IDFor
             onDataFetchError: (message: string, code: number) => {
                 if (modalFormProps.callbacks?.onDataFetchError?.(message, code, formModalApi) === false) return false;
 
-                formModalApi.buttonsApi.disabled('ok', true);
                 const box = MessageBox.confirm({
                     content: (
                         <>

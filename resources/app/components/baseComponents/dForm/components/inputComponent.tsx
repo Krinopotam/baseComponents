@@ -1,14 +1,14 @@
 /**
  * @InputComponent
- * @version 0.0.29.4
+ * @version 0.0.29.9
  * @link omegatester@gmail.com
  * @author Maksim Zaytsev
  * @license MIT
  */
 
+import {IDFormComponentProps, IDFormFieldProps} from './baseComponent';
 import React, {useCallback, useEffect} from 'react';
 
-import {IDFormComponentProps, IDFormFieldProps} from './baseComponent';
 import {Input} from 'antd';
 
 // !used in configGenerator parsing. Don't use curly brackets and multi rows comments!
@@ -39,7 +39,9 @@ export const InputComponent = ({formApi, formProps, fieldName}: IDFormComponentP
     }, [fieldName, formApi.model]);
 
     useEffect(() => {
-        formApi.model.setReady(fieldName, true);
+
+        setTimeout(() => {formApi.model.setReady(fieldName, true);}, 5000)
+        
     }, [fieldName, formApi.model]);
 
     return (

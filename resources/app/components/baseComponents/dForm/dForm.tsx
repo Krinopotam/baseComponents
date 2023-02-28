@@ -1,6 +1,6 @@
 /**
  * @DynamicForm
- * @version 0.0.37.54
+ * @version 0.0.37.56
  * @link omegatester@gmail.com
  * @author Maksim Zaytsev
  * @license MIT
@@ -8,21 +8,21 @@
 
 import './css/antdAnimation.css';
 
-import {DModel, IDFormModelCallbacks, IDFormSubmitResultObject, IDFormSubmitResultPromise} from './dModel';
-import {IButtonsRowApi, IFormButtons} from 'baseComponents/buttonsRow';
-import {IDFormApi, useInitFormApi} from 'baseComponents/dForm/hooks/api';
-import React, {useEffect, useRef, useState} from 'react';
+import { DModel, IDFormModelCallbacks, IDFormSubmitResultObject, IDFormSubmitResultPromise } from './dModel';
+import { IButtonsRowApi, IFormButtons } from 'baseComponents/buttonsRow';
+import { IDFormApi, useInitFormApi } from 'baseComponents/dForm/hooks/api';
+import React, { useEffect, useRef, useState } from 'react';
 
-import {FormRender} from './renders/formRender';
-import {IDFormFieldsProps} from 'baseComponents/dForm/components/baseComponent';
-import {IFormType} from '../modal';
-import {IRuleType} from './validators/baseValidator';
-import {TPromise} from 'baseComponents/serviceTypes';
-import {getUuid} from 'helpers/helpersString';
-import {useCallbacks} from 'baseComponents/dForm/hooks/callbacks';
-import {useGetActualProps} from 'baseComponents/dForm/hooks/actualProps';
-import {useGetButtons} from './hooks/buttons';
-import {useUpdateMessageBoxTheme} from 'baseComponents/messageBox/hooks/updateModalTheme';
+import { FormRender } from './renders/formRender';
+import { IDFormFieldsProps } from 'baseComponents/dForm/components/baseComponent';
+import { IFormType } from '../modal';
+import { IRuleType } from './validators/baseValidator';
+import { TPromise } from 'baseComponents/serviceTypes';
+import { getUuid } from 'helpers/helpersString';
+import { useCallbacks } from 'baseComponents/dForm/hooks/callbacks';
+import { useGetActualProps } from 'baseComponents/dForm/hooks/actualProps';
+import { useGetButtons } from './hooks/buttons';
+import { useUpdateMessageBoxTheme } from 'baseComponents/messageBox/hooks/updateModalTheme';
 
 //import './dynamicForm.css';
 
@@ -173,8 +173,8 @@ export interface IDFormCallbacks {
     /** fires when the read only state of the form changed */
     onFormReadOnlyStateChanged?: (state: boolean, formApi: IDFormApi) => boolean | void;
 
-    /** fires, when the form rendered */
-    onFormInitialized?: (formApi: IDFormApi) => boolean | void;
+    /** fires when the form began initialization (renders for the first time) */
+    onFormInit?: (formApi: IDFormApi) => boolean | void;
 
     /** fires when the form initialized and all fields have fully loaded all the data */
     onFormReadyStateChanged?: (state: boolean, formApi: IDFormApi) => boolean | void;

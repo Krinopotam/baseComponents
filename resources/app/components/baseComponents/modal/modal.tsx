@@ -1,6 +1,6 @@
 /**
  * @Modal
- * @version 0.0.0.25
+ * @version 0.0.0.30
  * @link omegatester@gmail.com
  * @author Maksim Zaytsev
  * @license MIT

@@ -35,6 +35,7 @@ const formData = {
     //departments: '0-0-1',
     //departments: '12345',
     departmentName: 'Департамент главных',
+    neverField: 'neverData',
 };
 
 
@@ -48,7 +49,7 @@ const formProps = new DFormModalConfig()
     .validationRules(validationRules)
     .layout('vertical')
     .contentIndent(12)
-    .confirmChanges(false)
+    .confirmChanges(true)
     .bodyHeight(300)
     .bodyMaxHeight(500)
     .bodyMinHeight(200)
@@ -56,14 +57,14 @@ const formProps = new DFormModalConfig()
     .minWidth(200)
     .maxWidth(1000)
     .callbacks({
-        onDataFetch: () => {
+        /*onDataFetch: () => {
             return new Promise((resolve, reject) => {
                 setTimeout(() => {
                     if (Math.random() < 0.5) reject({message: 'Ошибка загрузки данных', code: 400});
                     else resolve({data: {profess: 'Загружено Профессия', specialty: 'Загружено специализация'}});
                 }, 3000);
             });
-        },
+        },*/
         onSubmit: () => {
             return new Promise((resolve, reject) => {
                 setTimeout(() => {

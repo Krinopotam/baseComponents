@@ -24,6 +24,7 @@
 }
 
 /** selected row style*/
+/*
 .advanced-ant-grid .ant-table-tbody > tr.ant-table-row-selected > td {
     background-color: #b7e4ff !important;
 }
@@ -31,7 +32,7 @@
 .advanced-ant-grid.ant-table-no-hover .ant-table-tbody > tr.ant-table-row:hover > td {
     background: unset;
 }
-
+*/
 
 /** table auto height hack*/
 .advanced-ant-grid-root.auto-height {

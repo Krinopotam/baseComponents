@@ -100,7 +100,7 @@ export interface IDFormProps {
     // closeFormConfirmMessage?: string | null;
 }
 
-interface IDFormTabsProps {
+export interface IDFormTabsProps {
     /** Tabs panes height (default 40)*/
     height?: number;
 }

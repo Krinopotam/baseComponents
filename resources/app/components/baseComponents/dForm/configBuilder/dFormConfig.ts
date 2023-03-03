@@ -1,18 +1,16 @@
 import {IDFormProps} from 'baseComponents/dForm/dForm';
+import {BaseComponentConfig} from './baseComponentConfig';
 import {IDFormFieldProps} from '../components/baseComponent';
 import {IRuleType} from '../validators/baseValidator';
 
-export interface IConfigGetter{
-    getConfig:() => {id: string, fieldProps: object, rules: IRuleType[]};
-}
 
-export class DFormConfig  {
-    private _config: IDFormProps = {} as IDFormProps;
+export class DFormConfig<T>  {
+    protected _config: Record<string, unknown> = {};
 
 
 
 
-    /** An mutable object to merge with these controls api */
+    /** A mutable object to merge with these controls api */
     apiRef(value: IDFormProps['apiRef']) {
         this._config.apiRef = value;
         return this;
@@ -61,7 +59,7 @@ export class DFormConfig  {
     }
 
     /** Fields properties */
-    fieldsProps(value: IDFormProps['fieldsProps']) {
+    fieldsProps(value: Record<keyof T, IDFormFieldProps>) {
         this._config.fieldsProps = value;
         return this;
     }
@@ -115,7 +113,7 @@ export class DFormConfig  {
     }
 
     /** Validation rules */
-    validationRules(value: IDFormProps['validationRules']) {
+    validationRules(value: Record<keyof T, IRuleType[]>) {
         this._config.validationRules = value;
         return this;
     }
@@ -140,59 +138,45 @@ export class DFormConfig  {
 
 
     /** Add fields or fields inline groups */
-    addFields(...args: (IConfigGetter | Record<string, IConfigGetter[]>)[]) {
+    addFields(...args: BaseComponentConfig<T>[]) {
         this.addFieldsConfig(undefined, args);
         return this;
     }
 
     /** Add tabs */
-    addTab(tabName: string, ...args: (IConfigGetter | Record<string, IConfigGetter[]>)[]) {
+    addTab(tabName: string, ...args: BaseComponentConfig<T>[]) {
         this.addFieldsConfig(tabName, args);
         return this;
     }
 
     /** Add field properties to form config */
-    private addFieldsConfig(tabName: string | undefined, fieldClassList: (IConfigGetter | Record<string, IConfigGetter[]>)[]) {
-        for (const fieldClass of fieldClassList) {
-            if (typeof fieldClass !== 'object') continue;
-            if (fieldClass.getConfig) {
-                const fieldClass1 = fieldClass as IConfigGetter;
-                this.updateFieldsProps(fieldClass1, undefined, tabName);
-                continue;
-            }
-
-            const fieldsClassesGroup = fieldClass as Record<string, IConfigGetter[]>;
-            for (const groupName in fieldsClassesGroup) {
-                const groupFieldsClasses = fieldsClassesGroup[groupName];
-                if (!Array.isArray(groupFieldsClasses)) continue;
-
-                for (const fieldClass2 of groupFieldsClasses) {
-                    if (!fieldClass2.getConfig) continue;
-                    this.updateFieldsProps(fieldClass2, groupName, tabName);
-                }
-            }
+    private addFieldsConfig(tabName: string | undefined, configs: BaseComponentConfig<T>[]) {
+        for (const config of configs) {
+            this.updateFieldsProps(config, tabName);
         }
         return this;
     }
 
     /** Update the field properties */
-    private updateFieldsProps(fieldClass: IConfigGetter, groupName?: string, tabName?: string) {
-        const fieldConfig = fieldClass.getConfig();
-        if (!fieldConfig.fieldProps) return;
+    private updateFieldsProps(configClass: BaseComponentConfig<T>, tabName?: string) {
+        const id  = configClass.getId();
+        const fieldProps = configClass.getConfig();
+        const validationRules = configClass.getValidationRules();
+        
+        if (!fieldProps || !id) return;
         if (!this._config.fieldsProps) this._config.fieldsProps = {};
-        const formFieldsProps = this._config.fieldsProps;
-        const fieldProps = fieldConfig.fieldProps as IDFormFieldProps;
-        formFieldsProps[fieldConfig.id] = {...fieldProps};
+        const formFieldsProps = this._config.fieldsProps as Record<keyof T, IDFormFieldProps>;
+        formFieldsProps[id] = {...fieldProps};
 
         if (!this._config.validationRules) this._config.validationRules = {};
-        if (fieldConfig.rules && fieldConfig.rules.length > 0) this._config.validationRules[fieldConfig.id] = [...fieldConfig.rules];
+        const formValidationRules = this._config.validationRules as Record<keyof T, IRuleType[]>;
+        if (validationRules && validationRules.length > 0) formValidationRules[id] = [...validationRules];
 
-        if (typeof groupName !== 'undefined') formFieldsProps[fieldConfig.id].inlineGroup = groupName;
-        if (typeof tabName !== 'undefined') formFieldsProps[fieldConfig.id].tab = tabName;
+        if (typeof tabName !== 'undefined') formFieldsProps[id].tab = tabName;
     }
 
     /** Get form config */
     getConfig() {
-        return this._config;
+        return this._config as unknown as IDFormProps
     }
 }

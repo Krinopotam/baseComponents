@@ -3,7 +3,7 @@ let extraMethods = require('./configExtraMethods');
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 let parsingMethods = require('./configParsingMethods');
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-let plassMethods = require('./configClassMethods');
+let classMethods = require('./configClassMethods');
 
 //region Options
 const debug = !!process.argv[2];
@@ -18,7 +18,7 @@ const options = {
     formModalProps: {
         modulePath: '..\\..\\dFormModal\\dFormModal.tsx',
         savePath: '..\\configBuilder\\dFormModalConfig.ts',
-        typeName: 'IDFormModalProps',
+        typeName: 'IDModalProps',
         typePath: 'baseComponents/dFormModal/dFormModal',
     },
     treeSelectProps: {
@@ -107,66 +107,94 @@ function showStatusMsg(componentName, operation, error, final) {
 //region Generate configs
 /**
  * Generate form config class
- * @param {boolean} isModal
- * @returns {Promise<void>}
+ * @returns {void}
  */
-async function generateFormConfigClass(isModal) {
-    const componentName = isModal ? 'DFormModal' : 'DForm';
+function generateFormConfigClass() {
+    const componentName = 'DForm';
     const componentClassName = componentName + 'Config';
-    const formOptions = isModal ? options.formModalProps : options.formProps;
-    let parseResult = await parsingMethods.parseProperties(formOptions);
+    const formOptions = options.formProps;
+    let parseResult = parsingMethods.parseProperties(formOptions);
     if (parseResult.error) {
         showStatusMsg(componentClassName, parseResult.error.operation, parseResult.error.message);
         return;
     }
 
     let properties = parseResult.properties;
+    properties['fieldsProps'] = {...properties['fieldsProps'], type: 'Record<keyof T, IDFormFieldProps>'};
+    properties['validationRules'] = {...properties['validationRules'], type: 'Record<keyof T, IRuleType[]>'};
 
-    let dFormPropsImport = undefined;
-    if (isModal) {
-        //The modal form props interface separated on 2 parts. We need to join it to the form props
-        const frmPropertiesResult = await parsingMethods.parseProperties(options.formProps);
-        if (frmPropertiesResult.error) {
-            showStatusMsg(componentClassName, frmPropertiesResult.error.operation, frmPropertiesResult.error.message);
-            return;
-        }
-        const frmProperties = frmPropertiesResult.properties;
-        properties = {...frmProperties, ...properties};
-        dFormPropsImport = {typeName: options.formProps.typeName, typePath: options.formProps.typePath};
-    }
-
-    const classTxt = plassMethods.generateClass(componentClassName, {
+    /**
+     * @type {IClassProps}
+     */
+    const classProps = {
+        className: componentClassName + '<T>',
         imports: [
             formOptions,
+            {typeName: 'BaseComponentConfig', typePath: './baseComponentConfig'},
             {typeName: 'IDFormFieldProps', typePath: '../components/baseComponent'},
             {typeName: 'IRuleType', typePath: '../validators/baseValidator'},
-            dFormPropsImport,
         ],
-        types: extraMethods.IConfigGetter,
-        fields: [{access: 'private', name: '_config', type: formOptions.typeName, value: '{} as ' + formOptions.typeName}],
+        fields: [{access: 'protected', name: '_config', type: 'Record<string, unknown>', value: '{}'}],
         propMethods: properties,
         additionalMethods: [
             extraMethods.addField,
             extraMethods.addTabs,
             extraMethods.addFieldsConfig,
             extraMethods.updateFieldsProps,
-            extraMethods.getFormConfig,
+            '/** Get form config */\n    getConfig() {\n        return this._config as unknown as ' + formOptions.typeName + '\n    }'
         ],
-    });
+    };
+    const classTxt = classMethods.generateClass(classProps);
 
-    const saveResult = await parsingMethods.saveFile(formOptions.savePath, classTxt);
+    const saveResult = parsingMethods.saveFile(formOptions.savePath, classTxt);
     showStatusMsg(componentClassName, 'saving', saveResult, true);
 }
 
 /**
- * generate components config classes
- * @returns {Promise<string[]>}
+ * Generate  modal form config class
+  * @returns {void}
  */
-async function generateComponentsConfigs() {
+function generateModalFormConfigClass() {
+    const componentName = 'DFormModal';
+    const componentClassName = componentName + 'Config';
+    const formOptions =  options.formModalProps
+    let parseResult = parsingMethods.parseProperties(formOptions);
+    if (parseResult.error) {
+        showStatusMsg(componentClassName, parseResult.error.operation, parseResult.error.message);
+        return;
+    }
+    const properties = parseResult.properties
+
+    /**
+     * @type {IClassProps}
+     */
+    const classProps = {
+        className: componentClassName + '<T>',
+        extends:'DFormConfig<T>',
+        imports: [
+            formOptions,
+            {typeName: 'DFormConfig', typePath: './dFormConfig'},
+            {typeName: 'IDFormModalProps', typePath: formOptions.typePath},
+        ],
+        propMethods: properties,
+        additionalMethods:['/** Get form config */\n    getConfig() {\n        return this._config as unknown as IDFormModalProps \n    }'],
+    };
+    const classTxt = classMethods.generateClass(classProps);
+
+    const saveResult = parsingMethods.saveFile(formOptions.savePath, classTxt);
+    showStatusMsg(componentClassName, 'saving', saveResult, true);
+}
+
+
+/**
+ * generate components config classes
+ * @returns {string[]}
+ */
+function generateComponentsConfigs() {
     const componentsClassNames = [];
     for (const component of componentsList) {
         if (component.name === 'baseComponent') continue;
-        const className = await generateComponentConfigClass(component.name);
+        const className = generateComponentConfigClass(component.name);
         componentsClassNames.push(className);
     }
 
@@ -175,81 +203,112 @@ async function generateComponentsConfigs() {
 
 /**
  * Generate component config class
- * @param {string}componentName
- * @returns {Promise<string>}
+ * @returns {IClassProps}
  */
-async function generateComponentConfigClass(componentName) {
+function generaBaseComponentConfigClass() {
     const baseOptions = options['baseComponentProps'];
-    const componentOptions = options[componentName + 'Props'];
-    const componentClassName = capitalizeFirstLetter(componentName) + 'Config';
-    const basePropertiesResult = await parsingMethods.parseProperties(baseOptions);
+    const baseClassName = 'BaseComponentConfig';
+    const basePropertiesResult = parsingMethods.parseProperties(baseOptions);
 
     if (basePropertiesResult.error) {
-        showStatusMsg(componentClassName, basePropertiesResult.error.operation, basePropertiesResult.error.message);
-        return componentName;
+        showStatusMsg(baseClassName, basePropertiesResult.error.operation, basePropertiesResult.error.message);
+        return undefined;
     }
     const baseProperties = basePropertiesResult.properties;
-    const propertiesResult = await parsingMethods.parseProperties(componentOptions);
+    delete baseProperties['component'];
+    //endregion
+
+    /**
+     * @type {IClassProps}
+     */
+    const classProps = {
+        className: baseClassName+'<T>',
+        imports: [baseOptions, {typeName: 'IRuleType', typePath: '../validators/baseValidator'}],
+        fields: [
+            {access: 'protected', name: '_config', type: 'Record<string, unknown>', value: '{}'},
+            {access: 'protected readonly', name: '_id', type: 'keyof T'},
+            {access: 'protected', name: '_validationRules', type: 'IRuleType[]', value: '[]'},
+        ],
+        constructor: {
+            parameters: [{var: 'id', type: 'keyof T'}],
+            rows: [`this._id = id`],
+        },
+        propMethods: baseProperties,
+        additionalMethods: [extraMethods.addValidationRules, extraMethods.getValidationRules, extraMethods.getId, '/** Get field config */\n    getConfig() {\n        return this._config as unknown as ' + baseOptions.typeName + '\n    }'],
+    };
+    const classTxt = classMethods.generateClass(classProps);
+
+    const saveResult = parsingMethods.saveFile(baseOptions.savePath, classTxt);
+    showStatusMsg(baseClassName, 'saving', saveResult, true);
+
+    return classProps;
+}
+
+/**
+ * @param componentName
+ * @returns {IClassProps}
+ */
+function generateComponentConfigClass(componentName) {
+    const componentOptions = options[componentName + 'Props'];
+    const componentClassName = capitalizeFirstLetter(componentName) + 'Config';
+
+    const propertiesResult = parsingMethods.parseProperties(componentOptions);
     if (propertiesResult.error) {
         showStatusMsg(componentClassName, propertiesResult.error.operation, propertiesResult.error.message);
         return componentName;
     }
 
-    const properties = propertiesResult.properties;
-
-    let commonProperties = {...baseProperties, ...properties};
-    delete commonProperties['component'];
+    let properties = propertiesResult.properties;
+    delete properties['component'];
 
     //region unique components extra processing
     let altEditFormProps = undefined;
     let formConfigImport = undefined;
     let treeSelectImport = undefined;
     if (componentName === 'gridComponent') {
-        delete commonProperties['editFormProps'];
+        delete properties['editFormProps'];
         altEditFormProps = extraMethods.altEditFormProps;
         formConfigImport = {typeName: 'DFormModalConfig', typePath: './dFormModalConfig'};
     } else if (componentName === 'treeSelectComponent') {
-        const treeSelectResult = await parsingMethods.parseProperties(options.treeSelectProps);
+        const treeSelectResult = parsingMethods.parseProperties(options.treeSelectProps);
 
         if (treeSelectResult.error) {
             showStatusMsg(componentClassName, treeSelectResult.error.operation, treeSelectResult.error.message);
             return componentName;
         }
         const treeSelectProperties = treeSelectResult.properties;
-        commonProperties = {...treeSelectProperties, ...commonProperties};
-        delete commonProperties['onChange'];
+        properties = {...treeSelectProperties, ...properties};
+        delete properties['onChange'];
         treeSelectImport = {typeName: 'ITreeSelectProps', typePath: options.treeSelectProps.typePath};
     }
     //endregion
 
-    const classTxt = plassMethods.generateClass(componentClassName, {
+    /**
+     * @type {IClassProps}
+     */
+    const classProps = {
+        className: componentClassName+'<T>',
         imports: [
-            baseOptions,
             componentOptions,
+            {typeName: 'BaseComponentConfig', typePath: './baseComponentConfig'},
             {typeName: capitalizeFirstLetter(componentName), typePath: componentOptions.typePath},
-            {typeName: 'IConfigGetter', typePath: './dFormConfig'},
-            {typeName: 'IRuleType', typePath: '../validators/baseValidator'},
             formConfigImport,
             treeSelectImport,
         ],
-        implements: 'IConfigGetter',
-        fields: [
-            {access: 'private', name: '_config', type: componentOptions.typeName, value: '{} as ' + componentOptions.typeName},
-            {access: 'private readonly', name: '_id', type: 'string'},
-            {access: 'private', name: '_validationRules', type: 'IRuleType[]', value: '[]'},
-        ],
+        extends: 'BaseComponentConfig<T>',
         constructor: {
-            parameters: [{var: 'id', type: 'string'}],
-            rows: [`this._id = id`, `this._config.component = ${capitalizeFirstLetter(componentName)}`],
+            parameters: [{var: 'id', type: 'keyof T'}],
+            rows: ['super(id)', `this._config.component = ${capitalizeFirstLetter(componentName)}`],
         },
-        propMethods: commonProperties,
-        additionalMethods: [extraMethods.getComponentConfig, altEditFormProps, extraMethods.addValidationRules],
-    });
+        propMethods: properties,
+        additionalMethods: [altEditFormProps, '/** Get field config */\n    getConfig() {\n        return this._config as unknown as ' + componentOptions.typeName + '\n    }'],
+    };
+    const classTxt = classMethods.generateClass(classProps);
 
-    const saveResult = await parsingMethods.saveFile(options[componentName + 'Props'].savePath, classTxt);
+    const saveResult = parsingMethods.saveFile(options[componentName + 'Props'].savePath, classTxt);
     showStatusMsg(componentClassName, 'saving', saveResult, true);
 
-    return componentClassName;
+    return classProps;
 }
 
 //endregion
@@ -257,11 +316,12 @@ async function generateComponentConfigClass(componentName) {
 async function run() {
     console.log('Generating DForm components config builders classes');
     console.log('    Components configs classes:');
-    await generateComponentsConfigs();
+    generaBaseComponentConfigClass();
+    generateComponentsConfigs();
 
     console.log('    Forms configs classes:');
-    await generateFormConfigClass(false);
-    await generateFormConfigClass(true);
+    generateFormConfigClass();
+    generateModalFormConfigClass();
     console.log('The task finished');
 }
 

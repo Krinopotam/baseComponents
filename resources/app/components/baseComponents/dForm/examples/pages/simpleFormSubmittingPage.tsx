@@ -12,10 +12,18 @@ import {InputComponentConfig} from 'baseComponents/dForm/configBuilder/inputComp
 import {PasswordComponentConfig} from 'baseComponents/dForm/configBuilder/passwordComponentConfig';
 import React from 'react';
 
-const formProps = new DFormConfig()
+interface IFields {
+    login: string;
+    password: string;
+}
+
+const formProps = new DFormConfig<IFields>()
     .name('Test form')
     .confirmChanges(true)
-    .addFields(new InputComponentConfig('login').label('Логин'), new PasswordComponentConfig('password').label('Пароль'))
+    .addFields(
+        new InputComponentConfig('login').label('Логин'),
+        new PasswordComponentConfig('password').label('Пароль')
+    )
     .callbacks({
         onSubmit: () => {
             return new Promise((resolve, reject) => {

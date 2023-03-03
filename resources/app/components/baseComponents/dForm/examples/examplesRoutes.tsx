@@ -3,6 +3,7 @@
     import {Route, Routes} from 'react-router-dom';
     import {ExamplesLayout} from './examplesLayout';
     import {FormDependedFieldPage} from './pages/formDependedFieldPage';
+    import {FormWithTemplatedFieldsPage} from './pages/formWithTemplatedFieldsPage';
     import {HomePage} from './pages/homePage';
     import {ModalWithGroupsPage} from './pages/modalWithGroupsPage';
     import {ModalWithTabsPage} from './pages/modalWithTabsPage';
@@ -22,6 +23,7 @@ export const ExamplesRoutes = () => {
             <Route path="/" element={<ExamplesLayout />}>
                 <Route index element={<HomePage />} />
                 <Route path="FormDependedField" element={<FormDependedFieldPage />} />;
+                <Route path="FormWithTemplatedFields" element={<FormWithTemplatedFieldsPage />} />;
                 <Route path="Home" element={<HomePage />} />;
                 <Route path="ModalWithGroups" element={<ModalWithGroupsPage />} />;
                 <Route path="ModalWithTabs" element={<ModalWithTabsPage />} />;

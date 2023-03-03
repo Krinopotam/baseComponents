@@ -1,6 +1,6 @@
 /**
  * @DynamicForm
- * @version 0.0.37.75
+ * @version 0.0.37.76
  * @link omegatester@gmail.com
  * @author Maksim Zaytsev
  * @license MIT
@@ -30,7 +30,7 @@ import { useUpdateMessageBoxTheme } from 'baseComponents/messageBox/hooks/update
 /** Form properties*/
 // !used in configGenerator parsing. Don't use curly brackets and multi rows comments!
 export interface IDFormProps {
-    /** An mutable object to merge with these controls api */
+    /** A mutable object to merge with these controls api */
     apiRef?: unknown;
 
     /** Buttons properties */

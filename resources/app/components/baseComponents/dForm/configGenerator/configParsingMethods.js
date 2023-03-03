@@ -5,62 +5,31 @@ const fs = require('fs');
 /**
  * Load file
  * @param {{modulePath: string, savePath: string, typeName: string,typePath: string}} options
- * @returns {Promise<{data:string}|{error:{message:string, operation:string}}>}
+ * @returns {{data:string}|{error:{message:string, operation:string}}}
  */
-async function loadFile(options) {
-    const fileReader = new Promise((resolve, reject) => {
-        const path =__dirname + '\\' + options.modulePath;
-        fs.readFile(path, 'utf8', function read(err, data) {
-            if (err) {
-                reject({error: {message: err.message, operation: 'file loading'}});
-                return;
-            }
-
-            let fileContent = data.toString();
-            resolve({data: fileContent});
-        });
-    });
-
-    let result = {};
-    await fileReader
-        .then((data) => {
-            result = data;
-        })
-        .catch((err) => {
-            result = err;
-        });
-    return result;
+function loadFile(options) {
+    const path = __dirname + '\\' + options.modulePath;
+    try {
+        const fileContent = fs.readFileSync(path, 'utf8');
+        return {data: fileContent};
+    } catch (err) {
+        return {error: {message: err, operation: 'file loading'}};
+    }
 }
 
 /**
  * Save content to file
  * @param {string} filePath
  * @param {string} content
- * @returns {Promise<string>}
+ * @returns {string|undefined}
  */
-module.exports.saveFile = async function saveFile(filePath, content) {
-    const fileSaver = new Promise((resolve, reject) => {
-        const path =__dirname + '\\' + filePath;
-        fs.writeFile(path, content, 'utf8', function (err) {
-            if (err) {
-                reject({message: err.message});
-                return;
-            }
-
-            resolve();
-        });
-    });
-
-    let result = '';
-    await fileSaver
-        .then(() => {
-            result = '';
-        })
-        .catch((err) => {
-            result = err.message;
-        });
-
-    return result;
+module.exports.saveFile = function saveFile(filePath, content) {
+    const path = __dirname + '\\' + filePath;
+    try {
+        fs.writeFileSync(path, content, 'utf8');
+    } catch (err) {
+        return err;
+    }
 };
 
 //endregion
@@ -70,14 +39,13 @@ module.exports.saveFile = async function saveFile(filePath, content) {
 /**
  * Get interface text from file content
  * @param {{modulePath: string, savePath: string, typeName: string,typePath: string}} options
- * @returns {Promise<{data:string}|{error:{message:string, operation:string}}>}
+ * @returns {{data:string}|{error:{message:string, operation:string}}}
  */
-async function parseInterfaceText(options) {
-    const loadResult = await loadFile(options);
+function parseInterfaceText(options) {
+    const loadResult = loadFile(options);
     if (loadResult.error) return loadResult;
 
     const fileContent = loadResult.data;
-
     const matcher = new RegExp(
         'export interface ' + options.typeName + '\\s*(?:extends\\s[A-Za-z_<>,\'"\\s]*\\s*)?{[\\r\\n]([a-zA-Z\\d\\s/*?:;,.\'`"_=<>|()\\[\\]+-]*)[\\n\\r]}',
         'gm'
@@ -99,10 +67,10 @@ async function parseInterfaceText(options) {
 /**
  * Get properties collection
  * @param {{modulePath: string, savePath: string, typeName: string,typePath: string}} options
- * @returns {Promise<{properties:Object.<string, {name: string, type: string, sourceType: string, comment}>}|{error:{message:string, operation:string}}>}
+ * @returns {{properties:Object.<string, {name: string, type: string, sourceType: string, comment}>}|{error:{message:string, operation:string}}}
  */
-module.exports.parseProperties = async function parseProperties(options) {
-    const parseInterfaceResult = await parseInterfaceText(options);
+module.exports.parseProperties = function parseProperties(options) {
+    const parseInterfaceResult = parseInterfaceText(options);
 
     if (parseInterfaceResult.error) return parseInterfaceResult;
 

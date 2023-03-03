@@ -1,13 +1,26 @@
 /**
+ * @typedef {Object} IClassProps
+ * @property {string} className
+ * @property {[{typePath: string, typeName: string}]} [imports] - import props
+ * @property {[{access: string, name: string, [value]:string, type:string}]} [fields] - fields props
+ * @property {{parameters: [{var: 'id', type: 'string'}], rows:string[]}} [constructor] - constructor props
+ * @property {Object.<string, {name: string, type: string, sourceType: string, comment}>} [propMethods] - propMethods
+ * @property {string[]} [additionalMethods] - additional methods props
+ * @property {string} [types] - types props
+ * @property {string} [implements] - types props
+ * @property {string} [extends] - types props
+ **/
+
+/**
  * Generate class text
  * @param {string} className
- * @param {{[imports]:[{typePath: string, typeName: string}], [fields]:[{access: string, name: string, [value]:string, type:string}], [constructor]:{parameters: [{var: 'id', type: 'string'}], rows:string[]}, [propMethods]: Object.<string, {name: string, type: string, sourceType: string, comment}>, [additionalMethods]:string[], [types]:string, [implements]:string}} props
+ * @param {IClassProps} props
  * @returns {string}
  */
-module.exports.generateClass = function generateClass(className, props) {
+module.exports.generateClass = function generateClass(props) {
     return `${generateImports(props.imports)}
 ${props.types || ''}
-export class ${className} ${props.implements ? ' implements ' + props.implements : ''} {
+export class ${props.className} ${props.implements ? ' implements ' + props.implements : ''}${props.extends ? ' extends ' + props.extends : ''} {
 ${generateClassFields(props.fields)}
 ${generateClassConstructor(props.constructor)}
 ${generatePropsMethods(props.propMethods)}

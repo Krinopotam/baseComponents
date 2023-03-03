@@ -23,6 +23,7 @@ const items: MenuProps['items'] = [
     {type: 'divider'},
     getItem('Базовые примеры', 'baseExamples', <FolderOutlined />, [
         getItem(<Link to="SimpleForm">Простая форма</Link>, 'g1'),
+        getItem(<Link to="FormWithTemplatedFields">Простая форма с шаблонами полей</Link>, 'g1a'),
         getItem(<Link to="SimpleFormModal">Простая модальная форма</Link>, 'g2'),
         getItem(<Link to="ModalWithTabs">Модальная форма с вкладками</Link>, 'g3'),
         getItem(<Link to="ModalWithGroups">Модальная форма с группами</Link>, 'g4'),

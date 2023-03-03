@@ -23,7 +23,7 @@ import {useUpdateMessageBoxTheme} from 'baseComponents/messageBox/hooks/updateMo
 
 //region Types
 // !used in configGenerator parsing. Don't use curly brackets and multi rows comments!
-export interface IDFormModalProps extends IDFormProps {
+export interface IDModalProps {
     /** Modal controls callbacks */
     callbacks?: IDFormModalCallbacks;
 
@@ -63,6 +63,8 @@ export interface IDFormModalProps extends IDFormProps {
     /** Is controls visible (for open for without api) */
     isOpened?: boolean;
 }
+
+export type IDFormModalProps  = IDModalProps & IDFormProps
 
 export interface IDFormModalCallbacks extends IDFormCallbacks {
     onOpen?: (

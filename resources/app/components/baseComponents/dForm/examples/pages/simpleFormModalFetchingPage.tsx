@@ -14,13 +14,20 @@ import {DFormModal} from 'baseComponents/dFormModal/dFormModal';
 import {IDFormModalApi} from 'baseComponents/dFormModal/hooks/api';
 import {InputComponentConfig} from 'baseComponents/dForm/configBuilder/inputComponentConfig';
 
+interface IFields {
+    position: string;
+    department: string;
+}
+
 const formApi = {} as IDFormModalApi;
 
-const formProps = new DFormConfig()
+const formProps = new DFormConfig<IFields>()
     .apiRef(formApi)
     .name('Test form')
     .confirmChanges(true)
-    .addFields(new InputComponentConfig('position').label('Должность'), new InputComponentConfig('department').label('Подразделение'))
+    .addFields(
+        new InputComponentConfig('position').label('Должность'),
+        new InputComponentConfig('department').label('Подразделение'))
     .callbacks({
         onDataFetch: () => {
             return new Promise((resolve, reject) => {

@@ -1,9 +1,14 @@
 import {DForm} from 'baseComponents/dForm/dForm';
-import {DFormConfig} from 'baseComponents/dForm/configBuilder/dFormConfig';
-import {InputComponentConfig} from 'baseComponents/dForm/configBuilder/inputComponentConfig';
 import React from 'react';
+import {InputComponentConfig} from 'baseComponents/dForm/configBuilder/inputComponentConfig';
+import {DFormConfig} from 'baseComponents/dForm/configBuilder/dFormConfig';
 
-const formProps = new DFormConfig()
+interface IFields {
+    position: string;
+    department: string;
+}
+
+const formProps = new DFormConfig<IFields>()
     .name('Test form')
     .formMode('update')
     .confirmChanges(true)

@@ -10,18 +10,25 @@
 
 import {Button} from 'antd';
 import {DFormModal} from 'baseComponents/dFormModal/dFormModal';
-import {DFormModalConfig} from '../../configBuilder/dFormModalConfig';
 import {IDFormModalApi} from 'baseComponents/dFormModal/hooks/api';
 import {InputComponentConfig} from 'baseComponents/dForm/configBuilder/inputComponentConfig';
 import {PasswordComponentConfig} from 'baseComponents/dForm/configBuilder/passwordComponentConfig';
+import {DFormModalConfig} from "baseComponents/dForm/configBuilder/dFormModalConfig";
+
+interface IFields {
+    login: string;
+    password: string;
+}
 
 const formApi = {} as IDFormModalApi;
 
-const formProps = new DFormModalConfig()
+const formProps = new DFormModalConfig<IFields>()
     .apiRef(formApi)
     .name('Test form')
     .confirmChanges(true)
-    .addFields(new InputComponentConfig('login').label('Логин'), new PasswordComponentConfig('password').label('Пароль'))
+    .addFields(
+        new InputComponentConfig('login').label('Логин'),
+        new PasswordComponentConfig('password').label('Пароль'))
     .callbacks({
         onSubmit: () => {
             return new Promise((resolve, reject) => {

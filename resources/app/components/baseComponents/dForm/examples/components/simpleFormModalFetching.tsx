@@ -6,13 +6,20 @@ import {DFormModal} from 'baseComponents/dFormModal/dFormModal';
 import {IDFormModalApi} from 'baseComponents/dFormModal/hooks/api';
 import {InputComponentConfig} from 'baseComponents/dForm/configBuilder/inputComponentConfig';
 
+interface IFields {
+    position: string;
+    department: string;
+}
+
 const formApi = {} as IDFormModalApi;
 
-const formProps = new DFormConfig()
+const formProps = new DFormConfig<IFields>()
     .apiRef(formApi)
     .name('Test form')
     .confirmChanges(true)
-    .addFields(new InputComponentConfig('position').label('Должность'), new InputComponentConfig('department').label('Подразделение'))
+    .addFields(
+        new InputComponentConfig('position').label('Должность'),
+        new InputComponentConfig('department').label('Подразделение'))
     .callbacks({
         onDataFetch: () => {
             return new Promise((resolve, reject) => {
@@ -35,7 +42,7 @@ export const SimpleFormModalFetching = (): JSX.Element => {
         <>
             {/*Description Start*/}
             <h1>Пример загрузки данных при открытии формы</h1>
-            <p>Для обеспечения загрузки необходимо в калбэк onDataFetch передать функцию, возвращающую Promis, который при успешном ответе сервера (resolve) возвращает объект вида:</p>
+            <p>Для обеспечения загрузки необходимо в калбэк onDataFetch передать функцию, возвращающую Promise, который при успешном ответе сервера (resolve) возвращает объект вида:</p>
             <code>{`data:{имя_поля1: "значение", имя_поля2: "значение 2"...}`}</code>
             <p></p>
             {/*Description End*/}

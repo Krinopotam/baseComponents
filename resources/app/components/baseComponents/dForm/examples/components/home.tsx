@@ -38,9 +38,21 @@ const formData = {
     neverField: 'neverData',
 };
 
+interface IFields {
+    profess: string;
+    specialty: string;
+    assignDate: string;
+
+    name: string;
+    login: string;
+    departments: string;
+    password: string;
+    isLocked: string;
+    permissions: string;
+}
 
 const formModalApi: IDFormModalApi = {} as IDFormModalApi;
-const formProps = new DFormModalConfig()
+const formProps = new DFormModalConfig<IFields>()
     .apiRef(formModalApi)
     .formType('info')
     .name('TestFormModalConfig')
@@ -50,7 +62,7 @@ const formProps = new DFormModalConfig()
     .layout('vertical')
     .contentIndent(12)
     .confirmChanges(true)
-    .bodyHeight(300)
+    .bodyHeight(600)
     .bodyMaxHeight(500)
     .bodyMinHeight(200)
     .width(500)
@@ -75,20 +87,15 @@ const formProps = new DFormModalConfig()
         },
     })
     .addTab(
-        'Таб 1',
-        {
-            row1: [
-                new InputComponentConfig('profess').label('Профессия').showCount(true).maxLength(50),
-                new InputComponentConfig('specialty').label('Специализация').default('дефолтная специализация').dependsOn(['profess']),
-            ],
-        },
+        'Tab1',
+        new InputComponentConfig('profess').label('Профессия').showCount(true).maxLength(50).inlineGroup('row1'),
+        new InputComponentConfig('specialty').label('Специализация').default('дефолтная специализация').dependsOn(['profess']).inlineGroup('row1'),
+
         new DateTimeComponentConfig('assignDate').label('Дата назначения'),
-        {
-            row2: [
-                new InputComponentConfig('name').label('Имя пользователя').default('дефолтное имя пользователя').dependsOn(['profess']),
-                new InputComponentConfig('login').label('Логин').default('дефолтный логин').dependsOn(['name', 'specialty']),
-            ],
-        },
+
+        new InputComponentConfig('name').label('Имя пользователя').default('дефолтное имя пользователя').dependsOn(['profess']).inlineGroup('row2'),
+        new InputComponentConfig('login').label('Логин').default('дефолтный логин').dependsOn(['name', 'specialty']).inlineGroup('row2'),
+
         new TreeSelectComponentConfig('departments')
             .label('Подразделение')
             .fetchMode('onUse')
@@ -117,7 +124,7 @@ const formProps = new DFormModalConfig()
                 },
                 {title: 'Node2', id: '0-1'},
             ])
-            .editableFormProps(new DFormModalConfig().addFields(new InputComponentConfig('title').label('title')).getConfig())
+            .editableFormProps(new DFormModalConfig<Record<string, unknown>>().addFields(new InputComponentConfig('title').label('title')).getConfig())
 
         // .titleRender((treeNode: IApiJUser) => {
         //     return (
@@ -152,7 +159,7 @@ const formProps = new DFormModalConfig()
             .label('Полномочия')
             .confirmDelete(true)
             .editFormProps(
-                new DFormModalConfig()
+                new DFormModalConfig<Record<string, unknown>>()
                     .name('grid_edit_form')
                     .addFields(new InputComponentConfig('name').label('Имя'), new InputComponentConfig('role').label('Роль'))
                     .getConfig()
@@ -185,7 +192,6 @@ export const Home = (): JSX.Element => {
     const showModal = useCallback(() => {
         formModalApi.open('update', formData);
     }, []);
-
 
     return (
         <>

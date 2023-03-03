@@ -11,7 +11,13 @@ import {DFormConfig} from 'baseComponents/dForm/configBuilder/dFormConfig';
 import {InputComponentConfig} from 'baseComponents/dForm/configBuilder/inputComponentConfig';
 import React from 'react';
 
-const formProps = new DFormConfig()
+interface IFields {
+    field1: string;
+    field2: string;
+    field3: string;
+}
+
+const formProps = new DFormConfig<IFields>()
     .name('Test form')
     .confirmChanges(true)
     .addFields(

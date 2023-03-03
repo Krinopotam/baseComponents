@@ -15,9 +15,14 @@ import {IDFormModalApi} from 'baseComponents/dFormModal/hooks/api';
 import {InputComponentConfig} from 'baseComponents/dForm/configBuilder/inputComponentConfig';
 import {PasswordComponentConfig} from 'baseComponents/dForm/configBuilder/passwordComponentConfig';
 
+interface IFields {
+    login: string;
+    password: string;
+}
+
 const formApi = {} as IDFormModalApi;
 
-const formProps = new DFormModalConfig()
+const formProps = new DFormModalConfig<IFields>()
     .apiRef(formApi)
     .name('Test form')
     .confirmChanges(true)

@@ -166,6 +166,7 @@ const formProps = new DFormModalConfig<IFields>()
         new GridComponentConfig('permissions')
             .label('Полномочия')
             .confirmDelete(true)
+            .height(300)
             .editFormProps(
                 new DFormModalConfig<Record<string, unknown>>()
                     .name('grid_edit_form')

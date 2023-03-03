@@ -1,8 +1,8 @@
 import React, { useMemo } from 'react';
 
 import { IDFormApi } from 'baseComponents/dForm/hooks/api';
-import { IDFormModelCallbacks } from 'baseComponents/dForm/dModel';
-import { IDFormProps } from 'baseComponents/dForm/dForm';
+import {IDFormModelCallbacks} from 'baseComponents/dForm/dModel';
+import {IDFormDataSet, IDFormProps} from 'baseComponents/dForm/dForm';
 import { MessageBox } from 'baseComponents/messageBox';
 
 /**
@@ -182,6 +182,11 @@ export const useCallbacks = (formProps: IDFormProps, formApi: IDFormApi) => {
             onSubmitComplete: (values: Record<string, unknown>, errors: Record<string, string | undefined>) => {
                 if (formProps.callbacks?.onSubmitComplete?.(values, errors, formApi) === false) return;
                 formApi.buttonsApi.disabled('ok', false);
+            },
+
+            /** fires, when the dataSet change */
+            onDataSetChange: (dataSet: IDFormDataSet| undefined) => {
+                return formProps.callbacks?.onDataSetChange?.(dataSet, formApi);
             },
         };
     }, [formProps.callbacks, formProps.confirmChanges, formApi]);

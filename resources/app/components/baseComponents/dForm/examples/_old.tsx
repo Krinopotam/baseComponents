@@ -1,6 +1,6 @@
 /**
  * @DynamicFormExample
- * @version 0.0.32.33
+ * @version 0.0.32.36
  * @link omegatester@gmail.com
  * @author Maksim Zaytsev
  * @license MIT
@@ -9,30 +9,29 @@
 import 'dayjs/locale/ru';
 
 import {App, ConfigProvider, theme} from 'antd';
-import {DateTimeComponent, IDFormFieldDateTimeProps} from '../components/dateTimeComponent';
-import {IDFormFieldInputProps, InputComponent} from '../components/inputComponent';
-import {IDFormFieldPasswordProps, PasswordComponent} from '../components/passwordComponent';
-import {IDFormFieldSwitchProps, SwitchComponent} from '../components/switchComponent';
 import React, {useCallback, useState} from 'react';
 
 import Button from '../../button/button';
-import {DForm} from '../dForm';
-import {DFormConfig} from 'components/dForm/configBuilder/dFormConfig';
-import {DFormModal} from 'components/dFormModal/dFormModal';
-import {DFormModalConfig} from 'components/dForm/configBuilder/dFormModalConfig';
-import {DateTimeComponentConfig} from 'components/dForm/configBuilder/dateTimeComponentConfig';
-import {GridComponentConfig} from 'components/dForm/configBuilder/gridComponentConfig';
-import {IDFormApi} from 'components/dForm/hooks/api';
-import {IDFormFieldsProps} from 'components/dForm/components/baseComponent';
-import {IDFormModalApi} from 'components/dFormModal/hooks/api';
-import {InputComponentConfig} from 'components/dForm/configBuilder/inputComponentConfig';
-import {PasswordComponentConfig} from 'components/dForm/configBuilder/passwordComponentConfig';
-import {RuleType} from 'components/editableFields/validator';
-import {SwitchComponentConfig} from 'components/dForm/configBuilder/switchComponentConfig';
-import {TreeSelectComponentConfig} from 'components/dForm/configBuilder/treeSelectComponentConfig';
 import {createRoot} from 'react-dom/client';
 import dayjs from 'dayjs';
 import ruRU from 'antd/locale/ru_RU';
+import {IDFormFieldsProps} from '../components/baseComponent';
+import {IDFormFieldInputProps, InputComponent} from 'baseComponents/dForm/components/inputComponent';
+import {DateTimeComponent, IDFormFieldDateTimeProps} from '../components/dateTimeComponent';
+import {IDFormFieldPasswordProps, PasswordComponent} from '../components/passwordComponent';
+import {IDFormFieldSwitchProps, SwitchComponent} from '../components/switchComponent';
+import {IDFormApi} from '../hooks/api';
+import {DFormConfig} from '../configBuilder/dFormConfig';
+import {TreeSelectComponentConfig} from '../configBuilder/treeSelectComponentConfig';
+import {PasswordComponentConfig} from '../configBuilder/passwordComponentConfig';
+import {SwitchComponentConfig} from '../configBuilder/switchComponentConfig';
+import {GridComponentConfig} from '../configBuilder/gridComponentConfig';
+import {DFormModalConfig} from 'baseComponents/dForm/configBuilder/dFormModalConfig';
+import {IDFormModalApi} from 'baseComponents/dFormModal/hooks/api';
+import {InputComponentConfig} from 'baseComponents/dForm/configBuilder/inputComponentConfig';
+import {DateTimeComponentConfig} from 'baseComponents/dForm/configBuilder/dateTimeComponentConfig';
+import {DFormModal} from 'baseComponents/dFormModal/dFormModal';
+import {RuleType} from "baseComponents/editableFields/validator";
 
 dayjs.locale('ru');
 
@@ -265,19 +264,11 @@ const formProps2 = new DFormConfig()
     .confirmChanges(true)
     .addTab(
         'Таб 1',
-        {
-            row1: [
-                new InputComponentConfig('profess').label('Профессия').showCount(true).maxLength(50),
-                new InputComponentConfig('specialty').label('Специализация').default('дефолтная специализация').dependsOn(['profess']),
-            ],
-        },
-        new DateTimeComponentConfig('assignDate').label('Дата назначения'),
-        {
-            row2: [
-                new InputComponentConfig('name').label('Имя пользователя').default('дефолтное имя пользователя').dependsOn(['profess']),
-                new InputComponentConfig('login').label('Логин').default('дефолтный логин').dependsOn(['name', 'specialty']),
-            ],
-        },
+        new InputComponentConfig('profess').label('Профессия').showCount(true).maxLength(50).inlineGroup('row1'),
+        new InputComponentConfig('specialty').label('Специализация').default('дефолтная специализация').dependsOn(['profess']).inlineGroup('row1'),
+        new InputComponentConfig('name').label('Имя пользователя').default('дефолтное имя пользователя').dependsOn(['profess']).inlineGroup('row2'),
+        new InputComponentConfig('login').label('Логин').default('дефолтный логин').dependsOn(['name', 'specialty']).inlineGroup('row2'),
+
         new TreeSelectComponentConfig('departments')
             .label('Подразделение')
             .fetchMode('onUse')
@@ -412,19 +403,14 @@ const formProps3 = new DFormModalConfig()
     })
     .addTab(
         'Таб 1',
-        {
-            row1: [
-                new InputComponentConfig('profess').label('Профессия').showCount(true).maxLength(50),
-                new InputComponentConfig('specialty').label('Специализация').default('дефолтная специализация').dependsOn(['profess']),
-            ],
-        },
+        new InputComponentConfig('profess').label('Профессия').showCount(true).maxLength(50).inlineGroup('row1'),
+        new InputComponentConfig('specialty').label('Специализация').default('дефолтная специализация').dependsOn(['profess']).inlineGroup('row1'),
+
         new DateTimeComponentConfig('assignDate').label('Дата назначения'),
-        {
-            row2: [
-                new InputComponentConfig('name').label('Имя пользователя').default('дефолтное имя пользователя').dependsOn(['profess']),
-                new InputComponentConfig('login').label('Логин').default('дефолтный логин').dependsOn(['name', 'specialty']),
-            ],
-        },
+
+        new InputComponentConfig('name').label('Имя пользователя').default('дефолтное имя пользователя').dependsOn(['profess']).inlineGroup('row2'),
+        new InputComponentConfig('login').label('Логин').default('дефолтный логин').dependsOn(['name', 'specialty']).inlineGroup('row2'),
+
         new TreeSelectComponentConfig('departments')
             .label('Подразделение')
             .fetchMode('onUse')

@@ -22,7 +22,7 @@ const formProps = new DFormConfig<IFields>()
 
     .confirmChanges(true)
     .addFields(
-        new InputComponentConfig<IFields>('login').label('Логин'),
+        new InputComponentConfig('login').label('Логин'),
         new PasswordComponentConfig('password').label('Пароль')
     )
     .buttons({ok: {position: 'right'}})

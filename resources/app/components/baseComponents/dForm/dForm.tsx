@@ -211,6 +211,9 @@ export interface IDFormCallbacks {
 
     /** fires after the completion of sending the form, regardless of the result */
     onSubmitComplete?: (values: Record<string, unknown>, errors: Record<string, string | undefined>, formApi: IDFormApi) => boolean | void;
+
+    /** fires, when the dataSet change */
+    onDataSetChange?: (dataSet: IDFormDataSet| undefined, FormApi: IDFormApi) => IDFormDataSet| undefined
 }
 
 //endregion

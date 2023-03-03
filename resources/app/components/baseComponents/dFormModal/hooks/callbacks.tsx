@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 
-import { IDFormCallbacks } from 'baseComponents/dForm/dForm';
+import {IDFormCallbacks, IDFormDataSet} from 'baseComponents/dForm/dForm';
 import { IDFormModalApi } from 'baseComponents/dFormModal/hooks/api';
 import { IDFormModalProps } from 'baseComponents/dFormModal/dFormModal';
 import { MessageBox } from 'baseComponents/messageBox';
@@ -187,6 +187,11 @@ export const useCallbacks = (formModalApi: IDFormModalApi, modalFormProps: IDFor
                 formModalApi.buttonsApi.disabled('cancel', false);
                 formModalApi.buttonsApi.loading('ok', false);
             },
+            /** fires, when the dataSet change */
+            onDataSetChange: (dataSet: IDFormDataSet| undefined) => {
+                return modalFormProps.callbacks?.onDataSetChange?.(dataSet, formModalApi);
+            },
+
         } as IDFormCallbacks;
     }, [formModalApi, modalFormProps.callbacks, modalFormProps.confirmChanges]);
 };

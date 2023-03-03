@@ -1,6 +1,6 @@
 /**
  * @DynamicFormModel
- * @version 0.0.38.9
+ * @version 0.0.38.15
  * @link omegatester@gmail.com
  * @author Maksim Zaytsev
  * @license MIT
@@ -105,6 +105,9 @@ export interface IDFormModelCallbacks {
 
     /** fires, when the submitting finishes, whether in failure or success. */
     onSubmitComplete?: (values: Record<string, unknown>, errors: Record<string, string | undefined>, model: DModel) => void;
+
+    /** fires, when the dataSet change */
+    onDataSetChange?: (dataSet: IDFormDataSet | undefined, model: DModel) => IDFormDataSet | undefined;
 }
 
 export type IDFormSubmitResultPromise = TPromise<{data: Record<string, unknown>}, {message: string; code: number}>;
@@ -124,8 +127,8 @@ export class DModel {
     /** validation rules */
     private readonly _validationRules: IDFormFieldValidationRules;
 
-    /** the form data set instance (used for tracking data set changing) */
-    //private _datasetInstance: IDFormDataSet = {};
+    /** the form data set instance */
+    private _dataSet: IDFormDataSet | undefined = undefined;
 
     /** field labels */
     private _labels: Record<string, React.ReactNode | undefined> = {};
@@ -225,13 +228,15 @@ export class DModel {
     constructor(formProps: IDFormProps, callbacks: IDFormModelCallbacks) {
         this._formProps = cloneObject(formProps);
         this._fieldsProps = this._formProps.fieldsProps;
-        //this._datasetInstance = formProps.dataSet;
+        this._callbacks = callbacks;
+
+        this._dataSet = this._callbacks.onDataSetChange?.(formProps.dataSet, this) || formProps.dataSet;
+
         this._validationRules = formProps.validationRules || ({} as IDFormFieldValidationRules);
 
         this._formMode = formProps.formMode || 'create';
         this._formReadOnly = this._formMode === 'view' || false; //TODO implement mode changes
 
-        this._callbacks = callbacks;
         this._validator = new BaseValidator();
 
         this._tabsProps = this.preparePropsCollection(this._fieldsProps);
@@ -269,7 +274,7 @@ export class DModel {
     private initFieldsParameters(
         fieldsProps: IDFormFieldsProps,
         mode: IDFormMode,
-        newDataSet?: IDFormDataSet,
+        dataSet?: IDFormDataSet,
         noAutoHideDependedFields?: boolean
     ): [Record<string, React.ReactNode | undefined>, Record<string, unknown>, Record<string, boolean>, Record<string, boolean>, Record<string, boolean>] {
         const values: Record<string, unknown> = {};
@@ -278,12 +283,13 @@ export class DModel {
         const disabled: Record<string, boolean> = {};
         const labels: Record<string, React.ReactNode> = {};
 
-        const dataSet = newDataSet ? cloneObject(newDataSet) : {};
+        const clonedDataSet = dataSet ? cloneObject(dataSet) : {};
+
         for (const fieldName in fieldsProps) {
             const field = fieldsProps[fieldName];
             let fieldValue: unknown = undefined;
 
-            if ((mode === 'view' || mode === 'update' || mode === 'clone') && dataSet) fieldValue = dataSet[fieldName];
+            if ((mode === 'view' || mode === 'update' || mode === 'clone') && clonedDataSet) fieldValue = clonedDataSet[fieldName];
             else if (mode === 'create') fieldValue = field.default;
 
             labels[fieldName] = field.label;
@@ -769,10 +775,19 @@ export class DModel {
 
     /** Update form values */
     public setFormValues(dataSet: IDFormDataSet | undefined) {
+        const extDataSet = this._callbacks.onDataSetChange?.(dataSet, this);
+        const newDataSet = extDataSet || dataSet;
+
+        this._dataSet = newDataSet;
         const fieldsProps = this.getFieldsProps();
         for (const fieldName in fieldsProps) {
-            this.setValue(fieldName, dataSet?.[fieldName]);
+            this.setValue(fieldName, newDataSet?.[fieldName]);
         }
+    }
+
+    /** Get form data set (Not to be confused with form values. This is the dataset that was passed to the form) */
+    public getFormDataSet() {
+        return this._dataSet;
     }
 
     // Dirty
@@ -1029,7 +1044,7 @@ export class DModel {
 
         const values = this.getFormValues();
 
-        //if (this._formMode === 'create' || this._formMode === 'clone') values.id = getUuid();
+        if (this._formMode === 'create' || this._formMode === 'clone') values.id = '';
 
         const errors = this.validateForm();
 
@@ -1059,9 +1074,9 @@ export class DModel {
                 .then((promiseResult) => {
                     if (!this.isFormMounted()) return;
                     this.setFormSubmitting(false);
-                    onSubmitSuccess?.(values, promiseResult.data, this);
+                    onSubmitSuccess?.(values, promiseResult.data || values, this);
                     onSubmitComplete?.(values, errors, this);
-                    this._callbacks?.onSubmitSuccess?.(values, promiseResult.data, this);
+                    this._callbacks?.onSubmitSuccess?.(values, promiseResult.data || values, this);
                     this._callbacks?.onSubmitComplete?.(values, errors, this);
                 })
                 .catch((error) => {
@@ -1083,8 +1098,8 @@ export class DModel {
                 onSubmitError?.(values, objectResult.error.message || '', objectResult.error.code || 400, this);
                 this._callbacks?.onSubmitError?.(values, objectResult.error.message || '', objectResult.error.code || 400, this);
             } else {
-                onSubmitSuccess?.(values, objectResult.data, this);
-                this._callbacks?.onSubmitSuccess?.(values, objectResult.data || {}, this);
+                onSubmitSuccess?.(values, objectResult.data || values, this);
+                this._callbacks?.onSubmitSuccess?.(values, objectResult.data || values, this);
             }
 
             onSubmitComplete?.(values, errors, this);
@@ -1096,8 +1111,8 @@ export class DModel {
         this.setFormSubmitting(false);
         if (typeof result === 'boolean') {
             if (result) {
-                onSubmitSuccess?.(values, {}, this);
-                this._callbacks?.onSubmitSuccess?.(values, {}, this);
+                onSubmitSuccess?.(values, values, this);
+                this._callbacks?.onSubmitSuccess?.(values, values, this);
             } else {
                 onSubmitError?.(values, 'Неизвестная ошибка', 400, this);
                 this._callbacks?.onSubmitError?.(values, 'Неизвестная ошибка', 400, this);
@@ -1109,9 +1124,9 @@ export class DModel {
         }
 
         if (typeof result === 'undefined') {
-            onSubmitSuccess?.(values, {}, this);
+            onSubmitSuccess?.(values, values, this);
             onSubmitComplete?.(values, errors, this);
-            this._callbacks?.onSubmitSuccess?.(values, {}, this);
+            this._callbacks?.onSubmitSuccess?.(values, values, this);
             this._callbacks?.onSubmitComplete?.(values, errors, this);
         }
     }

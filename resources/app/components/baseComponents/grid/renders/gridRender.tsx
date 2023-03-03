@@ -6,7 +6,7 @@ import {Table} from 'antd';
 import {DFormModal} from 'baseComponents/dFormModal/dFormModal';
 import {IGridProps, IGridRowData} from 'baseComponents/grid/grid';
 import {MenuRow} from './menuRow';
-import {usePrepareEditFormProps} from 'baseComponents/grid/hooks/editForm';
+import {usePrepareEditFormProps} from 'baseComponents/grid/hooks/gridEditForm';
 import {IDFormModalApi} from 'baseComponents/dFormModal/hooks/api';
 import {ColumnGroupType, ColumnsType, ColumnType} from 'antd/es/table';
 import {ResizeCallbackData} from 'react-resizable';

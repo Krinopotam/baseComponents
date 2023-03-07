@@ -13,10 +13,9 @@ import MRGrid, {IGridRowData} from 'baseComponents/mrGrid/mrGrid';
 import {MRT_ColumnDef} from 'material-react-table';
 
 // !used in configGenerator parsing. Don't use curly brackets and multi rows comments!
-export interface IDFormFieldMrGridProps<TData extends IGridRowData> extends IDFormFieldProps {
+export interface IDFormFieldMrGridProps extends IDFormFieldProps {
     /** Grid columns */
-    columns: MRT_ColumnDef<TData>[];
-    //columns: CoreOptions<TData>['columns'];
+    columns: MRT_ColumnDef[];
 
     /** Grid data set */
     dataSet?: IGridRowData[];

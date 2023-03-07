@@ -1,12 +1,13 @@
-import React, {MutableRefObject, useCallback, useState} from 'react';
+import React, {MutableRefObject, useCallback, useLayoutEffect, useState} from 'react';
 import {isArray} from 'helpers/helpersObjects';
 import {getUuid} from 'helpers/helpersString';
 import {IDFormModalApi} from 'baseComponents/dFormModal/hooks/api';
 import {IButtonsRowApi} from 'baseComponents/buttonsRow';
-import {IGridProps, IGridRowData} from 'baseComponents/mrGrid/mrGrid';
+import {IGridProps} from 'baseComponents/mrGrid/mrGrid';
 import {MRT_TableInstance} from 'material-react-table';
+import scrollIntoView from 'scroll-into-view';
 
-export interface IGridApi<TData extends IGridRowData> {
+export interface IGridApi {
     /* Get grid ID */
     getGridId: () => string;
 
@@ -26,7 +27,7 @@ export interface IGridApi<TData extends IGridRowData> {
     //deleteRows: (rowData: IGridRowData | IGridRowData[], updateSelection?: boolean) => IGridRowData[];
 
     /** Set active row */
-    setActiveRowKey: (id: string | null, selectActive?: boolean, clearPrevSelection?:boolean) => void;
+    setActiveRowKey: (id: string | null, selectActive?: boolean, clearPrevSelection?: boolean, scrollAlign?: 'top' | 'bottom' | 'center') => void;
 
     /* Get active row id */
     getActiveRowKey: () => string;
@@ -68,7 +69,7 @@ export interface IGridApi<TData extends IGridRowData> {
     // getRowsListByKeys: (keys: IGridRowData['id'] | IGridRowData['id'][], asArray?: boolean) => IGridRowData[] | Record<string, IGridRowData>;
 
     /** Scroll to row with the key */
-    // scrollToRowKey: (key: IGridRowData['id'], skipIfVisible?: boolean) => void;
+    scrollToRowKey: (key: string | null, align?: 'top' | 'bottom' | 'center') => void;
 
     /** edit form api */
     editFormApi: IDFormModalApi;
@@ -77,21 +78,21 @@ export interface IGridApi<TData extends IGridRowData> {
     buttonsApi: IButtonsRowApi;
 
     /* Current grid props */
-    gridProps: IGridProps<TData>;
+    gridProps: IGridProps;
 }
 
-export const useInitGridApi = <TData extends IGridRowData>({
+export const useInitGridApi = ({
     props,
     tableRef,
     editFormApi,
     buttonsApi,
 }: {
-    props: IGridProps<TData>;
+    props: IGridProps;
     tableRef: MutableRefObject<MRT_TableInstance | null>;
     editFormApi: IDFormModalApi;
     buttonsApi: IButtonsRowApi;
-}): IGridApi<TData> => {
-    const [gridApi] = useState({} as IGridApi<TData>);
+}): IGridApi => {
+    const [gridApi] = useState({} as IGridApi);
     const [activeRow, setActiveRow] = useState<string>('');
 
     gridApi.gridProps = props;
@@ -104,8 +105,9 @@ export const useInitGridApi = <TData extends IGridRowData>({
     gridApi.getNextRowKey = useApiGetNextRowKey(tableRef);
     gridApi.getPrevRowKey = useApiGetPrevRowKey(tableRef);
     gridApi.getSelectedKeys = useApiGetSelectedKeys(tableRef);
-    gridApi.setSelectedRowKeys = useApiSetSelectedRowsKeys<TData>(tableRef, gridApi);
+    gridApi.setSelectedRowKeys = useApiSetSelectedRowsKeys(tableRef, gridApi);
 
+    gridApi.scrollToRowKey = useApiScrollToRowKey(gridApi);
     /* gridApi.dataSet = useApiDataSet(dataSet, setDataSet);
     gridApi.insertRows = useApiInsertRows(gridApi);
     gridApi.updateRows = useApiUpdateRows(gridApi);
@@ -118,7 +120,7 @@ export const useInitGridApi = <TData extends IGridRowData>({
     gridApi.selectAll = useApiSelectAll(gridApi);
     gridApi.getRowByKey = useApiGetRowByKey(rowsMap);
     gridApi.getRowsListByKeys = useApiGetRowsListByKeys(rowsMap);
-    gridApi.scrollToRowKey = useApiScrollToRowKey(gridApi, gridId);
+
     gridApi.selectNextRow = useApiSelectNextRow(gridApi);
     gridApi.selectFirstRow = useApiSelectFirstRow(gridApi);
     gridApi.selectLastRow = useApiSelectLastRow(gridApi);*/
@@ -133,11 +135,12 @@ const useApiGetGridId = () => {
 };
 
 /* Set active row ID*/
-const useApiSetActiveRowKey = <TData extends IGridRowData>(setActiveRow: React.Dispatch<React.SetStateAction<string>>, gridApi: IGridApi<TData>) => {
+const useApiSetActiveRowKey = (setActiveRow: React.Dispatch<React.SetStateAction<string>>, gridApi: IGridApi) => {
     return useCallback(
-        (id: string | null, selectActive?: boolean, clearPrevSelection?:boolean) => {
+        (id: string | null, selectActive?: boolean, clearPrevSelection?: boolean, scrollAlign?: 'top' | 'bottom' | 'center') => {
             setActiveRow(id || '');
             if (!selectActive) return;
+            gridApi.scrollToRowKey(id, scrollAlign);
             gridApi.setSelectedRowKeys(id, clearPrevSelection);
         },
         [gridApi, setActiveRow]
@@ -162,7 +165,7 @@ const useApiGetNextRowKey = (tableRef: MutableRefObject<MRT_TableInstance | null
             const curIndex = rows.indexOf(curRow);
             if (curIndex < 0) return rows[0].id;
             if (typeof step === 'undefined') step = 1;
-            if (curIndex + step<=rows.length - 1 ) return rows[curIndex + step].id;
+            if (curIndex + step <= rows.length - 1) return rows[curIndex + step].id;
             else return rows[rows.length - 1].id;
         },
         [tableRef]
@@ -209,7 +212,7 @@ const useApiGetSelectedKeys = (tableRef: MutableRefObject<MRT_TableInstance | nu
     );
 };
 
-const useApiSetSelectedRowsKeys = <TData extends IGridRowData>(tableRef: MutableRefObject<MRT_TableInstance | null>, gridApi: IGridApi<TData>) => {
+const useApiSetSelectedRowsKeys = (tableRef: MutableRefObject<MRT_TableInstance | null>, gridApi: IGridApi) => {
     return useCallback(
         (keys: null | string | string[] | Record<string, boolean>, clearPrevSelection?: boolean) => {
             const curSelectedKeys = gridApi.getSelectedKeys() as Record<string, boolean>;
@@ -236,6 +239,46 @@ const useApiSetSelectedRowsKeys = <TData extends IGridRowData>(tableRef: Mutable
     );
 };
 
+const useApiScrollToRowKey = (gridApi: IGridApi) => {
+    const scrollToRowHandle = useCallback(
+        (key: string | null, align?: 'top' | 'bottom' | 'center') => {
+            if (!key) return;
+
+            const $row = document.querySelector('.grid-container-' + gridApi.getGridId() + ' tr[data-row-key="' + key + '"]') as HTMLElement;
+            if (!$row) return;
+
+            const $container = document.querySelector('.grid-container-' + gridApi.getGridId()) as HTMLElement;
+            const $head = document.querySelector('.grid-head-' + gridApi.getGridId()) as HTMLElement;
+            const headHeight = $head.offsetHeight;
+
+            const offset = headHeight;
+
+            const rowPosition = $row.getBoundingClientRect();
+
+            const containerPosition = $container.getBoundingClientRect();
+            if (rowPosition.top - offset >= containerPosition.top && rowPosition.bottom <= containerPosition.bottom) return;
+
+            let topOffset = 0;
+            let alignTop = 0.5;
+            if (align === 'top') alignTop = 0;
+            else if (align === 'bottom') alignTop = 1;
+
+            if (alignTop < 1) topOffset = headHeight;
+
+            scrollIntoView($row, {
+                align: {top: alignTop, lockX: true, topOffset: topOffset},
+                validTarget: function (target: HTMLElement) {
+                    return target === $container;
+                },
+                //debug: true,
+                time: 100,
+            });
+        },
+        [gridApi]
+    );
+
+    return scrollToRowHandle;
+};
 /*
 const useApiDataSet = (dataSet: IGridRowData[], setDataSet: (dataSet: IGridRowData[]) => void): IGridApi['dataSet'] => {
     return useCallback(
@@ -495,52 +538,4 @@ const useApiGetRowsListByKeys = (rowsMap: IGridRowsMap): IGridApi['getRowsListBy
     );
 };
 
-const useApiScrollToRowKey = (gridApi: IGridApi, gridId: string): IGridApi['scrollToRowKey'] => {
-    const [scrollToRow, setScrollToRow] = useState<IGridRowData['id']>('');
-
-    const scrollToRowHandle = useCallback(
-        (key: IGridRowData['id'], skipIfVisible?: boolean) => {
-            const $row = document.querySelector('tr[data-row-key="' + key + '"]') as HTMLElement;
-            const gridProps = gridApi.gridProps;
-            if (!$row) return;
-
-            if (skipIfVisible) {
-                let $container: HTMLElement | Window;
-                let offset = 0;
-                if (gridProps.sticky && typeof gridProps.sticky !== 'boolean' && gridProps.sticky.getContainer) {
-                    $container = gridProps.sticky.getContainer();
-                    let headerHeight: number;
-                    if (gridProps.size === 'small') headerHeight = 39;
-                    else if (gridProps.size === 'middle') headerHeight = 47;
-                    else headerHeight = 55;
-
-                    const offsetHeader = gridProps.sticky.offsetHeader || 0;
-                    offset = headerHeight + offsetHeader;
-                } else $container = document.querySelector('.advanced-ant-grid-root.id-' + gridId + ' .ant-table-body') as HTMLElement;
-
-                const rowPosition = $row.getBoundingClientRect();
-
-                if ($container instanceof HTMLElement) {
-                    const containerPosition = $container.getBoundingClientRect();
-                    if (rowPosition.top - offset >= containerPosition.top && rowPosition.bottom <= containerPosition.bottom) return;
-                } else if ($container instanceof Window) {
-                    if (rowPosition.top >= 0 && rowPosition.bottom <= window.innerHeight) return;
-                }
-            }
-
-            scrollIntoView($row, {
-                //align: {top: 0,},
-                time: 100,
-            });
-        },
-        [gridApi, gridId]
-    );
-
-    useLayoutEffect(() => {
-        if (scrollToRow) scrollToRowHandle(scrollToRow, true);
-        setScrollToRow('');
-    }, [scrollToRow, scrollToRowHandle]);
-
-    return setScrollToRow;
-};
 */

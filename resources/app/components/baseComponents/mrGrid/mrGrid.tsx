@@ -1,13 +1,10 @@
-import React, {useMemo, useRef, useState} from 'react';
-import MaterialReactTable, {MRT_ColumnDef, MRT_Row, MRT_TableInstance} from 'material-react-table';
+import React, {useRef, useState} from 'react';
+import MaterialReactTable, {MRT_ColumnDef, MRT_TableInstance} from 'material-react-table';
 import {useKeyboardSelection} from 'baseComponents/mrGrid/hooks/keyboardSelection';
 import {IButtonsRowApi, IFormButton, IFormButtons} from 'baseComponents/buttonsRow';
 import {IDFormModalProps} from 'baseComponents/dFormModal/dFormModal';
-import {CoreOptions} from '@tanstack/table-core/src/core/table';
-import {RowData} from '@tanstack/table-core/src/types';
-import {IGridApi} from "baseComponents/grid/hooks/api";
-import {useInitGridApi} from "baseComponents/mrGrid/hooks/api";
-import {IDFormModalApi} from "baseComponents/dFormModal/hooks/api";
+import {useInitGridApi} from 'baseComponents/mrGrid/hooks/api';
+import {IDFormModalApi} from 'baseComponents/dFormModal/hooks/api';
 
 export interface IGridRowData extends Record<string, unknown> {
     /** Row id */
@@ -15,16 +12,16 @@ export interface IGridRowData extends Record<string, unknown> {
     children?: IGridRowData[];
 }
 
-export interface IGridProps<TData extends IGridRowData> {
+export interface IGridProps {
     /** Grid Id */
     id?: string;
 
     /** Grid columns */
-    columns: MRT_ColumnDef<TData>[];
+    columns: MRT_ColumnDef[];
     //columns: CoreOptions<TData>['columns'];
 
     /** Grid data set */
-    dataSet?: TData[];
+    dataSet?: IGridRowData[];
 
     /** Grid height */
     bodyHeight?: number | string | 'fill';
@@ -50,7 +47,7 @@ export interface IGridProps<TData extends IGridRowData> {
     noHover?: boolean;
 
     /** Grid callbacks */
-    callbacks?: IGridCallbacks<TData>;
+    callbacks?: IGridCallbacks;
 
     /** Confirm message before rows delete */
     rowDeleteMessage?: React.ReactNode;
@@ -59,27 +56,27 @@ export interface IGridProps<TData extends IGridRowData> {
     confirmDelete?: boolean;
 }
 
-export interface IGridCallbacks<TData> {
+export interface IGridCallbacks {
     /** Fires when menu visibility status changed */
     onMenuVisibilityChanged: (isVisible: boolean) => void;
 
     /** Fires, when dataSet changes */
-    onDataSetChange?: (dataSet: TData[]) => void;
+    onDataSetChange?: (dataSet: IGridRowData[]) => void;
 
     /** Callback executed when selected rows change */
-    onSelectionChange?: (selectedRowKeys: (string | number)[], selectedRows: TData[]) => void;
+    onSelectionChange?: (selectedRowKeys: (string | number)[], selectedRows: IGridRowData[]) => void;
 
     /** Callback executed when selected rows change */
-    onDelete?: (selectedRows: TData[]) => void;
+    onDelete?: (selectedRows: IGridRowData[]) => void;
 }
 
 //nested data is ok, see accessorKeys in ColumnDef below
 
-const MRGrid = <TData extends IGridRowData>(props: IGridProps<TData>) => {
+const MRGrid = (props: IGridProps) => {
     const tableRef = useRef<MRT_TableInstance>(null);
     const [editFormApi] = useState<IDFormModalApi>({} as IDFormModalApi);
     const [buttonsApi] = useState({} as IButtonsRowApi);
-    const gridApi = useInitGridApi<TData>({props, tableRef,editFormApi, buttonsApi})
+    const gridApi = useInitGridApi({props, tableRef, editFormApi, buttonsApi});
     //const [rowSelection, setRowSelection] = useState<MRT_RowSelectionState>({});
 
     useKeyboardSelection(tableRef, gridApi);
@@ -88,27 +85,28 @@ const MRGrid = <TData extends IGridRowData>(props: IGridProps<TData>) => {
         <MaterialReactTable
             tableInstanceRef={tableRef}
             columns={props.columns}
-            data={props.dataSet}
+            data={props.dataSet || []}
             enablePagination={false}
             enableColumnResizing={true}
             enableStickyHeader={true}
             enableRowSelection={false}
             enableExpanding
-            getSubRows={(originalRow: TData) => originalRow.children} //TODO: fix type issue
-            getRowId={(originalRow: TData) => originalRow.id} //TODO: fix type issue
+            getSubRows={(originalRow: IGridRowData) => originalRow.children} //TODO: fix type issue
+            getRowId={(originalRow: IGridRowData) => originalRow.id} //TODO: fix type issue
             //onRowSelectionChange={setRowSelection}
-             muiTableBodyRowProps={({row, ...other}) => ({
+            muiTableContainerProps={{className: 'grid-container-' + gridApi.getGridId(), sx: {maxHeight: '300px'}}}
+            muiTableHeadProps={{className: 'grid-head-' + gridApi.getGridId()}}
+            muiTableBodyRowProps={({row, ...other}) => ({
                 //implement row selection click events manually
-                onClick: () =>{
+                onClick: () => {
                     gridApi.setActiveRowKey(row.id, true, true);
-                    console.log(other)
+                    console.log(other, row);
                 },
+                'data-row-key': row.id,
                 sx: {
                     cursor: 'pointer',
                 },
             })}
-
-            muiTableContainerProps={{sx: {maxHeight: '300px'}}}
         />
     );
 };

@@ -1,10 +1,9 @@
-import React, {MutableRefObject, useCallback, useEffect, useState} from 'react';
+import {MutableRefObject, useEffect} from 'react';
 import {MRT_TableInstance} from 'material-react-table';
-import {findIndexInObjectsArray} from 'helpers/helpersObjects';
-import { IGridApi } from './api';
-import {IGridRowData} from "baseComponents/mrGrid/mrGrid";
+import {IGridApi} from './api';
+import {IGridRowData} from 'baseComponents/mrGrid/mrGrid';
 
-export const useKeyboardSelection = <TData extends IGridRowData>(tableRef: MutableRefObject<MRT_TableInstance | null>, gridApi: IGridApi<TData>) => {
+export const useKeyboardSelection = (tableRef: MutableRefObject<MRT_TableInstance | null>, gridApi: IGridApi) => {
     useEffect(() => {
         if (!tableRef) return;
         const tableContainerRef = tableRef.current?.refs.tableContainerRef;
@@ -31,37 +30,22 @@ export const useKeyboardSelection = <TData extends IGridRowData>(tableRef: Mutab
     }, [tableRef, gridApi]);
 };
 
-const onKeyDownLeft = <TData extends IGridRowData>(
-    e: KeyboardEvent,
-    tableRef: MutableRefObject<MRT_TableInstance | null>,
-    gridApi: IGridApi<TData>
-) => {
+const onKeyDownLeft = (e: KeyboardEvent, tableRef: MutableRefObject<MRT_TableInstance | null>, gridApi: IGridApi) => {
     alert('left');
 };
 
-const onKeyDownRight = <TData extends IGridRowData>(
-    e: KeyboardEvent,
-    tableRef: MutableRefObject<MRT_TableInstance | null>,
-    gridApi: IGridApi<TData>
-) => {
+const onKeyDownRight = (e: KeyboardEvent, tableRef: MutableRefObject<MRT_TableInstance | null>, gridApi: IGridApi) => {
     alert('right');
 };
 
-const onKeyDownUp = <TData extends IGridRowData>(
-    e: KeyboardEvent,
-    gridApi: IGridApi<TData>
-) => {
+const onKeyDownUp = (e: KeyboardEvent, gridApi: IGridApi) => {
     e.preventDefault();
     const prevId = gridApi.getPrevRowKey(gridApi.getActiveRowKey());
-    gridApi.setActiveRowKey(prevId || null, true, true);
+    gridApi.setActiveRowKey(prevId || null, true, true, 'top');
 };
 
-const onKeyDownDown = <TData extends IGridRowData>(
-    e: KeyboardEvent,
-    gridApi: IGridApi<TData>
-) => {
+const onKeyDownDown = (e: KeyboardEvent, gridApi: IGridApi) => {
     e.preventDefault();
     const nextId = gridApi.getNextRowKey(gridApi.getActiveRowKey());
-    gridApi.setActiveRowKey(nextId || null, true, true);
+    gridApi.setActiveRowKey(nextId || null, true, true, 'bottom');
 };
-

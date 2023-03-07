@@ -197,7 +197,7 @@ class MessageBox {
         const config = {...props, type: formType, formId: formId};
 
         let modal: ModalType = Modal;
-        if (this._themedModalInstance) modal = this._themedModalInstance;
+        if (this._themedModalInstance && Object.keys(this._themedModalInstance).length > 0) modal = this._themedModalInstance;
         const modalInst = modal[formType](this.generateModalConfig(config));
 
         const messageBoxApi = new MessageBoxApi(formId, modalInst, config, this.generateModalConfig);

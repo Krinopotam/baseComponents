@@ -3,12 +3,15 @@ import {BaseComponentConfig} from './baseComponentConfig';
 import {IDFormFieldProps} from '../components/baseComponent';
 import {IRuleType} from '../validators/baseValidator';
 
+import {ApiAction, IApiAction} from "../../../../../../resources/app/applib/api/ApiAction";
+import {IFetchError } from "baseComponents/libs/services/webServices";
+import {IFormModelApi} from "components/dynamicForm/formModel";
+import {IModalMessageBox} from "components/baseComponent/modalMessageBox/modalMessageBox";
+import { IDFormApi, useInitFormApi } from 'baseComponents/dForm/hooks/api';
+import {getUuid} from "baseComponents/libs/helpers/helpersString";
 
 export class DFormConfig<T>  {
     protected _config: Record<string, unknown> = {};
-
-
-
 
     /** A mutable object to merge with these controls api */
     apiRef(value: IDFormProps['apiRef']) {
@@ -173,6 +176,55 @@ export class DFormConfig<T>  {
         if (validationRules && validationRules.length > 0) formValidationRules[id] = [...validationRules];
 
         if (typeof tabName !== 'undefined') formFieldsProps[id].tab = tabName;
+    }
+
+
+    /**
+     * Set storage action for update
+     * @param storageAction
+     * @param additionalValues
+     */
+    setActionUpdate(storageAction: IApiAction, additionalValues?: Record<keyof DataType, unknown>) {
+
+        if (!this._config.callbacks) this._config.callbacks = {};
+
+        // define submit action throw webservices object
+        this._config.callbacks.onSubmit = (values: Record<string, unknown>, formModelApi: IDFormApi
+        ): Promise<unknown> => {
+
+            return new Promise((resolve, reject) => {
+                const isNew = formModelApi.getFormProps().formMode === 'create' || formModelApi.getFormProps().formMode === 'clone';
+                if (isNew && !values.id) values.id = getUuid();
+
+                // set action parameters
+                storageAction.param = {
+                    values : values,
+                    changes: values,
+                    isNew  : isNew,
+                };
+                const onSuccess = () => {
+                    resolve({result: 'success', data: values, code: 200, message: ''});
+                }
+                const onFail = () => {
+                    const result: IFetchError = {
+                        code   : (storageAction.errors && storageAction.errors.length > 0) ? storageAction.errors[0].error : 500,
+                        message: (storageAction.errors && storageAction.errors.length > 0) ? storageAction.errors[0].message : 'Неизвестная ошибка',
+                    };
+                    reject(result);
+                }
+
+                // make fetch
+                storageAction.fetch(undefined, true, onSuccess, onFail);
+
+            });
+        };
+
+        // add values
+        if (additionalValues) { // @ts-ignore
+            this.setAdditionalValues(additionalValues);
+        }
+
+        return this;
     }
 
     /** Get form config */

@@ -44,6 +44,7 @@ const componentsList = [
     {name: 'textAreaComponent', interface: 'IDFormFieldTextAreaProps'},
     {name: 'textEditorComponent', interface: 'IDFormTextEditorProps'},
     {name: 'treeSelectComponent', interface: 'IDFormFieldTreeSelectProps'},
+	{name: 'mrGridComponent', interface: 'IDFormFieldMrGridProps'},
 ];
 
 function addComponentsToOptions() {

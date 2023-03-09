@@ -167,7 +167,7 @@ const gridDataSet: Person[] = [
 ];
 
 //should be memoized or stable
-const columns: MRT_ColumnDef<Person>[] = [
+const columns: MRT_ColumnDef[] = [
     {
         accessorKey: 'name.firstName', //access nested data with dot notation
         header: 'First Name',
@@ -330,6 +330,8 @@ const formProps = new DFormModalConfig<IFields>()
     .addTab('Tab 4', new MrGridComponentConfig('newGrid').label('Полномочия').columns<Person>(columns).dataSet(gridDataSet))
     .getConfig();
 
+const mgGridFormConfig = new DFormModalConfig<Person>().addFields(new InputComponentConfig('address').label('Адрес'), new InputComponentConfig('city').label('Город'), new InputComponentConfig('state').label('Штат')).getConfig()
+
 export const Home = (): JSX.Element => {
     const showModal = useCallback(() => {
         formModalApi.open('update', formData);
@@ -342,7 +344,7 @@ export const Home = (): JSX.Element => {
                 Open form
             </Button>
             {/* <TabulatorGrid/> */}
-            <MRGrid<Person> dataSet={gridDataSet} columns={columns} />
+            <MRGrid dataSet={gridDataSet} columns={columns} editFormProps={mgGridFormConfig} />
         </>
     );
 };

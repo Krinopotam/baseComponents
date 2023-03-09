@@ -1,10 +1,9 @@
-import {MutableRefObject, useEffect} from 'react';
+import {MutableRefObject, useLayoutEffect} from 'react';
 import {MRT_TableInstance} from 'material-react-table';
 import {IGridApi} from './api';
-import {IGridRowData} from 'baseComponents/mrGrid/mrGrid';
 
 export const useKeyboardSelection = (tableRef: MutableRefObject<MRT_TableInstance | null>, gridApi: IGridApi) => {
-    useEffect(() => {
+    useLayoutEffect(() => {
         if (!tableRef) return;
         const tableContainerRef = tableRef.current?.refs.tableContainerRef;
         if (!tableContainerRef) return;

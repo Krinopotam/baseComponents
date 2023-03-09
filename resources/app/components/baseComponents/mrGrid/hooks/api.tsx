@@ -1,11 +1,14 @@
-import React, {MutableRefObject, useCallback, useLayoutEffect, useState} from 'react';
+import {MutableRefObject, useCallback, useRef, useState} from 'react';
 import {isArray} from 'helpers/helpersObjects';
 import {getUuid} from 'helpers/helpersString';
 import {IDFormModalApi} from 'baseComponents/dFormModal/hooks/api';
 import {IButtonsRowApi} from 'baseComponents/buttonsRow';
-import {IGridProps} from 'baseComponents/mrGrid/mrGrid';
+import {IGridProps, IGridRowData} from 'baseComponents/mrGrid/mrGrid';
 import {MRT_TableInstance} from 'material-react-table';
 import scrollIntoView from 'scroll-into-view';
+import {Row} from '@tanstack/table-core/src/types';
+
+type IVerticalAlign = 'top' | 'bottom' | 'middle';
 
 export interface IGridApi {
     /* Get grid ID */
@@ -27,25 +30,31 @@ export interface IGridApi {
     //deleteRows: (rowData: IGridRowData | IGridRowData[], updateSelection?: boolean) => IGridRowData[];
 
     /** Set active row */
-    setActiveRowKey: (id: string | null, selectActive?: boolean, clearPrevSelection?: boolean, scrollAlign?: 'top' | 'bottom' | 'center') => void;
+    setActiveRowKey: (id: string | null, selectActive?: boolean, clearPrevSelection?: boolean, scrollAlign?: IVerticalAlign) => void;
 
     /* Get active row id */
     getActiveRowKey: () => string;
 
+    /** Get active row/undefined by key */
+    getActiveRow: () => Row<IGridRowData> | undefined;
+
     /* Get next row id*/
-    getNextRowKey: (id: string | null | undefined, step?: number) => string | undefined;
+    getNextRowKey: (id: string | undefined, step?: number) => string | undefined;
 
     /* Get previous row id*/
-    getPrevRowKey: (id: string | null | undefined, step?: number) => string | undefined;
+    getPrevRowKey: (id: string | undefined, step?: number) => string | undefined;
 
     /** Get selected rows keys */
-    getSelectedKeys: (asArray?: boolean) => Record<string, boolean> | string[];
+    getSelectedRowKeys: (asArray?: boolean) => Record<string, boolean> | string[];
 
     /** Set selected row/rows keys */
     setSelectedRowKeys: (keys: null | string | string[] | Record<string, boolean>, clearPrevSelection?: boolean) => void;
 
-    /** Get selected row node/nodes */
-    //getSelectedRows: () => IGridRowData[];
+    /** gey selected mrGrid row nodes */
+    getSelectedRows: (asArray?: boolean) => Record<string, Row<IGridRowData>> | Row<IGridRowData>[];
+
+    /** gey selected mrGrid rows */
+    getSelectedRowsData: (asArray?: boolean) => Record<string, IGridRowData> | IGridRowData[];
 
     /** Set selected row/rows */
     //setSelectedRows: (row: IGridRowData | IGridRowData[] | null, clearOldSelection?: boolean) => void;
@@ -63,13 +72,13 @@ export interface IGridApi {
     // selectLastRow: (ensureVisible?: boolean) => void;
 
     /** Returns row/undefined by key */
-    // getRowByKey: (key: IGridRowData['id']) => IGridRowData | undefined;
+    getRowByKey: (key: string) => Row<IGridRowData> | undefined;
 
     /** Returns rows list/collection/undefined by key/keys */
     // getRowsListByKeys: (keys: IGridRowData['id'] | IGridRowData['id'][], asArray?: boolean) => IGridRowData[] | Record<string, IGridRowData>;
 
     /** Scroll to row with the key */
-    scrollToRowKey: (key: string | null, align?: 'top' | 'bottom' | 'center') => void;
+    scrollToRowKey: (key: string | null, align?: IVerticalAlign) => void;
 
     /** edit form api */
     editFormApi: IDFormModalApi;
@@ -93,19 +102,22 @@ export const useInitGridApi = ({
     buttonsApi: IButtonsRowApi;
 }): IGridApi => {
     const [gridApi] = useState({} as IGridApi);
-    const [activeRow, setActiveRow] = useState<string>('');
-
+    const activeRowRef = useRef('');
     gridApi.gridProps = props;
     gridApi.editFormApi = editFormApi;
     gridApi.buttonsApi = buttonsApi;
 
     gridApi.getGridId = useApiGetGridId();
-    gridApi.setActiveRowKey = useApiSetActiveRowKey(setActiveRow, gridApi);
-    gridApi.getActiveRowKey = useApiGetActiveRowKey(activeRow);
+    gridApi.setActiveRowKey = useApiSetActiveRowKey(activeRowRef, gridApi);
+    gridApi.getActiveRowKey = useApiGetActiveRowKey(activeRowRef);
+    gridApi.getActiveRow = useApiGetActiveRow(gridApi);
     gridApi.getNextRowKey = useApiGetNextRowKey(tableRef);
     gridApi.getPrevRowKey = useApiGetPrevRowKey(tableRef);
-    gridApi.getSelectedKeys = useApiGetSelectedKeys(tableRef);
+    gridApi.getSelectedRowKeys = useApiGetSelectedRowKeys(tableRef);
+    gridApi.getSelectedRows = useApiGetSelectedRows(tableRef);
+    gridApi.getSelectedRowsData = useApiGetSelectedRowsData(tableRef);
     gridApi.setSelectedRowKeys = useApiSetSelectedRowsKeys(tableRef, gridApi);
+    gridApi.getRowByKey = useApiGetRowByKey(tableRef);
 
     gridApi.scrollToRowKey = useApiScrollToRowKey(gridApi);
     /* gridApi.dataSet = useApiDataSet(dataSet, setDataSet);
@@ -115,7 +127,7 @@ export const useInitGridApi = ({
     gridApi.deleteRows = useApiDeleteRows(gridApi);
     gridApi.getSelectedRowKeys = useApiGetSelectedRowKeys(selectedRowKeys);
     gridApi.setSelectedRowKeys = useApiSetSelectedRowKeys(gridApi, setSelectedRowKeys);
-    gridApi.getSelectedRows = useApiGetSelectedRows(gridApi);
+
     gridApi.setSelectedRows = useApiSetSelectedRows(gridApi);
     gridApi.selectAll = useApiSelectAll(gridApi);
     gridApi.getRowByKey = useApiGetRowByKey(rowsMap);
@@ -129,30 +141,38 @@ export const useInitGridApi = ({
 };
 
 /* Get grid ID */
-const useApiGetGridId = () => {
+const useApiGetGridId = (): IGridApi['getGridId'] => {
     const [gridId] = useState(getUuid());
     return useCallback(() => gridId, [gridId]);
 };
 
 /* Set active row ID*/
-const useApiSetActiveRowKey = (setActiveRow: React.Dispatch<React.SetStateAction<string>>, gridApi: IGridApi) => {
+const useApiSetActiveRowKey = (activeRowRef: MutableRefObject<string>, gridApi: IGridApi): IGridApi['setActiveRowKey'] => {
     return useCallback(
-        (id: string | null, selectActive?: boolean, clearPrevSelection?: boolean, scrollAlign?: 'top' | 'bottom' | 'center') => {
-            setActiveRow(id || '');
+        (id: string | null, selectActive?: boolean, clearPrevSelection?: boolean, scrollAlign?: IVerticalAlign) => {
+            activeRowRef.current = id || '';
             if (!selectActive) return;
             gridApi.scrollToRowKey(id, scrollAlign);
             gridApi.setSelectedRowKeys(id, clearPrevSelection);
         },
-        [gridApi, setActiveRow]
+        [gridApi, activeRowRef]
     );
 };
 
 /* Get active row ID*/
-const useApiGetActiveRowKey = (activeRow: string) => {
-    return useCallback(() => activeRow, [activeRow]);
+const useApiGetActiveRowKey = (activeRowRef: MutableRefObject<string>): IGridApi['getActiveRowKey'] => {
+    return useCallback(() => activeRowRef.current, [activeRowRef]);
 };
 
-const useApiGetNextRowKey = (tableRef: MutableRefObject<MRT_TableInstance | null>) => {
+/* Get active row*/
+const useApiGetActiveRow = (gridApi: IGridApi): IGridApi['getActiveRow'] => {
+    return useCallback(() => {
+        const activeRowKey = gridApi.getActiveRowKey();
+        return gridApi.getRowByKey(activeRowKey);
+    }, [gridApi]);
+};
+
+const useApiGetNextRowKey = (tableRef: MutableRefObject<MRT_TableInstance | null>): IGridApi['getNextRowKey'] => {
     return useCallback(
         (id: string | null | undefined, step?: number) => {
             if (!tableRef.current) return undefined;
@@ -172,7 +192,7 @@ const useApiGetNextRowKey = (tableRef: MutableRefObject<MRT_TableInstance | null
     );
 };
 
-const useApiGetPrevRowKey = (tableRef: MutableRefObject<MRT_TableInstance | null>) => {
+const useApiGetPrevRowKey = (tableRef: MutableRefObject<MRT_TableInstance | null>): IGridApi['getPrevRowKey'] => {
     return useCallback(
         (id: string | null | undefined, step?: number) => {
             if (!tableRef.current) return undefined;
@@ -192,30 +212,36 @@ const useApiGetPrevRowKey = (tableRef: MutableRefObject<MRT_TableInstance | null
     );
 };
 
-const useApiGetSelectedKeys = (tableRef: MutableRefObject<MRT_TableInstance | null>) => {
+const useApiGetSelectedRowKeys = (tableRef: MutableRefObject<MRT_TableInstance | null>): IGridApi['getSelectedRowKeys'] => {
+    const prevRowSelectionRef = useRef<Record<string, boolean>>({});
+    const prevRowSelectionArrayRef = useRef<string[]>([]);
+
     return useCallback(
         (asArray?: boolean): Record<string, boolean> | string[] => {
             if (!tableRef.current) return asArray ? [] : {};
             const tableApi = tableRef.current;
             const rowSelection = tableApi.getState().rowSelection;
             if (!asArray) return rowSelection;
+            if (prevRowSelectionRef.current === rowSelection) return prevRowSelectionArrayRef.current;
 
-            const result: string[] = [];
+            const rowSelectionArray: string[] = [];
 
             for (const id in rowSelection) {
-                if (rowSelection[id]) result.push(id);
+                if (rowSelection[id]) rowSelectionArray.push(id);
             }
 
-            return result;
+            prevRowSelectionRef.current = rowSelection;
+            prevRowSelectionArrayRef.current = rowSelectionArray;
+            return rowSelectionArray;
         },
         [tableRef]
     );
 };
 
-const useApiSetSelectedRowsKeys = (tableRef: MutableRefObject<MRT_TableInstance | null>, gridApi: IGridApi) => {
+const useApiSetSelectedRowsKeys = (tableRef: MutableRefObject<MRT_TableInstance | null>, gridApi: IGridApi): IGridApi['setSelectedRowKeys'] => {
     return useCallback(
         (keys: null | string | string[] | Record<string, boolean>, clearPrevSelection?: boolean) => {
-            const curSelectedKeys = gridApi.getSelectedKeys() as Record<string, boolean>;
+            const curSelectedKeys = gridApi.getSelectedRowKeys() as Record<string, boolean>;
 
             let newSelectedKeys: Record<string, boolean> = {};
 
@@ -232,6 +258,7 @@ const useApiSetSelectedRowsKeys = (tableRef: MutableRefObject<MRT_TableInstance 
 
             if (!tableRef.current) return;
             const tableApi = tableRef.current;
+
             const setRowSelection = tableApi.setRowSelection;
             setRowSelection(resultSelectedKeys);
         },
@@ -239,9 +266,85 @@ const useApiSetSelectedRowsKeys = (tableRef: MutableRefObject<MRT_TableInstance 
     );
 };
 
-const useApiScrollToRowKey = (gridApi: IGridApi) => {
-    const scrollToRowHandle = useCallback(
-        (key: string | null, align?: 'top' | 'bottom' | 'center') => {
+const useApiGetSelectedRows = (tableRef: MutableRefObject<MRT_TableInstance | null>): IGridApi['getSelectedRows'] => {
+    const prevRowSelectionRef = useRef<Record<string, boolean>>({});
+    const prevSelectedRowsRef = useRef<Record<string, Row<IGridRowData>>>({});
+    const prevSelectedRowsArrayRef = useRef<Row<IGridRowData>[]>([]);
+
+    return useCallback(
+        (asArray?: boolean): Record<string, Row<IGridRowData>> | Row<IGridRowData>[] => {
+            if (!tableRef.current) return asArray ? [] : {};
+            const tableApi = tableRef.current;
+            const rowSelection = tableApi.getState().rowSelection;
+
+            if (prevRowSelectionRef.current === rowSelection) {
+                return !asArray ? prevSelectedRowsRef.current : prevSelectedRowsArrayRef.current;
+            }
+
+            const selectedRows: Record<string, Row<IGridRowData>> = {};
+            const selectedRowsArray: Row<IGridRowData>[] = [];
+
+            for (const id in rowSelection) {
+                if (!rowSelection[id]) continue;
+                const row = tableApi.getRowModel().rowsById[id] as unknown as Row<IGridRowData>;
+                if (!row) continue;
+                if (!asArray) selectedRows[id] = row;
+                else selectedRowsArray.push(row);
+            }
+
+            if (!asArray) {
+                prevSelectedRowsRef.current = selectedRows;
+                return selectedRows;
+            }
+
+            prevSelectedRowsArrayRef.current = selectedRowsArray;
+            return selectedRowsArray;
+        },
+        [tableRef]
+    );
+};
+
+const useApiGetSelectedRowsData = (tableRef: MutableRefObject<MRT_TableInstance | null>): IGridApi['getSelectedRowsData'] => {
+    const prevRowSelectionRef = useRef<Record<string, boolean>>({});
+    const prevSelectedRowsRef = useRef<Record<string, IGridRowData>>({});
+    const prevSelectedRowsArrayRef = useRef<IGridRowData[]>([]);
+
+    return useCallback(
+        (asArray?: boolean): Record<string, IGridRowData> | IGridRowData[] => {
+            if (!tableRef.current) return asArray ? [] : {};
+            const tableApi = tableRef.current;
+            const rowSelection = tableApi.getState().rowSelection;
+
+            if (prevRowSelectionRef.current === rowSelection) {
+                return !asArray ? prevSelectedRowsRef.current : prevSelectedRowsArrayRef.current;
+            }
+
+            const selectedRows: Record<string, IGridRowData> = {};
+            const selectedRowsArray: IGridRowData[] = [];
+
+            for (const id in rowSelection) {
+                if (!rowSelection[id]) continue;
+                const row = tableApi.getRowModel().rowsById[id] as unknown as Row<IGridRowData>;
+                if (!row) continue;
+                if (!asArray) selectedRows[id] = row.original;
+                else selectedRowsArray.push(row.original);
+            }
+
+            if (!asArray) {
+                prevSelectedRowsRef.current = selectedRows;
+                return selectedRows;
+            }
+
+            prevSelectedRowsArrayRef.current = selectedRowsArray;
+            return selectedRowsArray;
+        },
+        [tableRef]
+    );
+};
+
+const useApiScrollToRowKey = (gridApi: IGridApi): IGridApi['scrollToRowKey'] => {
+    return useCallback(
+        (key: string | null, align?: IVerticalAlign) => {
             if (!key) return;
 
             const $row = document.querySelector('.grid-container-' + gridApi.getGridId() + ' tr[data-row-key="' + key + '"]') as HTMLElement;
@@ -276,8 +379,17 @@ const useApiScrollToRowKey = (gridApi: IGridApi) => {
         },
         [gridApi]
     );
+};
 
-    return scrollToRowHandle;
+const useApiGetRowByKey = (tableRef: MutableRefObject<MRT_TableInstance | null>): IGridApi['getRowByKey'] => {
+    return useCallback(
+        (key: string) => {
+            if (!key || !tableRef.current) return undefined;
+            const tableApi = tableRef.current;
+            return tableApi.getRowModel().rowsById[key] as unknown as Row<IGridRowData>;
+        },
+        [tableRef]
+    );
 };
 /*
 const useApiDataSet = (dataSet: IGridRowData[], setDataSet: (dataSet: IGridRowData[]) => void): IGridApi['dataSet'] => {
@@ -510,14 +622,7 @@ const useApiSelectLastRow = (gridApi: IGridApi) => {
     );
 };
 
-const useApiGetRowByKey = (dataSetMap: Record<string, IGridRowData>): IGridApi['getRowByKey'] => {
-    return useCallback(
-        (key: string | number) => {
-            return dataSetMap[key];
-        },
-        [dataSetMap]
-    );
-};
+
 
 const useApiGetRowsListByKeys = (rowsMap: IGridRowsMap): IGridApi['getRowsListByKeys'] => {
     return useCallback(

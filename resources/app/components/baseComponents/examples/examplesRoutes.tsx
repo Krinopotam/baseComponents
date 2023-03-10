@@ -7,6 +7,7 @@
     import {FormDependedFieldPage} from './pages/formDependedFieldPage';
     import {FormFetchingPage} from './pages/formFetchingPage';
     import {FormSimplePage} from './pages/formSimplePage';
+    import {FormSimpleHorizontalPage} from './pages/formSimpleHorizontalPage';
     import {FormSubmittingPage} from './pages/formSubmittingPage';
     import {FormValidationPage} from './pages/formValidationPage';
     import {FormWithTemplatedFieldsPage} from './pages/formWithTemplatedFieldsPage';
@@ -34,6 +35,7 @@ export const ExamplesRoutes = () => {
                 <Route path="FormDependedField" element={<FormDependedFieldPage />} />;
                 <Route path="FormFetching" element={<FormFetchingPage />} />;
                 <Route path="FormSimple" element={<FormSimplePage />} />;
+                <Route path="FormSimpleHorizontal" element={<FormSimpleHorizontalPage />} />;
                 <Route path="FormSubmitting" element={<FormSubmittingPage />} />;
                 <Route path="FormValidation" element={<FormValidationPage />} />;
                 <Route path="FormWithTemplatedFields" element={<FormWithTemplatedFieldsPage />} />;

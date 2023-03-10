@@ -28,8 +28,13 @@ const formProps = new DFormConfig<IFields>()
 
 export const FormDependedField = (): JSX.Element => {
     return (
+        <>
+            {/*Description Start*/}
+            <h1>Пример формы с зависимыми полями</h1>
+            <p>Пока родительское поле не заполнено, зависимые поля скрыты</p>
+            {/*Description End*/}
         <div style={{maxWidth: 500}}>
             <DForm {...formProps} />
-        </div>
+        </div></>
     );
 };

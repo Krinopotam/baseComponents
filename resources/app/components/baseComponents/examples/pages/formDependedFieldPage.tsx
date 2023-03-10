@@ -36,9 +36,10 @@ const formProps = new DFormConfig<IFields>()
 
 export const FormDependedField = (): JSX.Element => {
     return (
+        <>
         <div style={{maxWidth: 500}}>
             <DForm {...formProps} />
-        </div>
+        </div></>
     );
 };
 `

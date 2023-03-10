@@ -17,14 +17,15 @@ const formProps = new DFormConfig<IFields>()
         new InputComponentConfig('login').label('Логин'),
         new PasswordComponentConfig('password').label('Пароль')
     )
+    .layout('horizontal')
     .buttons({ok: {position: 'right'}})
     .getConfig();
 
-export const FormSimple = (): JSX.Element => {
+export const FormSimpleHorizontal = (): JSX.Element => {
     return (
         <>
             {/*Description Start*/}
-            <h1>Пример простой формы с вертикальным расположением подписей полей</h1>
+            <h1>Пример простой формы горизонтальным расположением подписей полей</h1>
             {/*Description End*/}
             <div style={{maxWidth: 500}}>
                 <DForm {...formProps} />

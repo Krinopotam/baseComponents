@@ -1,6 +1,6 @@
 import React, {useLayoutEffect, useState} from 'react';
 import {objectKeysLength} from 'helpers/helpersObjects';
-import {ButtonsRow, IFormButtons} from 'baseComponents/buttonsRow';
+import {ButtonsRow} from 'baseComponents/buttonsRow';
 import {IGridApi} from "baseComponents/mrGrid/hooks/api";
 import {useInitButtons} from "baseComponents/mrGrid/hooks/buttons";
 

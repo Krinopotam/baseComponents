@@ -8,6 +8,8 @@ import {MRT_TableInstance} from 'material-react-table';
 import scrollIntoView from 'scroll-into-view';
 import {Row} from '@tanstack/table-core/src/types';
 import useUnmountedRef from 'ahooks/lib/useUnmountedRef';
+import {TPromise} from 'baseComponents/serviceTypes';
+import {MessageBox} from 'baseComponents/messageBox';
 
 type IVerticalAlign = 'top' | 'bottom' | 'middle';
 
@@ -16,7 +18,7 @@ export interface IGridApi {
     getGridId: () => string;
 
     /** Get grid mounted state */
-    getIsMounted:()=>boolean;
+    getIsMounted: () => boolean;
 
     /** Get current data set*/
     getDataSet: () => IGridRowData[];
@@ -104,7 +106,11 @@ export interface IGridApi {
 
     /* Current grid props */
     gridProps: IGridProps;
+
+    fetchData: (dataSource?: IGridDataFetchPromise) => void;
 }
+
+export type IGridDataFetchPromise = TPromise<{data: IGridRowData[]}, {message: string; code: number}>;
 
 export const useInitGridApi = ({
     props,
@@ -126,10 +132,10 @@ export const useInitGridApi = ({
     gridApi.gridProps = props;
     gridApi.editFormApi = editFormApi;
     gridApi.buttonsApi = buttonsApi;
-    gridApi.getIsMounted = useApiIsMounted(unmountRef)
+    gridApi.getIsMounted = useApiIsMounted(unmountRef);
     gridApi.getGridId = useApiGetGridId();
     gridApi.getDataSet = useApiGetDataSet(dataSet || []);
-    gridApi.setDataSet = useApiSetDataSet(setDataSet);
+    gridApi.setDataSet = useApiSetDataSet(setDataSet, gridApi);
     gridApi.getIsLoading = useApiGetIsLoading(isLoading);
     gridApi.setIsLoading = useApiSetIsLoading(setIsLoading);
     gridApi.setActiveRowKey = useApiSetActiveRowKey(activeRowRef, gridApi);
@@ -149,8 +155,8 @@ export const useInitGridApi = ({
     gridApi.updateRows = useApiUpdateRows(gridApi);
     gridApi.deleteRowsByKeys = useApiDeleteRowsByKeys(gridApi);
     gridApi.deleteRows = useApiDeleteRows(gridApi);
-
     gridApi.scrollToRowKey = useApiScrollToRowKey(gridApi);
+    gridApi.fetchData = useApiFetchData(gridApi);
     /*
     gridApi.selectAll = useApiSelectAll(gridApi);
     gridApi.selectNextRow = useApiSelectNextRow(gridApi);
@@ -165,7 +171,7 @@ const useApiGetGridId = (): IGridApi['getGridId'] => {
     return useCallback(() => gridId, [gridId]);
 };
 
-const useApiIsMounted = ( unmountRef: React.MutableRefObject<boolean>): IGridApi['getIsMounted'] => {
+const useApiIsMounted = (unmountRef: React.MutableRefObject<boolean>): IGridApi['getIsMounted'] => {
     return useCallback(() => !unmountRef.current, [unmountRef]);
 };
 
@@ -175,12 +181,13 @@ const useApiGetDataSet = (dataSet: IGridRowData[]): IGridApi['getDataSet'] => {
     }, [dataSet]);
 };
 
-const useApiSetDataSet = (setDataSet: React.Dispatch<React.SetStateAction<IGridRowData[] | undefined>>): IGridApi['setDataSet'] => {
+const useApiSetDataSet = (setDataSet: React.Dispatch<React.SetStateAction<IGridRowData[] | undefined>>, gridApi: IGridApi): IGridApi['setDataSet'] => {
     return useCallback(
         (dataSet: IGridRowData[] | null) => {
-            setDataSet(dataSet || []);
+            const newDataSet = gridApi.gridProps.callbacks?.onDataSetChange?.(dataSet || [], gridApi) || dataSet;
+            setDataSet(newDataSet || []);
         },
-        [setDataSet]
+        [gridApi, setDataSet]
     );
 };
 
@@ -487,7 +494,6 @@ const useApiGetRowsListByKeys = (tableRef: MutableRefObject<MRT_TableInstance | 
 const useApiInsertRows = (gridApi: IGridApi): IGridApi['insertRows'] => {
     return useCallback(
         (rows: IGridRowData[] | IGridRowData, place?: 'before' | 'after', id?: string | number, updateActiveRow?: boolean): IGridRowData[] => {
-            const gridProps = gridApi.gridProps;
             if (!place) place = 'after';
 
             const clonedDataSet = [...gridApi.getDataSet()];
@@ -519,8 +525,7 @@ const useApiInsertRows = (gridApi: IGridApi): IGridApi['insertRows'] => {
                 }
             }
 
-            const newDataSet = gridProps?.callbacks?.onDataSetChange?.(clonedDataSet) || clonedDataSet;
-            gridApi.setDataSet(newDataSet);
+            gridApi.setDataSet(clonedDataSet);
 
             if (updateActiveRow && clonedRows[0]) gridApi.setActiveRowKey(clonedRows[0].id, true, true, 'bottom');
 
@@ -533,7 +538,6 @@ const useApiInsertRows = (gridApi: IGridApi): IGridApi['insertRows'] => {
 const useApiUpdateRows = (gridApi: IGridApi): IGridApi['updateRows'] => {
     return useCallback(
         (rows: IGridRowData[] | IGridRowData, updateActiveRow?: boolean): IGridRowData[] => {
-            const gridProps = gridApi.gridProps;
             const clonedDataSet = [...gridApi.getDataSet()];
 
             const clonedRows: IGridRowData[] = isArray(rows) ? [...(rows as IGridRowData[])] : [rows as IGridRowData];
@@ -545,8 +549,7 @@ const useApiUpdateRows = (gridApi: IGridApi): IGridApi['updateRows'] => {
                 clonedDataSet[index] = row;
             }
 
-            const newDataSet = gridProps?.callbacks?.onDataSetChange?.(clonedDataSet) || clonedDataSet;
-            gridApi.setDataSet(newDataSet);
+            gridApi.setDataSet(clonedDataSet);
 
             if (updateActiveRow && clonedRows[0]) gridApi.setActiveRowKey(clonedRows[0].id, true, true, 'middle');
 
@@ -559,7 +562,6 @@ const useApiUpdateRows = (gridApi: IGridApi): IGridApi['updateRows'] => {
 const useApiDeleteRowsByKeys = (gridApi: IGridApi): IGridApi['deleteRowsByKeys'] => {
     return useCallback(
         (keys: string[] | string, updateActiveRow?: boolean): IGridRowData[] => {
-            const gridProps = gridApi.gridProps;
             const clonedDataSet = [...gridApi.getDataSet()];
 
             const clonedKeys: string[] = isArray(keys) ? [...(keys as string[])] : [keys as string];
@@ -575,8 +577,7 @@ const useApiDeleteRowsByKeys = (gridApi: IGridApi): IGridApi['deleteRowsByKeys']
 
             if (!newSelectedId && clonedDataSet[clonedDataSet.length - 1]) newSelectedId = clonedDataSet[clonedDataSet.length - 1].id;
 
-            const newDataSet = gridProps?.callbacks?.onDataSetChange?.(clonedDataSet) || clonedDataSet;
-            gridApi.setDataSet(newDataSet);
+            gridApi.setDataSet(clonedDataSet);
 
             if (updateActiveRow && newSelectedId) gridApi.setActiveRowKey(newSelectedId, true, true, 'bottom');
 
@@ -593,6 +594,47 @@ const useApiDeleteRows = (gridApi: IGridApi): IGridApi['deleteRows'] => {
             const keys = [];
             for (const row of clonedRows) keys.push(row.id);
             return gridApi.deleteRowsByKeys(keys, updateActiveRow);
+        },
+        [gridApi]
+    );
+};
+
+const useApiFetchData = (gridApi: IGridApi): IGridApi['fetchData'] => {
+    return useCallback(
+        (dataSource?: IGridDataFetchPromise) => {
+            const curDataSource = dataSource || gridApi.gridProps.callbacks?.onDataFetch?.(gridApi);
+            if (!curDataSource) return;
+
+            gridApi.setIsLoading(true);
+            curDataSource.then(
+                (result) => {
+                    if (!gridApi.getIsMounted()) return;
+                    gridApi.setIsLoading(false);
+                    const values = (result.data || []) as IGridRowData[];
+                    gridApi.setDataSet(values);
+                },
+                (error) => {
+                    if (!gridApi.getIsMounted()) return;
+                    gridApi.setIsLoading(false);
+                    const box = MessageBox.confirm({
+                        content: (
+                            <>
+                                <p>{error.message}</p>
+                                <p>{'Попробовать снова?'}</p>
+                            </>
+                        ),
+                        type: 'error',
+                        buttons: {
+                            ok: {
+                                onClick: () => {
+                                    box.destroy();
+                                    gridApi.fetchData(dataSource);
+                                },
+                            },
+                        },
+                    });
+                }
+            );
         },
         [gridApi]
     );

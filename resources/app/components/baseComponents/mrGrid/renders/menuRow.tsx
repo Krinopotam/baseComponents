@@ -18,7 +18,7 @@ export const MenuRow = ({gridApi}: IGridMenuProps): JSX.Element | null => {
         const menuVisible = objectKeysLength(buttons) > 0;
         if (typeof isMenuVisible === 'undefined' || isMenuVisible !== menuVisible) {
             setIsMenuVisible(menuVisible);
-            if (gridProps.callbacks?.onMenuVisibilityChanged) gridProps.callbacks.onMenuVisibilityChanged(menuVisible);
+            gridProps.callbacks?.onMenuVisibilityChanged?.(menuVisible, gridApi);
         }
     }, [buttons, gridProps.callbacks, gridProps.callbacks?.onMenuVisibilityChanged, isMenuVisible]);
 

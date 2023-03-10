@@ -109,17 +109,25 @@ export const MrGridWithFormAsyncSubmit = (): JSX.Element => {
             <h1>Пример простого грида с формой редактирования и асинхронным сохранением</h1>
             {/*Description End*/}
             <MRGrid
-                dataSet={gridDataSet}
+                //dataSet={gridDataSet}
                 columns={columns}
                 editFormProps={mgGridFormConfig}
                 confirmDelete
                 callbacks={{
+                    onDataFetch:()=>{
+                        return new Promise((resolve, reject) => {
+                            setTimeout(() => {
+                                if (Math.random() < 0.9) reject({message: 'Ошибка загрузки данных', code: 400});
+                                else resolve({data: gridDataSet});
+                            }, 2000);
+                        });
+                    },
                     onDelete: () => {
                         return new Promise((resolve, reject) => {
                             setTimeout(() => {
                                 if (Math.random() < 0.5) reject({message: 'Ошибка удаления строк', code: 400});
                                 else resolve({data: {result: 'OK'}});
-                            }, 200);
+                            }, 2000);
                         });
                     },
                 }}

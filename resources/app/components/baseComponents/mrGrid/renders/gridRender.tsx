@@ -21,6 +21,8 @@ export const GridRender = ({tableRef, gridApi}: {tableRef: React.MutableRefObjec
                 notHideContent={true}
             >
             <MaterialReactTable
+                state={{ isLoading: gridApi.getIsLoading() }}
+
                 tableInstanceRef={tableRef}
                 columns={gridApi.gridProps.columns}
                 data={gridApi.getDataSet()}

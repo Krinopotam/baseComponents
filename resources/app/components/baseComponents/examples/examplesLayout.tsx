@@ -3,7 +3,6 @@ import {Layout, Menu, MenuProps, theme} from 'antd';
 import {Link, Outlet} from 'react-router-dom';
 
 import React from 'react';
-import {MrGridWithFormAsyncSubmit} from "baseComponents/examples/components/mrGridWithFormAsyncSubmit";
 
 const {Header, Sider, Content} = Layout;
 
@@ -48,7 +47,6 @@ const items: MenuProps['items'] = [
     ]),
     {type: 'divider'},
     getItem(<Link to="PlayGround">Песочница</Link>, 'PlayGround'),
-
 ];
 
 export const ExamplesLayout = (): JSX.Element => {

@@ -147,7 +147,7 @@ const deleteHandler = (gridApi: IGridApi) => {
 
     let messageBox: MessageBoxApi;
     const removeRows = () => {
-        const deletePromise = gridProps.callbacks?.onDelete?.(selectedRows);
+        const deletePromise = gridProps.callbacks?.onDelete?.(selectedRows, gridApi);
 
         if (isPromise(deletePromise)) {
             if (!gridProps.confirmDelete) gridApi.setIsLoading(true);

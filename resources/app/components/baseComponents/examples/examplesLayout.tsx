@@ -29,6 +29,7 @@ const items: MenuProps['items'] = [
         getItem(<Link to="SimpleValidation">Простая валидация</Link>, '1_4'),
         getItem(<Link to="SimpleFormFetching">Загрузка данных формы с сервера</Link>, '1_5'),
         getItem(<Link to="SimpleFormSubmitting">Отправка данных формы на сервер</Link>, '1_6'),
+        getItem(<Link to="DependenceBetweenFields">Форма с зависимостями</Link>, '1_7'),
     ]),
     getItem('DFormModal - Модальная форма', 'dFormModal', <FolderOutlined />, [
         getItem(<Link to="SimpleFormModal">Простая модальная форма</Link>, '2_1'),

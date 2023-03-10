@@ -22,6 +22,7 @@
     import {SimpleFormModalSubmittingPage} from './pages/simpleFormModalSubmittingPage';
     import {SimpleFormSubmittingPage} from './pages/simpleFormSubmittingPage';
     import {SimpleValidationPage} from './pages/simpleValidationPage';
+    import {DependenceBetweenFields} from './pages/dependenceBetweenFields';
 
 
 export const ExamplesRoutes = () => {
@@ -49,7 +50,7 @@ export const ExamplesRoutes = () => {
                 <Route path="SimpleFormModalSubmitting" element={<SimpleFormModalSubmittingPage />} />;
                 <Route path="SimpleFormSubmitting" element={<SimpleFormSubmittingPage />} />;
                 <Route path="SimpleValidation" element={<SimpleValidationPage />} />;
-
+                <Route path="DependenceBetweenFields" element={<DependenceBetweenFields />} />;
                 <Route path="*" element={<HomePage />} />
             </Route>
         </Routes>

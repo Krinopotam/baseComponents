@@ -1,4 +1,12 @@
-import 'dayjs/locale/ru';
+
+    import React from 'react';
+    import {PlayGround} from '../components/playGround';
+    import { Divider } from 'antd';
+    import SyntaxHighlighter from 'react-syntax-highlighter';
+    import {docco} from 'react-syntax-highlighter/dist/esm/styles/hljs';
+
+    export const PlayGroundPage = (): JSX.Element => {
+    const source = `import 'dayjs/locale/ru';
 
 import React, {useCallback} from 'react';
 
@@ -327,12 +335,12 @@ const formProps = new DFormModalConfig<IFields>()
                 },
             ])
     )
-    .addTab('Tab 4', new MrGridComponentConfig('newGrid').label('Полномочия').columns<Person>(columns).dataSet(gridDataSet))
+    .addTab('Tab 4', new MrGridComponentConfig('newGrid').label('Полномочия').columns(columns).dataSet(gridDataSet))
     .getConfig();
 
 const mgGridFormConfig = new DFormModalConfig<Person>().addFields(new InputComponentConfig('address').label('Адрес'), new InputComponentConfig('city').label('Город'), new InputComponentConfig('state').label('Штат')).getConfig()
 
-export const Home = (): JSX.Element => {
+export const PlayGround = (): JSX.Element => {
     const showModal = useCallback(() => {
         formModalApi.open('update', formData);
     }, []);
@@ -345,6 +353,21 @@ export const Home = (): JSX.Element => {
             </Button>
             {/* <TabulatorGrid/> */}
             <MRGrid dataSet={gridDataSet} columns={columns} editFormProps={mgGridFormConfig} />
+        </>
+    );
+};
+`
+    return (
+        <>
+            <div>
+                <PlayGround />
+            </div>
+            <Divider />
+            <div>
+                <SyntaxHighlighter language="javascript" style={docco}>
+                    {source}
+                </SyntaxHighlighter>
+            </div>
         </>
     );
 };

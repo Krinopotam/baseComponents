@@ -17,7 +17,7 @@ module.exports = (env, argv) => {
         mode: NODE_ENV,
 
         entry: {
-			'react-app/formExamples' : './resources/app/components/baseComponents/dForm/examples/app.tsx',
+			'react-app/examples' : './resources/app/components/baseComponents/examples/app.tsx',
         },
 
         output: {

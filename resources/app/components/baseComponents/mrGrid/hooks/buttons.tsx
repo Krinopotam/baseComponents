@@ -58,8 +58,8 @@ const getCreateButton = (gridApi: IGridApi): IFormButton | undefined => {
         size: 'small',
         onClick: () => {
             const activeRow = gridApi.getActiveRow()
-            if (!activeRow) return
-            editFormApi.open('create', undefined, {...activeRow.original});
+            const formParent = activeRow ? {...activeRow?.original} : undefined
+            editFormApi.open('create', undefined, formParent);
         },
     };
 };

@@ -5,7 +5,6 @@ import {IDFormModalProps} from 'baseComponents/dFormModal/dFormModal';
 import {useInitGridApi} from 'baseComponents/mrGrid/hooks/api';
 import {IDFormModalApi} from 'baseComponents/dFormModal/hooks/api';
 import {GridRender} from 'baseComponents/mrGrid/renders/gridRender';
-import {useInitButtons} from "baseComponents/mrGrid/hooks/buttons";
 import {useWhyDidYouUpdate} from "ahooks";
 
 export interface IGridRowData extends Record<string, unknown> {
@@ -53,6 +52,9 @@ export interface IGridProps {
 
     /** Confirm message before rows delete */
     rowDeleteMessage?: React.ReactNode;
+
+    /** Tree view mode */
+    treeMode?:boolean
 
     /** Should confirm before delete */
     confirmDelete?: boolean;

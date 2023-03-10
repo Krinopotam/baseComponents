@@ -33,7 +33,7 @@ export const FormWithTemplatedFields = (): JSX.Element => {
     return (
         <>
             {/*Description Start*/}
-            <h1>Пример простой формы</h1>
+            <h1>Пример формы с полями, сохраненными в виде шаблонов с предустановленными значениями</h1>
             {/*Description End*/}
             <div style={{maxWidth: 500}}>
                 <DForm {...formProps} />

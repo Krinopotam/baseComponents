@@ -1,10 +1,10 @@
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const fs = require('fs');
 
-const examplesRoot = '.\\examples\\components';
+const examplesRoot = '.\\components';
 const importExamplesRoot = '../components/';
 const importPagesRoot = './pages/';
-const pagesPath = '.\\examples\\pages';
+const pagesPath = '.\\pages';
 
 
 /**
@@ -26,7 +26,9 @@ function lowerFirstLetter(string) {
 /**
  *
  * @param {string} componentFileName
+ * @param {string} componentPath
  * @param {string} source
+ * @param {string} pagesPath
 * @returns {string}
  */
 function generatePageComponent(componentFileName, componentPath, source, pagesPath) {
@@ -35,7 +37,7 @@ function generatePageComponent(componentFileName, componentPath, source, pagesPa
 
     const pageComponentName = componentName + 'Page';
 
-    source = source.replaceAll(/\s*\{\/\*Description Start\*\/\}[\S\s]*?\{\/\*Description End\*\/\}/gi, ''); //remove {/*Description Start/*} blocks
+    source = source.replaceAll(/\s*\{\/\*Description Start\*\/}[\S\s]*?\{\/\*Description End\*\/}/gi, ''); //remove {/*Description Start/*} blocks
     source = source.replaceAll(/\s*\/\*Description Start\*\/[\S\s]*?\/\*Description End\*\//gi, ''); //remove /*Description Start*/ blocks
 
     const importStr = `
@@ -75,8 +77,8 @@ function generatePageComponent(componentFileName, componentPath, source, pagesPa
 
 /**
  * 
- * @param {string*} routers 
- * @param {string*} imports 
+ * @param {string} routers
+ * @param {string} imports
  */
 function generateExamplesRoutes(imports, routers) {
     const result = `
@@ -97,7 +99,7 @@ ${routers}
     );
 };
 `;
-    fs.writeFileSync('./examples/examplesRoutes.tsx', result, {encoding: 'utf8', flag: 'w'});
+    fs.writeFileSync('./examplesRoutes.tsx', result, {encoding: 'utf8', flag: 'w'});
 }
 
 function run() {

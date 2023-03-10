@@ -1,12 +1,4 @@
-
-    import React from 'react';
-    import {SimpleForm} from '../components/simpleForm';
-    import { Divider } from 'antd';
-    import SyntaxHighlighter from 'react-syntax-highlighter';
-    import {docco} from 'react-syntax-highlighter/dist/esm/styles/hljs';
-
-    export const SimpleFormPage = (): JSX.Element => {
-    const source = `import {DForm} from 'baseComponents/dForm/dForm';
+import {DForm} from 'baseComponents/dForm/dForm';
 import React from 'react';
 import {PasswordComponentConfig} from "baseComponents/dForm/configBuilder/passwordComponentConfig";
 import {InputComponentConfig} from "baseComponents/dForm/configBuilder/inputComponentConfig";
@@ -28,26 +20,14 @@ const formProps = new DFormConfig<IFields>()
     .buttons({ok: {position: 'right'}})
     .getConfig();
 
-export const SimpleForm = (): JSX.Element => {
+export const FormSimple = (): JSX.Element => {
     return (
         <>
+            {/*Description Start*/}
+            <h1>Пример простой формы</h1>
+            {/*Description End*/}
             <div style={{maxWidth: 500}}>
                 <DForm {...formProps} />
-            </div>
-        </>
-    );
-};
-`
-    return (
-        <>
-            <div>
-                <SimpleForm />
-            </div>
-            <Divider />
-            <div>
-                <SyntaxHighlighter language="javascript" style={docco}>
-                    {source}
-                </SyntaxHighlighter>
             </div>
         </>
     );

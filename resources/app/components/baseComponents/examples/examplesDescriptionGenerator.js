@@ -85,15 +85,16 @@ function generateExamplesRoutes(imports, routers) {
     import React from 'react';
     import {Route, Routes} from 'react-router-dom';
     import {ExamplesLayout} from './examplesLayout';
+    import {Home} from './home';
 ${imports}
 
 export const ExamplesRoutes = () => {
     return (
         <Routes>
             <Route path="/" element={<ExamplesLayout />}>
-                <Route index element={<HomePage />} />
+                <Route index element={<Home />} />
 ${routers}
-                <Route path="*" element={<HomePage />} />
+                <Route path="*" element={<Home />} />
             </Route>
         </Routes>
     );

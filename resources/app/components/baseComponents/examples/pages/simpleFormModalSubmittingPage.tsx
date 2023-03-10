@@ -1,6 +1,6 @@
 
     import React from 'react';
-    import {SimpleFormModalSubmitting} from '../components/simpleFormModalSubmitting';
+    import {FormModalSubmitting} from '../components/simpleFormModalSubmitting';
     import { Divider } from 'antd';
     import SyntaxHighlighter from 'react-syntax-highlighter';
     import {docco} from 'react-syntax-highlighter/dist/esm/styles/hljs';
@@ -34,7 +34,7 @@ const formProps = new DFormModalConfig<IFields>()
             return new Promise((resolve, reject) => {
                 setTimeout(() => {
                     if (Math.random() < 0.5) reject({message: 'Ошибка сохранения', code: 400});
-                    else resolve({data: {result: 'OK'}});
+                    else resolve({data: {login: 'new login', password: 'new password'}});
                 }, 3000);
             });
         },
@@ -47,17 +47,19 @@ export const SimpleFormModalSubmitting = (): JSX.Element => {
     }, []);
 
     return (
+        <>
         <div style={{maxWidth: 500}}>
             <Button onClick={onClick}>Открыть форму</Button>
             <DFormModal {...formProps} />
         </div>
+            </>
     );
 };
 `
     return (
         <>
             <div>
-                <SimpleFormModalSubmitting />
+                <FormModalSubmitting />
             </div>
             <Divider />
             <div>

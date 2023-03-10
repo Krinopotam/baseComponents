@@ -1,6 +1,6 @@
 
     import React from 'react';
-    import {Home} from '../components/home';
+    import {Home} from '../home';
     import { Divider } from 'antd';
     import SyntaxHighlighter from 'react-syntax-highlighter';
     import {docco} from 'react-syntax-highlighter/dist/esm/styles/hljs';

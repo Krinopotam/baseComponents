@@ -23,7 +23,7 @@ const formProps = new DFormModalConfig<IFields>()
         new PasswordComponentConfig('password').label('Пароль'))
     .getConfig();
 
-export const SimpleFormModal = (): JSX.Element => {
+export const ModalFormSimple = (): JSX.Element => {
     const onClick = useCallback(() => {
         formApi.open('create');
     }, []);

@@ -102,11 +102,12 @@ const mgGridFormConfig = new DFormModalConfig<Person>()
     .confirmChanges(true)
     .getConfig();
 
-export const MrGridWithFormAsyncSubmit = (): JSX.Element => {
+export const MrGridWithFormAsync = (): JSX.Element => {
     return (
         <>
             {/*Description Start*/}
-            <h1>Пример простого грида с формой редактирования и асинхронным сохранением</h1>
+            <h1>Пример грида с асинхронной загрузкой и сохранением данных</h1>
+            <p>Для примера, вероятность сбоя при загрузке/сохранения 30%</p>
             {/*Description End*/}
             <MRGrid
                 //dataSet={gridDataSet}
@@ -117,7 +118,7 @@ export const MrGridWithFormAsyncSubmit = (): JSX.Element => {
                     onDataFetch:()=>{
                         return new Promise((resolve, reject) => {
                             setTimeout(() => {
-                                if (Math.random() < 0.9) reject({message: 'Ошибка загрузки данных', code: 400});
+                                if (Math.random() < 0.3) reject({message: 'Ошибка загрузки данных', code: 400});
                                 else resolve({data: gridDataSet});
                             }, 2000);
                         });
@@ -125,7 +126,7 @@ export const MrGridWithFormAsyncSubmit = (): JSX.Element => {
                     onDelete: () => {
                         return new Promise((resolve, reject) => {
                             setTimeout(() => {
-                                if (Math.random() < 0.5) reject({message: 'Ошибка удаления строк', code: 400});
+                                if (Math.random() < 0.3) reject({message: 'Ошибка удаления строк', code: 400});
                                 else resolve({data: {result: 'OK'}});
                             }, 2000);
                         });

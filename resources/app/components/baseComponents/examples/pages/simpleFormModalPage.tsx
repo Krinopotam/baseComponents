@@ -1,6 +1,6 @@
 
     import React from 'react';
-    import {SimpleFormModal} from '../components/simpleFormModal';
+    import {FormModalSimple} from '../components/simpleFormModal';
     import { Divider } from 'antd';
     import SyntaxHighlighter from 'react-syntax-highlighter';
     import {docco} from 'react-syntax-highlighter/dist/esm/styles/hljs';
@@ -49,7 +49,7 @@ export const SimpleFormModal = (): JSX.Element => {
     return (
         <>
             <div>
-                <SimpleFormModal />
+                <FormModalSimple />
             </div>
             <Divider />
             <div>

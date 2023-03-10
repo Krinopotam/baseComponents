@@ -1,12 +1,4 @@
-
-    import React from 'react';
-    import {FormFetching} from '../components/formFetching';
-    import { Divider } from 'antd';
-    import SyntaxHighlighter from 'react-syntax-highlighter';
-    import {docco} from 'react-syntax-highlighter/dist/esm/styles/hljs';
-
-    export const SimpleFormFetchingPage = (): JSX.Element => {
-    const source = `import {DForm} from 'baseComponents/dForm/dForm';
+import {DForm} from 'baseComponents/dForm/dForm';
 import React from 'react';
 import {InputComponentConfig} from 'baseComponents/dForm/configBuilder/inputComponentConfig';
 import {DFormConfig} from 'baseComponents/dForm/configBuilder/dFormConfig';
@@ -34,26 +26,23 @@ const formProps = new DFormConfig<IFields>()
     .buttons({ok: {position: 'right'}})
     .getConfig();
 
-export const SimpleFormFetching = (): JSX.Element => {
+export const FormFetching = (): JSX.Element => {
     return (
         <>
+            {/*Description Start*/}
+            <h1>Пример загрузки данных формы</h1>
+            <p>
+                Для обеспечения загрузки необходимо в калбэк onDataFetch передать функцию, возвращающую Promise, который при успешном ответе сервера (resolve)
+                возвращает объект вида:
+            </p>
+            <code>{`data:{имя_поля1: "значение", имя_поля2: "значение 2"...}`}</code>
+            <p>а при ошибке (reject)</p>
+            <code>{`error:{message: string, code: number}`}</code>
+            <p>Для примера, вероятность сбоя при загрузке 50%</p>
+            <p></p>
+            {/*Description End*/}
             <div style={{maxWidth: 500}}>
                 <DForm {...formProps} />
-            </div>
-        </>
-    );
-};
-`
-    return (
-        <>
-            <div>
-                <FormFetching />
-            </div>
-            <Divider />
-            <div>
-                <SyntaxHighlighter language="javascript" style={docco}>
-                    {source}
-                </SyntaxHighlighter>
             </div>
         </>
     );

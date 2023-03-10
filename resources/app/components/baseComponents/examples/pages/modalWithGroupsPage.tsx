@@ -1,6 +1,6 @@
 
     import React from 'react';
-    import {ModalWithGroups} from '../components/modalWithGroups';
+    import {ModalFormWithGroups} from '../components/modalFormWithGroups';
     import { Divider } from 'antd';
     import SyntaxHighlighter from 'react-syntax-highlighter';
     import {docco} from 'react-syntax-highlighter/dist/esm/styles/hljs';
@@ -53,7 +53,7 @@ export const ModalWithGroups = (): JSX.Element => {
     return (
         <>
             <div>
-                <ModalWithGroups />
+                <ModalFormWithGroups />
             </div>
             <Divider />
             <div>

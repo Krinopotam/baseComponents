@@ -1,4 +1,12 @@
-import {DForm} from 'baseComponents/dForm/dForm';
+
+    import React from 'react';
+    import {FormFetching} from '../components/formFetching';
+    import { Divider } from 'antd';
+    import SyntaxHighlighter from 'react-syntax-highlighter';
+    import {docco} from 'react-syntax-highlighter/dist/esm/styles/hljs';
+
+    export const FormFetchingPage = (): JSX.Element => {
+    const source = `import {DForm} from 'baseComponents/dForm/dForm';
 import React from 'react';
 import {InputComponentConfig} from 'baseComponents/dForm/configBuilder/inputComponentConfig';
 import {DFormConfig} from 'baseComponents/dForm/configBuilder/dFormConfig';
@@ -26,10 +34,27 @@ const formProps = new DFormConfig<IFields>()
     .buttons({ok: {position: 'right'}})
     .getConfig();
 
-export const SimpleFormFetching = (): JSX.Element => {
+export const FormFetching = (): JSX.Element => {
     return (
-        <div style={{maxWidth: 500}}>
-            <DForm {...formProps} />
-        </div>
+        <>
+            <div style={{maxWidth: 500}}>
+                <DForm {...formProps} />
+            </div>
+        </>
+    );
+};
+`
+    return (
+        <>
+            <div>
+                <FormFetching />
+            </div>
+            <Divider />
+            <div>
+                <SyntaxHighlighter language="javascript" style={docco}>
+                    {source}
+                </SyntaxHighlighter>
+            </div>
+        </>
     );
 };

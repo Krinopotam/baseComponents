@@ -1,32 +1,32 @@
 
     import React from 'react';
-    import {FormFetching} from '../components/formFetching';
+    import {FormSubmitting} from '../components/formSubmitting';
     import { Divider } from 'antd';
     import SyntaxHighlighter from 'react-syntax-highlighter';
     import {docco} from 'react-syntax-highlighter/dist/esm/styles/hljs';
 
-    export const SimpleFormFetchingPage = (): JSX.Element => {
+    export const FormSubmittingPage = (): JSX.Element => {
     const source = `import {DForm} from 'baseComponents/dForm/dForm';
-import React from 'react';
-import {InputComponentConfig} from 'baseComponents/dForm/configBuilder/inputComponentConfig';
 import {DFormConfig} from 'baseComponents/dForm/configBuilder/dFormConfig';
+import {InputComponentConfig} from 'baseComponents/dForm/configBuilder/inputComponentConfig';
+import {PasswordComponentConfig} from 'baseComponents/dForm/configBuilder/passwordComponentConfig';
+import React from 'react';
 
 interface IFields {
-    position: string;
-    department: string;
+    login: string;
+    password: string;
 }
 
 const formProps = new DFormConfig<IFields>()
     .name('Test form')
-    .formMode('update')
     .confirmChanges(true)
-    .addFields(new InputComponentConfig('position').label('Должность'), new InputComponentConfig('department').label('Подразделение'))
+    .addFields(new InputComponentConfig('login').label('Логин'), new PasswordComponentConfig('password').label('Пароль'))
     .callbacks({
-        onDataFetch: () => {
+        onSubmit: () => {
             return new Promise((resolve, reject) => {
                 setTimeout(() => {
-                    if (Math.random() < 0.5) reject({message: 'Ошибка загрузки данных', code: 400});
-                    else resolve({data: {position: 'Директор', department: 'Главная дирекция'}});
+                    if (Math.random() < 0.5) reject({message: 'Ошибка сохранения', code: 400});
+                    else resolve({data: {login: 'new login', password: 'new password'}});
                 }, 3000);
             });
         },
@@ -34,7 +34,7 @@ const formProps = new DFormConfig<IFields>()
     .buttons({ok: {position: 'right'}})
     .getConfig();
 
-export const SimpleFormFetching = (): JSX.Element => {
+export const FormSubmitting = (): JSX.Element => {
     return (
         <>
             <div style={{maxWidth: 500}}>
@@ -47,7 +47,7 @@ export const SimpleFormFetching = (): JSX.Element => {
     return (
         <>
             <div>
-                <FormFetching />
+                <FormSubmitting />
             </div>
             <Divider />
             <div>

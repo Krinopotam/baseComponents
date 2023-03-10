@@ -5,7 +5,7 @@
     import SyntaxHighlighter from 'react-syntax-highlighter';
     import {docco} from 'react-syntax-highlighter/dist/esm/styles/hljs';
 
-    export const ModalWithTabsGroupsPage = (): JSX.Element => {
+    export const ModalFormWithTabsGroupsPage = (): JSX.Element => {
     const source = `import React, {useCallback} from 'react';
 
 import {Button} from 'baseComponents/button';
@@ -46,7 +46,7 @@ const formProps = new DFormModalConfig<IFields>()
         new InputComponentConfig('number').label('Номер')
     ).getConfig();
 
-export const ModalWithTabsGroups = (): JSX.Element => {
+export const ModalFormWithTabsGroups = (): JSX.Element => {
     const onClick = useCallback(() => {
         formApi.open('create');
     }, []);

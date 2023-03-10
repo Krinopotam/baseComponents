@@ -38,7 +38,7 @@ const formProps = new DFormModalConfig<IFields>()
         new InputComponentConfig('number').label('Номер')
     ).getConfig();
 
-export const ModalWithTabsGroups = (): JSX.Element => {
+export const ModalFormWithTabsGroups = (): JSX.Element => {
     const onClick = useCallback(() => {
         formApi.open('create');
     }, []);

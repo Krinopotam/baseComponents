@@ -2,57 +2,56 @@
     import React from 'react';
     import {Route, Routes} from 'react-router-dom';
     import {ExamplesLayout} from './examplesLayout';
+    import {Home} from './home';
     import {FormBetweenFieldsPage} from './pages/formBetweenFieldsPage';
     import {FormDependedFieldPage} from './pages/formDependedFieldPage';
+    import {FormFetchingPage} from './pages/formFetchingPage';
     import {FormSimplePage} from './pages/formSimplePage';
+    import {FormSubmittingPage} from './pages/formSubmittingPage';
+    import {FormValidationPage} from './pages/formValidationPage';
     import {FormWithTemplatedFieldsPage} from './pages/formWithTemplatedFieldsPage';
-    import {HomePage} from './pages/homePage';
-    import {ModalWithGridPage} from './pages/modalWithGridPage';
-    import {ModalWithGroupsPage} from './pages/modalWithGroupsPage';
-    import {ModalWithTabsPage} from './pages/modalWithTabsPage';
-    import {ModalWithTabsGroupsPage} from './pages/modalWithTabsGroupsPage';
+    import {ModalFormFetchingPage} from './pages/modalFormFetchingPage';
+    import {ModalFormSimplePage} from './pages/modalFormSimplePage';
+    import {ModalFormSubmittingPage} from './pages/modalFormSubmittingPage';
+    import {ModalFormWithGridPage} from './pages/modalFormWithGridPage';
+    import {ModalFormWithGroupsPage} from './pages/modalFormWithGroupsPage';
+    import {ModalFormWithTabsPage} from './pages/modalFormWithTabsPage';
+    import {ModalFormWithTabsGroupsPage} from './pages/modalFormWithTabsGroupsPage';
     import {MrGridSimplePage} from './pages/mrGridSimplePage';
     import {MrGridSimpleTreePage} from './pages/mrGridSimpleTreePage';
     import {MrGridWithComplexDataSetPage} from './pages/mrGridWithComplexDataSetPage';
     import {MrGridWithFormPage} from './pages/mrGridWithFormPage';
-    import {MrGridWithFormAsyncSubmitPage} from './pages/mrGridWithFormAsyncSubmitPage';
+    import {MrGridWithFormAsyncPage} from './pages/mrGridWithFormAsyncPage';
     import {PlayGroundPage} from './pages/playGroundPage';
-    import {SimpleFormFetchingPage} from './pages/simpleFormFetchingPage';
-    import {SimpleFormModalPage} from './pages/simpleFormModalPage';
-    import {SimpleFormModalFetchingPage} from './pages/simpleFormModalFetchingPage';
-    import {SimpleFormModalSubmittingPage} from './pages/simpleFormModalSubmittingPage';
-    import {SimpleFormSubmittingPage} from './pages/simpleFormSubmittingPage';
-    import {SimpleValidationPage} from './pages/simpleValidationPage';
 
 
 export const ExamplesRoutes = () => {
     return (
         <Routes>
             <Route path="/" element={<ExamplesLayout />}>
-                <Route index element={<HomePage />} />
+                <Route index element={<Home />} />
                 <Route path="FormBetweenFields" element={<FormBetweenFieldsPage />} />;
                 <Route path="FormDependedField" element={<FormDependedFieldPage />} />;
+                <Route path="FormFetching" element={<FormFetchingPage />} />;
                 <Route path="FormSimple" element={<FormSimplePage />} />;
+                <Route path="FormSubmitting" element={<FormSubmittingPage />} />;
+                <Route path="FormValidation" element={<FormValidationPage />} />;
                 <Route path="FormWithTemplatedFields" element={<FormWithTemplatedFieldsPage />} />;
-                <Route path="Home" element={<HomePage />} />;
-                <Route path="ModalWithGrid" element={<ModalWithGridPage />} />;
-                <Route path="ModalWithGroups" element={<ModalWithGroupsPage />} />;
-                <Route path="ModalWithTabs" element={<ModalWithTabsPage />} />;
-                <Route path="ModalWithTabsGroups" element={<ModalWithTabsGroupsPage />} />;
+                <Route path="ModalFormFetching" element={<ModalFormFetchingPage />} />;
+                <Route path="ModalFormSimple" element={<ModalFormSimplePage />} />;
+                <Route path="ModalFormSubmitting" element={<ModalFormSubmittingPage />} />;
+                <Route path="ModalFormWithGrid" element={<ModalFormWithGridPage />} />;
+                <Route path="ModalFormWithGroups" element={<ModalFormWithGroupsPage />} />;
+                <Route path="ModalFormWithTabs" element={<ModalFormWithTabsPage />} />;
+                <Route path="ModalFormWithTabsGroups" element={<ModalFormWithTabsGroupsPage />} />;
                 <Route path="MrGridSimple" element={<MrGridSimplePage />} />;
                 <Route path="MrGridSimpleTree" element={<MrGridSimpleTreePage />} />;
                 <Route path="MrGridWithComplexDataSet" element={<MrGridWithComplexDataSetPage />} />;
                 <Route path="MrGridWithForm" element={<MrGridWithFormPage />} />;
-                <Route path="MrGridWithFormAsyncSubmit" element={<MrGridWithFormAsyncSubmitPage />} />;
+                <Route path="MrGridWithFormAsync" element={<MrGridWithFormAsyncPage />} />;
                 <Route path="PlayGround" element={<PlayGroundPage />} />;
-                <Route path="SimpleFormFetching" element={<SimpleFormFetchingPage />} />;
-                <Route path="SimpleFormModal" element={<SimpleFormModalPage />} />;
-                <Route path="SimpleFormModalFetching" element={<SimpleFormModalFetchingPage />} />;
-                <Route path="SimpleFormModalSubmitting" element={<SimpleFormModalSubmittingPage />} />;
-                <Route path="SimpleFormSubmitting" element={<SimpleFormSubmittingPage />} />;
-                <Route path="SimpleValidation" element={<SimpleValidationPage />} />;
 
-                <Route path="*" element={<HomePage />} />
+                <Route path="*" element={<Home />} />
             </Route>
         </Routes>
     );

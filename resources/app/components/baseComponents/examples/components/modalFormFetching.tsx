@@ -33,7 +33,7 @@ const formProps = new DFormConfig<IFields>()
     .buttons({ok: {position: 'right'}})
     .getConfig();
 
-export const SimpleFormModalFetching = (): JSX.Element => {
+export const ModalFormFetching = (): JSX.Element => {
     const onClick = useCallback(() => {
         formApi.open('update');
     }, []);
@@ -44,6 +44,9 @@ export const SimpleFormModalFetching = (): JSX.Element => {
             <h1>Пример загрузки данных при открытии формы</h1>
             <p>Для обеспечения загрузки необходимо в калбэк onDataFetch передать функцию, возвращающую Promise, который при успешном ответе сервера (resolve) возвращает объект вида:</p>
             <code>{`data:{имя_поля1: "значение", имя_поля2: "значение 2"...}`}</code>
+            <p>а при ошибке (reject)</p>
+            <code>{`error:{message: string, code: number}`}</code>
+            <p>Для примера, вероятность сбоя при загрузке 50%</p>
             <p></p>
             {/*Description End*/}
             <div style={{maxWidth: 500}}>

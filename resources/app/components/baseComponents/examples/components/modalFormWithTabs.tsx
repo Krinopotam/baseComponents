@@ -1,12 +1,4 @@
-
-    import React from 'react';
-    import {ModalFormWithTabs} from '../components/modalFormWithTabs';
-    import { Divider } from 'antd';
-    import SyntaxHighlighter from 'react-syntax-highlighter';
-    import {docco} from 'react-syntax-highlighter/dist/esm/styles/hljs';
-
-    export const ModalWithTabsPage = (): JSX.Element => {
-    const source = `import React, { useCallback } from 'react';
+import React, { useCallback } from 'react';
 
 import {Button} from 'baseComponents/button';
 import {DFormModal} from 'baseComponents/dFormModal/dFormModal';
@@ -40,7 +32,7 @@ const formProps = new DFormModalConfig<IFields>()
     )
     .getConfig();
 
-export const ModalWithTabs = (): JSX.Element => {
+export const ModalFormWithTabs = (): JSX.Element => {
     const onClick = useCallback(() => {
         formApi.open('create');
     }, []);
@@ -50,20 +42,5 @@ export const ModalWithTabs = (): JSX.Element => {
             <Button onClick={onClick}>Открыть форму</Button>
             <DFormModal {...formProps} />
         </div>
-    );
-};
-`
-    return (
-        <>
-            <div>
-                <ModalFormWithTabs />
-            </div>
-            <Divider />
-            <div>
-                <SyntaxHighlighter language="javascript" style={docco}>
-                    {source}
-                </SyntaxHighlighter>
-            </div>
-        </>
     );
 };

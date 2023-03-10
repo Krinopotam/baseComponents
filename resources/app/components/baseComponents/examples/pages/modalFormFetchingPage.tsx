@@ -5,7 +5,7 @@
     import SyntaxHighlighter from 'react-syntax-highlighter';
     import {docco} from 'react-syntax-highlighter/dist/esm/styles/hljs';
 
-    export const SimpleFormModalFetchingPage = (): JSX.Element => {
+    export const ModalFormFetchingPage = (): JSX.Element => {
     const source = `import React, {useCallback} from 'react';
 
 import {Button} from 'antd';
@@ -41,7 +41,7 @@ const formProps = new DFormConfig<IFields>()
     .buttons({ok: {position: 'right'}})
     .getConfig();
 
-export const SimpleFormModalFetching = (): JSX.Element => {
+export const ModalFormFetching = (): JSX.Element => {
     const onClick = useCallback(() => {
         formApi.open('update');
     }, []);

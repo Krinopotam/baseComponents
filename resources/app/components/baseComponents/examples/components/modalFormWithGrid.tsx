@@ -1,12 +1,4 @@
-
-    import React from 'react';
-    import {ModalFormWithGrid} from '../components/modalFormWithGrid';
-    import { Divider } from 'antd';
-    import SyntaxHighlighter from 'react-syntax-highlighter';
-    import {docco} from 'react-syntax-highlighter/dist/esm/styles/hljs';
-
-    export const ModalWithGridPage = (): JSX.Element => {
-    const source = `import React, {useCallback} from 'react';
+import React, {useCallback} from 'react';
 
 import {Button} from 'baseComponents/button';
 import {DFormModal} from 'baseComponents/dFormModal/dFormModal';
@@ -85,32 +77,20 @@ const formProps = new DFormModalConfig<IFields>()
     .addFields(new MrGridComponentConfig('permissions').label('Полномочия').columns(columns).dataSet(gridDataSet))
     .getConfig();
 
-export const ModalWithGrid = (): JSX.Element => {
+export const ModalFormWithGrid = (): JSX.Element => {
     const onClick = useCallback(() => {
         formApi.open('create');
     }, []);
 
     return (
         <>
+            {/*Description Start*/}
+            <h1>Пример модальной формы с простым гридом</h1>
+            {/*Description End*/}
 
             <div style={{maxWidth: 500}}>
                 <Button onClick={onClick}>Открыть форму</Button>
                 <DFormModal {...formProps} />
-            </div>
-        </>
-    );
-};
-`
-    return (
-        <>
-            <div>
-                <ModalFormWithGrid />
-            </div>
-            <Divider />
-            <div>
-                <SyntaxHighlighter language="javascript" style={docco}>
-                    {source}
-                </SyntaxHighlighter>
             </div>
         </>
     );

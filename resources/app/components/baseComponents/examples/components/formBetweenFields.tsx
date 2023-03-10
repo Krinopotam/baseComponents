@@ -73,7 +73,7 @@ export const FormBetweenFields = (): JSX.Element => {
     return (
         <>
             {/*Description Start*/}
-            <h1>Пример формы c зависимостями</h1>
+            <h1>Пример формы c полями, набор данных которых зависит друг от друга</h1>
             {/*Description End*/}
             <div style={{maxWidth: 500}}>
                 <DForm {...formProps} />

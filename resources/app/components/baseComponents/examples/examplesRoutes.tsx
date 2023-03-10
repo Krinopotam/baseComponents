@@ -14,6 +14,7 @@
     import {MrGridSimpleTreePage} from './pages/mrGridSimpleTreePage';
     import {MrGridWithComplexDataSetPage} from './pages/mrGridWithComplexDataSetPage';
     import {MrGridWithFormPage} from './pages/mrGridWithFormPage';
+    import {MrGridWithFormAsyncSubmitPage} from './pages/mrGridWithFormAsyncSubmitPage';
     import {PlayGroundPage} from './pages/playGroundPage';
     import {SimpleFormFetchingPage} from './pages/simpleFormFetchingPage';
     import {SimpleFormModalPage} from './pages/simpleFormModalPage';
@@ -40,6 +41,7 @@ export const ExamplesRoutes = () => {
                 <Route path="MrGridSimpleTree" element={<MrGridSimpleTreePage />} />;
                 <Route path="MrGridWithComplexDataSet" element={<MrGridWithComplexDataSetPage />} />;
                 <Route path="MrGridWithForm" element={<MrGridWithFormPage />} />;
+                <Route path="MrGridWithFormAsyncSubmit" element={<MrGridWithFormAsyncSubmitPage />} />;
                 <Route path="PlayGround" element={<PlayGroundPage />} />;
                 <Route path="SimpleFormFetching" element={<SimpleFormFetchingPage />} />;
                 <Route path="SimpleFormModal" element={<SimpleFormModalPage />} />;

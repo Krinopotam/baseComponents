@@ -95,13 +95,13 @@ const mgGridFormConfig = new DFormModalConfig<Person>().layout('horizontal')
         new InputComponentConfig('address').label('Адрес'),
         new InputComponentConfig('city').label('Город'),
         new InputComponentConfig('state').label('Штат')
-    )
+    ).confirmChanges(true)
     .getConfig();
 
 export const MrGridWithForm = (): JSX.Element => {
     return (
         <>
-            <MRGrid dataSet={gridDataSet} columns={columns} editFormProps={mgGridFormConfig} />
+            <MRGrid dataSet={gridDataSet} columns={columns} editFormProps={mgGridFormConfig} confirmDelete />
         </>
     );
 };

@@ -7,6 +7,7 @@ import {MenuRow} from 'baseComponents/mrGrid/renders/menuRow';
 import {usePrepareEditFormProps} from 'baseComponents/mrGrid/hooks/gridEditForm';
 import {DFormModal} from 'baseComponents/dFormModal/dFormModal';
 import {MrGridLocalizationRu} from "baseComponents/mrGrid/localization/ru";
+import {LoadingContainer} from "baseComponents/loadingContainer/loadingContainer";
 
 export const GridRender = ({tableRef, gridApi}: {tableRef: React.MutableRefObject<MRT_TableInstance | null>; gridApi: IGridApi}): JSX.Element => {
     const gridProps = gridApi.gridProps;
@@ -15,6 +16,10 @@ export const GridRender = ({tableRef, gridApi}: {tableRef: React.MutableRefObjec
 
     return (
         <>
+            <LoadingContainer
+                isLoading={gridApi.getIsLoading()}
+                notHideContent={true}
+            >
             <MaterialReactTable
                 tableInstanceRef={tableRef}
                 columns={gridApi.gridProps.columns}
@@ -56,6 +61,7 @@ export const GridRender = ({tableRef, gridApi}: {tableRef: React.MutableRefObjec
                 renderTopToolbarCustomActions={() => <MenuRow gridApi={gridApi} />}
                 localization={MrGridLocalizationRu}
             />
+            </LoadingContainer>
             {editFormProps ? <DFormModal {...editFormProps} apiRef={gridApi.editFormApi} /> : null}
         </>
     );

@@ -6,6 +6,7 @@ import {useInitGridApi} from 'baseComponents/mrGrid/hooks/api';
 import {IDFormModalApi} from 'baseComponents/dFormModal/hooks/api';
 import {GridRender} from 'baseComponents/mrGrid/renders/gridRender';
 import {useWhyDidYouUpdate} from 'ahooks';
+import {TPromise} from 'baseComponents/serviceTypes';
 
 export interface IGridRowData extends Record<string, unknown> {
     /** Row id */
@@ -62,7 +63,7 @@ export interface IGridProps {
 
 export interface IGridCallbacks {
     /** Fires when menu visibility status changed */
-    onMenuVisibilityChanged: (isVisible: boolean) => void;
+    onMenuVisibilityChanged?: (isVisible: boolean) => void;
 
     /** Fires, when the dataSet changed. User can modify the dataSet before dataSet will apply */
     onDataSetChange?: (dataSet: IGridRowData[]) => IGridRowData[] | void;
@@ -70,9 +71,11 @@ export interface IGridCallbacks {
     /** Callback executed when selected rows change */
     onSelectionChange?: (selectedRowKeys: (string | number)[], selectedRows: IGridRowData[]) => void;
 
-    /** Callback executed when selected rows change */
-    onDelete?: (selectedRows: IGridRowData[]) => void;
+    /** Callback executed when selected rows delete */
+    onDelete?: (selectedRows: IGridRowData[]) => IGridDeletePromise | void | undefined;
 }
+
+export type IGridDeletePromise = TPromise<{data: Record<string, unknown>}, {message: string; code: number}>;
 
 //nested data is ok, see accessorKeys in ColumnDef below
 

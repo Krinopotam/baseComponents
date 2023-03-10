@@ -3,6 +3,7 @@ import {Layout, Menu, MenuProps, theme} from 'antd';
 import {Link, Outlet} from 'react-router-dom';
 
 import React from 'react';
+import {MrGridWithFormAsyncSubmit} from "baseComponents/examples/components/mrGridWithFormAsyncSubmit";
 
 const {Header, Sider, Content} = Layout;
 
@@ -43,9 +44,11 @@ const items: MenuProps['items'] = [
         getItem(<Link to="MrGridSimpleTree">Древовидный грид</Link>, '3_2'),
         getItem(<Link to="MrGridWithComplexDataSet">Грид с комлексным набором данных</Link>, '3_3'),
         getItem(<Link to="MrGridWithForm">Грид с формой редактирования</Link>, '3_4'),
+        getItem(<Link to="MrGridWithFormAsyncSubmit">Грид с формой редактирования и асинхронным сохранением</Link>, '3_5'),
     ]),
     {type: 'divider'},
     getItem(<Link to="PlayGround">Песочница</Link>, 'PlayGround'),
+
 ];
 
 export const ExamplesLayout = (): JSX.Element => {

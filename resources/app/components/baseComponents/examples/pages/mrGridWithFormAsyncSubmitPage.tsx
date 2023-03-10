@@ -1,4 +1,12 @@
-import React from 'react';
+
+    import React from 'react';
+    import {MrGridWithFormAsyncSubmit} from '../components/mrGridWithFormAsyncSubmit';
+    import { Divider } from 'antd';
+    import SyntaxHighlighter from 'react-syntax-highlighter';
+    import {docco} from 'react-syntax-highlighter/dist/esm/styles/hljs';
+
+    export const MrGridWithFormAsyncSubmitPage = (): JSX.Element => {
+    const source = `import React from 'react';
 import MRGrid from 'baseComponents/mrGrid/mrGrid';
 import {MRT_ColumnDef} from 'material-react-table';
 import {DFormModalConfig} from 'baseComponents/dForm/configBuilder/dFormModalConfig';
@@ -80,23 +88,52 @@ const gridDataSet: Person[] = [
     },
 ];
 
-const mgGridFormConfig = new DFormModalConfig<Person>().layout('horizontal')
+const mgGridFormConfig = new DFormModalConfig<Person>()
+    .layout('horizontal')
     .addFields(
         new InputComponentConfig('firstName').label('Имя'),
         new InputComponentConfig('lastName').label('Фамилия'),
         new InputComponentConfig('address').label('Адрес'),
         new InputComponentConfig('city').label('Город'),
         new InputComponentConfig('state').label('Штат')
-    ).confirmChanges(true)
+    )
+    .confirmChanges(true)
     .getConfig();
 
-export const MrGridWithForm = (): JSX.Element => {
+export const MrGridWithFormAsyncSubmit = (): JSX.Element => {
     return (
         <>
-            {/*Description Start*/}
-            <h1>Пример простого грида с формой редактирования</h1>
-            {/*Description End*/}
-            <MRGrid dataSet={gridDataSet} columns={columns} editFormProps={mgGridFormConfig} confirmDelete />
+            <MRGrid
+                dataSet={gridDataSet}
+                columns={columns}
+                editFormProps={mgGridFormConfig}
+                confirmDelete
+                callbacks={{
+                    onDelete: () => {
+                        return new Promise((resolve, reject) => {
+                            setTimeout(() => {
+                                if (Math.random() < 0.5) reject({message: 'Ошибка удаления строк', code: 400});
+                                else resolve({data: {result: 'OK'}});
+                            }, 3000);
+                        });
+                    },
+                }}
+            />
+        </>
+    );
+};
+`
+    return (
+        <>
+            <div>
+                <MrGridWithFormAsyncSubmit />
+            </div>
+            <Divider />
+            <div>
+                <SyntaxHighlighter language="javascript" style={docco}>
+                    {source}
+                </SyntaxHighlighter>
+            </div>
         </>
     );
 };

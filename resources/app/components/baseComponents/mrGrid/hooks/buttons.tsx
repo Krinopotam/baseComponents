@@ -2,9 +2,10 @@ import {IFormButton, IFormButtons} from 'baseComponents/buttonsRow';
 import React, {useLayoutEffect, useState} from 'react';
 import {CopyOutlined, DeleteOutlined, EditOutlined, EyeOutlined, PlusOutlined} from '@ant-design/icons';
 import {MessageBox} from 'baseComponents/messageBox';
-import {mergeObjects} from 'helpers/helpersObjects';
+import {isPromise, mergeObjects} from 'helpers/helpersObjects';
 import {IGridApi} from 'baseComponents/mrGrid/hooks/api';
-import {IGridRowData} from "baseComponents/mrGrid/mrGrid";
+import {IGridDeletePromise, IGridRowData} from 'baseComponents/mrGrid/mrGrid';
+import {MessageBoxApi} from 'components/baseComponents/messageBox/messageBoxApi';
 
 export const useInitButtons = (gridApi: IGridApi): IFormButtons => {
     const [gridButtons, setGridButtons] = useState({});
@@ -39,8 +40,8 @@ const getViewButton = (gridApi: IGridApi, activeRowKey: string, selectedRowKeys:
         size: 'small',
         disabled: !activeRowKey || selectedRowKeys.length !== 1,
         onClick: () => {
-            const activeRow = gridApi.getActiveRow()
-            if (!activeRow) return
+            const activeRow = gridApi.getActiveRow();
+            if (!activeRow) return;
             editFormApi.open('view', {...activeRow.original}, {...activeRow.original}); //TODO get parent row
         },
     };
@@ -57,8 +58,8 @@ const getCreateButton = (gridApi: IGridApi): IFormButton | undefined => {
         position: 'left',
         size: 'small',
         onClick: () => {
-            const activeRow = gridApi.getActiveRow()
-            const formParent = activeRow ? {...activeRow?.original} : undefined
+            const activeRow = gridApi.getActiveRow();
+            const formParent = activeRow ? {...activeRow?.original} : undefined;
             editFormApi.open('create', undefined, formParent);
         },
     };
@@ -77,8 +78,8 @@ const getCloneButton = (gridApi: IGridApi, activeRowKey: string, selectedRowKeys
         size: 'small',
         disabled: !activeRowKey || selectedRowKeys.length !== 1,
         onClick: () => {
-            const activeRow = gridApi.getActiveRow()
-            if (!activeRow) return
+            const activeRow = gridApi.getActiveRow();
+            if (!activeRow) return;
             editFormApi.open('clone', {...activeRow.original}, {...activeRow.original}); //TODO get parent row
         },
     };
@@ -97,8 +98,8 @@ const getUpdateButton = (gridApi: IGridApi, activeRowKey: string, selectedRowKey
         size: 'small',
         disabled: !activeRowKey || selectedRowKeys.length !== 1,
         onClick: () => {
-            const activeRow = gridApi.getActiveRow()
-            if (!activeRow) return
+            const activeRow = gridApi.getActiveRow();
+            if (!activeRow) return;
             editFormApi.open('update', {...activeRow.original}, {...activeRow.original}); //TODO get parent row
         },
     };
@@ -115,25 +116,58 @@ const getDeleteButton = (gridApi: IGridApi, selectedRowKeys: string[]): IFormBut
         position: 'left',
         danger: true,
         size: 'small',
-        disabled: !selectedRowKeys || selectedRowKeys.length===0,
+        disabled: !selectedRowKeys || selectedRowKeys.length === 0,
         onClick: () => {
-            const selectedRows = gridApi.getSelectedRowsData(true) as IGridRowData[]
-            const deleteHandler = () => {
-                gridApi.deleteRows(selectedRowKeys, true);
-                gridProps.callbacks?.onDelete?.(selectedRows);
-            }
-
-            if (gridProps.confirmDelete) {
-                MessageBox.confirmWaiter({
-                    content: gridProps.rowDeleteMessage || 'Удалить выбранные строки?',
-                    type: 'error',
-                    onOk: deleteHandler,
-                });
-            }
-            else {
-                //gridApi.buttonsApi.loading('delete', true)
-                deleteHandler()
-            }
+            deleteHandler(gridApi);
         },
     };
+};
+
+const deleteHandler = (gridApi: IGridApi) => {
+    const gridProps = gridApi.gridProps;
+    const selectedRows = gridApi.getSelectedRowsData(true) as IGridRowData[];
+    const selectedRowKeys = gridApi.getSelectedRowKeys(true) as string[];
+
+    let messageBox: MessageBoxApi | undefined;
+    const removeRows = () => {
+        const deletePromise = gridProps.callbacks?.onDelete?.(selectedRows);
+
+        if (isPromise(deletePromise)) {
+            if (!gridProps.confirmDelete) gridApi.setIsLoading(true);
+            const promiseResult = deletePromise as IGridDeletePromise;
+            promiseResult
+                .then((promiseResult) => {
+                    //if (!this.isFormMounted()) return;
+                    gridApi.deleteRows(selectedRowKeys, true);
+                    if (!gridProps.confirmDelete) gridApi.setIsLoading(false);
+                    else if (messageBox) messageBox.destroy();
+
+                    //this._callbacks?.onSubmitSuccess?.(values, promiseResult.data || values, this);
+                    //this._callbacks?.onSubmitComplete?.(values, errors, this);
+                })
+                .catch((error) => {
+                    //if (!this.isFormMounted()) return;
+                    if (!gridProps.confirmDelete) gridApi.setIsLoading(false);
+                    else if (messageBox) messageBox.destroy();
+
+                    //this._callbacks?.onSubmitError?.(values, error.message, error.code, this);
+                    //this._callbacks?.onSubmitComplete?.(values, errors, this);
+
+                    MessageBox.alert({content: error.message, type: 'error'});
+                });
+            return;
+        }
+
+        gridApi.deleteRows(selectedRowKeys, true);
+        if (messageBox) messageBox.destroy();
+    };
+
+    if (gridProps.confirmDelete) {
+        messageBox = MessageBox.confirmWaiter({
+            content: gridProps.rowDeleteMessage || 'Удалить выбранные строки?',
+            onOk: removeRows,
+        });
+    } else {
+        removeRows();
+    }
 };

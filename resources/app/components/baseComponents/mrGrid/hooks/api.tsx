@@ -20,6 +20,12 @@ export interface IGridApi {
     /** Set data set*/
     setDataSet: (dataSet: IGridRowData[] | null) => void;
 
+    /** Get current loading state */
+    getIsLoading: () => boolean;
+
+    /** Set current loading state */
+    setIsLoading: (isLoading:boolean) => void;
+
     /** Insert new row/rows */
     insertRows: (rowData: IGridRowData | IGridRowData[], place?: 'before' | 'after', id?: IGridRowData['id'], updateActiveRow?: boolean) => IGridRowData[];
 
@@ -101,6 +107,8 @@ export const useInitGridApi = ({
     const [gridApi] = useState({} as IGridApi);
     const activeRowRef = useRef('');
     const [dataSet, setDataSet] = useState(props.dataSet);
+    const [isLoading, setIsLoading] = useState(false);
+
     gridApi.gridProps = props;
     gridApi.editFormApi = editFormApi;
     gridApi.buttonsApi = buttonsApi;
@@ -108,7 +116,8 @@ export const useInitGridApi = ({
     gridApi.getGridId = useApiGetGridId();
     gridApi.getDataSet = useApiGetDataSet(dataSet || []);
     gridApi.setDataSet = useApiSetDataSet(setDataSet);
-    gridApi.getGridId = useApiGetGridId();
+    gridApi.getIsLoading = useApiGetIsLoading(isLoading);
+    gridApi.setIsLoading = useApiSetIsLoading(setIsLoading);
     gridApi.setActiveRowKey = useApiSetActiveRowKey(activeRowRef, gridApi);
     gridApi.getActiveRowKey = useApiGetActiveRowKey(activeRowRef);
     gridApi.getActiveRow = useApiGetActiveRow(gridApi);
@@ -158,6 +167,23 @@ const useApiSetDataSet = (setDataSet: React.Dispatch<React.SetStateAction<IGridR
             setDataSet(dataSet || []);
         },
         [setDataSet]
+    );
+};
+
+/* Get current loading state */
+const useApiGetIsLoading = (isLoading:boolean): IGridApi['getIsLoading'] => {
+    return useCallback(() => {
+        return isLoading;
+    }, [isLoading]);
+};
+
+/* Set current loading state */
+const useApiSetIsLoading = (setIsLoading: React.Dispatch<React.SetStateAction<boolean>>): IGridApi['setIsLoading'] => {
+    return useCallback(
+        (isLoading: boolean) => {
+            setIsLoading(isLoading);
+        },
+        [setIsLoading]
     );
 };
 

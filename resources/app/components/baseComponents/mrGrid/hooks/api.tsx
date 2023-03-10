@@ -1,5 +1,5 @@
-import {MutableRefObject, useCallback, useRef, useState} from 'react';
-import {isArray} from 'helpers/helpersObjects';
+import React, {MutableRefObject, useCallback, useRef, useState} from 'react';
+import {findIndexInObjectsArray, isArray} from 'helpers/helpersObjects';
 import {getUuid} from 'helpers/helpersString';
 import {IDFormModalApi} from 'baseComponents/dFormModal/hooks/api';
 import {IButtonsRowApi} from 'baseComponents/buttonsRow';
@@ -14,14 +14,17 @@ export interface IGridApi {
     /* Get grid ID */
     getGridId: () => string;
 
-    /** Get or set current data set*/
-    //dataSet: (rows?: IGridRowData[] | null) => IGridRowData[];
+    /** Get current data set*/
+    getDataSet: () => IGridRowData[];
+
+    /** Set data set*/
+    setDataSet: (dataSet: IGridRowData[] | null) => void;
 
     /** Insert new row/rows */
-    //insertRows: (rowData: IGridRowData | IGridRowData[], place?: 'before' | 'after', id?: IGridRowData['id'], updateSelection?: boolean) => IGridRowData[];
+    insertRows: (rowData: IGridRowData | IGridRowData[], place?: 'before' | 'after', id?: IGridRowData['id'], updateActiveRow?: boolean) => IGridRowData[];
 
     /** Update existed row/rows */
-    // updateRows: (rowData: IGridRowData | IGridRowData[], updateSelection?: boolean) => IGridRowData[];
+    updateRows: (rowData: IGridRowData | IGridRowData[], updateActiveRow?: boolean) => IGridRowData[];
 
     /** Delete existed row/rows by keys */
     //deleteRowsByKey: (keys: IGridRowData['id'] | IGridRowData['id'][], updateSelection?: boolean) => IGridRowData[];
@@ -103,10 +106,14 @@ export const useInitGridApi = ({
 }): IGridApi => {
     const [gridApi] = useState({} as IGridApi);
     const activeRowRef = useRef('');
+    const [dataSet, setDataSet] = useState(props.dataSet);
     gridApi.gridProps = props;
     gridApi.editFormApi = editFormApi;
     gridApi.buttonsApi = buttonsApi;
 
+    gridApi.getGridId = useApiGetGridId();
+    gridApi.getDataSet = useApiGetDataSet(dataSet || []);
+    gridApi.setDataSet = useApiSetDataSet(setDataSet);
     gridApi.getGridId = useApiGetGridId();
     gridApi.setActiveRowKey = useApiSetActiveRowKey(activeRowRef, gridApi);
     gridApi.getActiveRowKey = useApiGetActiveRowKey(activeRowRef);
@@ -118,11 +125,11 @@ export const useInitGridApi = ({
     gridApi.getSelectedRowsData = useApiGetSelectedRowsData(tableRef);
     gridApi.setSelectedRowKeys = useApiSetSelectedRowsKeys(tableRef, gridApi);
     gridApi.getRowByKey = useApiGetRowByKey(tableRef);
+    gridApi.insertRows = useApiInsertRows(gridApi);
+    gridApi.updateRows = useApiUpdateRows(gridApi);
 
     gridApi.scrollToRowKey = useApiScrollToRowKey(gridApi);
     /* gridApi.dataSet = useApiDataSet(dataSet, setDataSet);
-    gridApi.insertRows = useApiInsertRows(gridApi);
-    gridApi.updateRows = useApiUpdateRows(gridApi);
     gridApi.deleteRowsByKey = useApiDeleteRowsByKey(gridApi);
     gridApi.deleteRows = useApiDeleteRows(gridApi);
     gridApi.getSelectedRowKeys = useApiGetSelectedRowKeys(selectedRowKeys);
@@ -144,6 +151,23 @@ export const useInitGridApi = ({
 const useApiGetGridId = (): IGridApi['getGridId'] => {
     const [gridId] = useState(getUuid());
     return useCallback(() => gridId, [gridId]);
+};
+
+/* Get current dataSet */
+const useApiGetDataSet = (dataSet: IGridRowData[]): IGridApi['getDataSet'] => {
+    return useCallback(() => {
+        return dataSet || [];
+    }, [dataSet]);
+};
+
+/* Set current dataSet */
+const useApiSetDataSet = (setDataSet: React.Dispatch<React.SetStateAction<IGridRowData[] | undefined>>): IGridApi['setDataSet'] => {
+    return useCallback(
+        (dataSet: IGridRowData[] | null) => {
+            setDataSet(dataSet || []);
+        },
+        [setDataSet]
+    );
 };
 
 /* Set active row ID*/
@@ -345,37 +369,41 @@ const useApiGetSelectedRowsData = (tableRef: MutableRefObject<MRT_TableInstance 
 const useApiScrollToRowKey = (gridApi: IGridApi): IGridApi['scrollToRowKey'] => {
     return useCallback(
         (key: string | null, align?: IVerticalAlign) => {
-            if (!key) return;
+            const scrollMethod = () => {
+                if (!key) return;
 
-            const $row = document.querySelector('.grid-container-' + gridApi.getGridId() + ' tr[data-row-key="' + key + '"]') as HTMLElement;
-            if (!$row) return;
+                const $row = document.querySelector('.grid-container-' + gridApi.getGridId() + ' tr[data-row-key="' + key + '"]') as HTMLElement;
+                if (!$row) return;
 
-            const $container = document.querySelector('.grid-container-' + gridApi.getGridId()) as HTMLElement;
-            const $head = document.querySelector('.grid-head-' + gridApi.getGridId()) as HTMLElement;
-            const headHeight = $head.offsetHeight;
+                const $container = document.querySelector('.grid-container-' + gridApi.getGridId()) as HTMLElement;
+                const $head = document.querySelector('.grid-head-' + gridApi.getGridId()) as HTMLElement;
+                const headHeight = $head.offsetHeight;
 
-            const offset = headHeight;
+                const offset = headHeight;
 
-            const rowPosition = $row.getBoundingClientRect();
+                const rowPosition = $row.getBoundingClientRect();
 
-            const containerPosition = $container.getBoundingClientRect();
-            if (rowPosition.top - offset >= containerPosition.top && rowPosition.bottom <= containerPosition.bottom) return;
+                const containerPosition = $container.getBoundingClientRect();
+                if (rowPosition.top - offset >= containerPosition.top && rowPosition.bottom <= containerPosition.bottom) return;
 
-            let topOffset = 0;
-            let alignTop = 0.5;
-            if (align === 'top') alignTop = 0;
-            else if (align === 'bottom') alignTop = 1;
+                let topOffset = 0;
+                let alignTop = 0.5;
+                if (align === 'top') alignTop = 0;
+                else if (align === 'bottom') alignTop = 1;
 
-            if (alignTop < 1) topOffset = headHeight;
+                if (alignTop < 1) topOffset = headHeight;
 
-            scrollIntoView($row, {
-                align: {top: alignTop, lockX: true, topOffset: topOffset},
-                validTarget: function (target: HTMLElement) {
-                    return target === $container;
-                },
-                //debug: true,
-                time: 100,
-            });
+                scrollIntoView($row, {
+                    align: {top: alignTop, lockX: true, topOffset: topOffset},
+                    validTarget: function (target: HTMLElement) {
+                        return target === $container;
+                    },
+                    //debug: true,
+                    time: 100,
+                });
+            };
+
+            setTimeout(scrollMethod, 0); //need timeout because often at the time of the call the grid has not yet been redrawn and the row IDs have not been set
         },
         [gridApi]
     );
@@ -391,6 +419,81 @@ const useApiGetRowByKey = (tableRef: MutableRefObject<MRT_TableInstance | null>)
         [tableRef]
     );
 };
+
+const useApiInsertRows = (gridApi: IGridApi): IGridApi['insertRows'] => {
+    return useCallback(
+        (rows: IGridRowData[] | IGridRowData, place?: 'before' | 'after', id?: string | number, updateActiveRow?: boolean): IGridRowData[] => {
+            const gridProps = gridApi.gridProps;
+            if (!place) place = 'after';
+
+            const _dataSet = [...gridApi.getDataSet()];
+
+            const _rows: IGridRowData[] = isArray(rows) ? [...(rows as IGridRowData[])] : [rows as IGridRowData];
+
+            if (!id) {
+                if (place === 'before') {
+                    for (const row of _rows) {
+                        if (!row.id) row.id = getUuid();
+                        _dataSet.unshift(row);
+                    }
+                } else {
+                    for (const row of _rows) {
+                        if (!row.id) row.id = getUuid();
+                        _dataSet.push(row);
+                    }
+                }
+            } else {
+                let index = findIndexInObjectsArray(_dataSet, 'id', id);
+
+                if (index < 0) index = place === 'before' ? 0 : _dataSet.length;
+                else if (place === 'after') index = index + 1;
+
+                for (let i = _rows.length - 1; i >= 0; i--) {
+                    const row = _rows[i];
+                    if (!row.id) row.id = getUuid();
+                    _dataSet.splice(index, 0, row);
+                }
+            }
+
+            const newDataSet = gridProps?.callbacks?.onDataSetChange?.(_dataSet) || _dataSet;
+            gridApi.setDataSet(newDataSet);
+
+            if (updateActiveRow && _rows[0]) gridApi.setActiveRowKey(_rows[0].id, true, true, 'bottom');
+
+            return _dataSet;
+        },
+        [gridApi]
+    );
+};
+
+const useApiUpdateRows = (gridApi: IGridApi): IGridApi['updateRows'] => {
+    return useCallback(
+        (rows: IGridRowData[] | IGridRowData, updateActiveRow?: boolean): IGridRowData[] => {
+            const gridProps = gridApi.gridProps;
+            const _dataSet = [...gridApi.getDataSet()];
+
+            const _rows: IGridRowData[] = isArray(rows) ? [...(rows as IGridRowData[])] : [rows as IGridRowData];
+
+            for (let i = _rows.length - 1; i >= 0; i--) {
+                const row = _rows[i];
+                const index = findIndexInObjectsArray(_dataSet, 'id', row.id);
+                if (index < 0) continue;
+                _dataSet[index] = row;
+            }
+
+            const newDataSet = gridProps?.callbacks?.onDataSetChange?.(_dataSet) || _dataSet;
+            gridApi.setDataSet(newDataSet);
+
+            gridApi.setDataSet(_dataSet);
+
+            if (updateActiveRow && _rows[0]) gridApi.setActiveRowKey(_rows[0].id, true, true, 'middle');
+
+            return _dataSet;
+        },
+        [gridApi]
+    );
+};
+
 /*
 const useApiDataSet = (dataSet: IGridRowData[], setDataSet: (dataSet: IGridRowData[]) => void): IGridApi['dataSet'] => {
     return useCallback(

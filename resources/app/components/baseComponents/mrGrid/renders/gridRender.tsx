@@ -18,13 +18,12 @@ export const GridRender = ({tableRef, gridApi}: {tableRef: React.MutableRefObjec
             <MaterialReactTable
                 tableInstanceRef={tableRef}
                 columns={gridApi.gridProps.columns}
-                data={gridApi.gridProps.dataSet || []}
+                data={gridApi.getDataSet()}
                 enablePagination={false}
                 enableColumnResizing={true}
                 enableStickyHeader={true}
                 enableRowSelection={false}
                 enableBottomToolbar={false}
-                enableColumnFilterModes={false}
                 enableColumnDragging={false}
                 enableColumnOrdering={true}
                 enableFullScreenToggle={false}
@@ -32,6 +31,9 @@ export const GridRender = ({tableRef, gridApi}: {tableRef: React.MutableRefObjec
                 enableExpanding={gridProps.treeMode}
                 enableColumnActions={false}
                 enableGrouping={false}
+                enableColumnFilterModes={true}
+                filterFromLeafRows={true}
+                //maxLeafRowFilterDepth={0}
                 positionToolbarAlertBanner={'none'}
                 positionToolbarDropZone={'none'}
                 getSubRows={(originalRow) => (originalRow as IGridRowData).children}

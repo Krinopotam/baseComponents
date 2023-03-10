@@ -22,9 +22,8 @@ export const usePrepareEditFormProps = (gridApi: IGridApi) => {
 
             if (formMode === 'create' || formMode === 'clone') {
                 if (!updatedRow.id) updatedRow.id = getUuid();
-                const curSelectedKeys = gridApi.getSelectedRowKeys() as string[];
-                const selectedId = curSelectedKeys.length > 0 ? curSelectedKeys[0] : undefined;
-                gridApi.insertRows(updatedRow, 'after', selectedId, true);
+                const activeKey = gridApi.getActiveRowKey();
+                gridApi.insertRows(updatedRow, 'after', activeKey || undefined, true);
             } else if (formMode === 'update') {
                 gridApi.updateRows(updatedRow, true);
             }

@@ -5,7 +5,7 @@ import {IDFormModalProps} from 'baseComponents/dFormModal/dFormModal';
 import {useInitGridApi} from 'baseComponents/mrGrid/hooks/api';
 import {IDFormModalApi} from 'baseComponents/dFormModal/hooks/api';
 import {GridRender} from 'baseComponents/mrGrid/renders/gridRender';
-import {useWhyDidYouUpdate} from "ahooks";
+import {useWhyDidYouUpdate} from 'ahooks';
 
 export interface IGridRowData extends Record<string, unknown> {
     /** Row id */
@@ -54,7 +54,7 @@ export interface IGridProps {
     rowDeleteMessage?: React.ReactNode;
 
     /** Tree view mode */
-    treeMode?:boolean
+    treeMode?: boolean;
 
     /** Should confirm before delete */
     confirmDelete?: boolean;
@@ -64,8 +64,8 @@ export interface IGridCallbacks {
     /** Fires when menu visibility status changed */
     onMenuVisibilityChanged: (isVisible: boolean) => void;
 
-    /** Fires, when dataSet changes */
-    onDataSetChange?: (dataSet: IGridRowData[]) => void;
+    /** Fires, when the dataSet changed. User can modify the dataSet before dataSet will apply */
+    onDataSetChange?: (dataSet: IGridRowData[]) => IGridRowData[] | void;
 
     /** Callback executed when selected rows change */
     onSelectionChange?: (selectedRowKeys: (string | number)[], selectedRows: IGridRowData[]) => void;
@@ -77,7 +77,7 @@ export interface IGridCallbacks {
 //nested data is ok, see accessorKeys in ColumnDef below
 
 const MRGrid = (props: IGridProps): JSX.Element => {
-    useWhyDidYouUpdate('MRGrid', props)
+    useWhyDidYouUpdate('MRGrid', props);
     const tableRef = useRef<MRT_TableInstance>(null);
     const [editFormApi] = useState<IDFormModalApi>({} as IDFormModalApi);
     const [buttonsApi] = useState({} as IButtonsRowApi);

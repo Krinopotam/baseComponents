@@ -1,5 +1,5 @@
 import {IFormButton, IFormButtons} from 'baseComponents/buttonsRow';
-import React, {useLayoutEffect, useState} from 'react';
+import React, {useLayoutEffect, useMemo, useState} from 'react';
 import {CopyOutlined, DeleteOutlined, EditOutlined, EyeOutlined, PlusOutlined} from '@ant-design/icons';
 import {MessageBox} from 'baseComponents/messageBox';
 import {isPromise, mergeObjects} from 'helpers/helpersObjects';
@@ -12,123 +12,140 @@ export const useInitButtons = (gridApi: IGridApi): IFormButtons => {
     const buttons = gridApi.gridProps.buttons;
     const selectedRowKeys = gridApi.getSelectedRowKeys(true) as string[];
     const activeRowKey = gridApi.getActiveRowKey();
+
+    const vewButton = useGetViewButton(gridApi, activeRowKey, selectedRowKeys);
+    const createButton = useGetCreateButton(gridApi);
+    const cloneButton = useGetCloneButton(gridApi, activeRowKey, selectedRowKeys);
+    const updateButton = useGetUpdateButton(gridApi, activeRowKey, selectedRowKeys);
+    const deleteButton = useGetDeleteButton(gridApi, selectedRowKeys);
+
     useLayoutEffect(() => {
         const defaultButtons = {
-            view: getViewButton(gridApi, activeRowKey, selectedRowKeys),
-            create: getCreateButton(gridApi),
-            clone: getCloneButton(gridApi, activeRowKey, selectedRowKeys),
-            update: getUpdateButton(gridApi, activeRowKey, selectedRowKeys),
-            delete: getDeleteButton(gridApi, selectedRowKeys),
+            view: vewButton,
+            create: createButton,
+            clone: cloneButton,
+            update: updateButton,
+            delete: deleteButton,
         } as IFormButtons;
 
         setGridButtons(mergeObjects(defaultButtons, buttons));
-    }, [gridApi, buttons, activeRowKey, selectedRowKeys]);
+    }, [gridApi, buttons, activeRowKey, selectedRowKeys, deleteButton, vewButton, createButton, cloneButton, updateButton]);
 
     return gridButtons;
 };
 
 /** Get view button props */
-const getViewButton = (gridApi: IGridApi, activeRowKey: string, selectedRowKeys: string[]): IFormButton | undefined => {
-    const gridProps = gridApi.gridProps;
-    const editFormApi = gridApi.editFormApi;
-    if (!gridProps.editFormProps || !gridProps.readonly || gridProps.buttons?.view === null) return undefined;
+const useGetViewButton = (gridApi: IGridApi, activeRowKey: string, selectedRowKeys: string[]): IFormButton | undefined => {
+    return useMemo(() => {
+        const gridProps = gridApi.gridProps;
+        const editFormApi = gridApi.editFormApi;
+        if (!gridProps.editFormProps || !gridProps.readonly || gridProps.buttons?.view === null) return undefined;
 
-    return {
-        title: 'Просмотреть',
-        icon: <EyeOutlined />,
-        position: 'left',
-        size: 'small',
-        disabled: !activeRowKey || selectedRowKeys.length !== 1,
-        onClick: () => {
-            const activeRow = gridApi.getActiveRow();
-            if (!activeRow) return;
-            editFormApi.open('view', {...activeRow.original}, {...activeRow.original}); //TODO get parent row
-        },
-    };
+        return {
+            title: 'Просмотреть',
+            icon: <EyeOutlined />,
+            position: 'left',
+            size: 'small',
+            disabled: !activeRowKey || selectedRowKeys.length !== 1,
+            onClick: () => {
+                const activeRow = gridApi.getActiveNode();
+                if (!activeRow) return;
+                editFormApi.open('view', {...activeRow.original}, {...activeRow.original}); //TODO get parent row
+            },
+        };
+    }, [activeRowKey, gridApi, selectedRowKeys.length]);
 };
 
 /** Get create button props */
-const getCreateButton = (gridApi: IGridApi): IFormButton | undefined => {
-    const gridProps = gridApi.gridProps;
-    const editFormApi = gridApi.editFormApi;
-    if (!gridProps.editFormProps || gridProps.readonly || gridProps.buttons?.create === null) return undefined;
-    return {
-        title: 'Создать',
-        icon: <PlusOutlined />,
-        position: 'left',
-        size: 'small',
-        onClick: () => {
-            const activeRow = gridApi.getActiveRow();
-            const formParent = activeRow ? {...activeRow?.original} : undefined;
-            editFormApi.open('create', undefined, formParent);
-        },
-    };
+const useGetCreateButton = (gridApi: IGridApi): IFormButton | undefined => {
+    return useMemo(() => {
+        const gridProps = gridApi.gridProps;
+
+        const editFormApi = gridApi.editFormApi;
+        if (!gridProps.editFormProps || gridProps.readonly || gridProps.buttons?.create === null) return undefined;
+        return {
+            title: 'Создать',
+            icon: <PlusOutlined />,
+            position: 'left',
+            size: 'small',
+            onClick: () => {
+                const activeRow = gridApi.getActiveNode();
+                const formParent = activeRow ? {...activeRow?.original} : undefined;
+                editFormApi.open('create', undefined, formParent);
+            },
+        };
+    }, [gridApi]);
 };
 
 /** Get clone button props */
-const getCloneButton = (gridApi: IGridApi, activeRowKey: string, selectedRowKeys: string[]): IFormButton | undefined => {
-    const gridProps = gridApi.gridProps;
-    const editFormApi = gridApi.editFormApi;
-    if (!gridProps.editFormProps || gridProps.readonly || gridProps.buttons?.clone === null) return undefined;
+const useGetCloneButton = (gridApi: IGridApi, activeRowKey: string, selectedRowKeys: string[]): IFormButton | undefined => {
+    return useMemo(() => {
+        const gridProps = gridApi.gridProps;
+        const editFormApi = gridApi.editFormApi;
+        if (!gridProps.editFormProps || gridProps.readonly || gridProps.buttons?.clone === null) return undefined;
 
-    return {
-        title: 'Клонировать',
-        icon: <CopyOutlined />,
-        position: 'left',
-        size: 'small',
-        disabled: !activeRowKey || selectedRowKeys.length !== 1,
-        onClick: () => {
-            const activeRow = gridApi.getActiveRow();
-            if (!activeRow) return;
-            editFormApi.open('clone', {...activeRow.original}, {...activeRow.original}); //TODO get parent row
-        },
-    };
+        return {
+            title: 'Клонировать',
+            icon: <CopyOutlined />,
+            position: 'left',
+            size: 'small',
+            disabled: !activeRowKey || selectedRowKeys.length !== 1,
+            onClick: () => {
+                const activeRow = gridApi.getActiveNode();
+                if (!activeRow) return;
+                editFormApi.open('clone', {...activeRow.original}, {...activeRow.original}); //TODO get parent row
+            },
+        };
+    }, [activeRowKey, gridApi, selectedRowKeys.length]);
 };
 
 /** Get update button props */
-const getUpdateButton = (gridApi: IGridApi, activeRowKey: string, selectedRowKeys: string[]): IFormButton | undefined => {
-    const gridProps = gridApi.gridProps;
-    const editFormApi = gridApi.editFormApi;
-    if (!gridProps.editFormProps || gridProps.readonly || gridProps.buttons?.update === null) return undefined;
+const useGetUpdateButton = (gridApi: IGridApi, activeRowKey: string, selectedRowKeys: string[]): IFormButton | undefined => {
+    return useMemo(() => {
+        const gridProps = gridApi.gridProps;
+        const editFormApi = gridApi.editFormApi;
+        if (!gridProps.editFormProps || gridProps.readonly || gridProps.buttons?.update === null) return undefined;
 
-    return {
-        title: 'Редактировать',
-        icon: <EditOutlined />,
-        position: 'left',
-        size: 'small',
-        disabled: !activeRowKey || selectedRowKeys.length !== 1,
-        onClick: () => {
-            const activeRow = gridApi.getActiveRow();
-            if (!activeRow) return;
-            editFormApi.open('update', {...activeRow.original}, {...activeRow.original}); //TODO get parent row
-        },
-    };
+        return {
+            title: 'Редактировать',
+            icon: <EditOutlined />,
+            position: 'left',
+            size: 'small',
+            disabled: !activeRowKey || selectedRowKeys.length !== 1,
+            onClick: () => {
+                const activeRow = gridApi.getActiveNode();
+                if (!activeRow) return;
+                editFormApi.open('update', {...activeRow.original}, {...activeRow.original}); //TODO get parent row
+            },
+        };
+    }, [activeRowKey, gridApi, selectedRowKeys.length]);
 };
 
 /** Get delete button props */
-const getDeleteButton = (gridApi: IGridApi, selectedRowKeys: string[]): IFormButton | undefined => {
-    const gridProps = gridApi.gridProps;
-    if (!gridProps.editFormProps || gridProps.readonly || gridProps.buttons?.delete === null) return undefined;
+const useGetDeleteButton = (gridApi: IGridApi, selectedRowKeys: string[]): IFormButton | undefined => {
+    return useMemo(() => {
+        const gridProps = gridApi.gridProps;
+        if (!gridProps.editFormProps || gridProps.readonly || gridProps.buttons?.delete === null) return undefined;
 
-    return {
-        title: 'Удалить',
-        icon: <DeleteOutlined />,
-        position: 'left',
-        danger: true,
-        size: 'small',
-        disabled: !selectedRowKeys || selectedRowKeys.length === 0,
-        onClick: () => {
-            deleteHandler(gridApi);
-        },
-    };
+        return {
+            title: 'Удалить',
+            icon: <DeleteOutlined />,
+            position: 'left',
+            danger: true,
+            size: 'small',
+            disabled: !selectedRowKeys || selectedRowKeys.length === 0,
+            onClick: () => {
+                deleteHandler(gridApi);
+            },
+        };
+    }, [gridApi, selectedRowKeys]);
 };
 
 const deleteHandler = (gridApi: IGridApi) => {
     const gridProps = gridApi.gridProps;
-    const selectedRows = gridApi.getSelectedRowsData(true) as IGridRowData[];
-    const selectedRowKeys = gridApi.getSelectedRowKeys(true) as string[];
+    const selectedRows = gridApi.getSelectedRows(true) as IGridRowData[];
 
-    let messageBox: MessageBoxApi | undefined;
+    let messageBox: MessageBoxApi;
     const removeRows = () => {
         const deletePromise = gridProps.callbacks?.onDelete?.(selectedRows);
 
@@ -136,29 +153,22 @@ const deleteHandler = (gridApi: IGridApi) => {
             if (!gridProps.confirmDelete) gridApi.setIsLoading(true);
             const promiseResult = deletePromise as IGridDeletePromise;
             promiseResult
-                .then((promiseResult) => {
-                    //if (!this.isFormMounted()) return;
-                    gridApi.deleteRows(selectedRowKeys, true);
+                .then(() => {
+                    if (!gridApi.getIsMounted()) return;
+                    gridApi.deleteRows(selectedRows, true);
                     if (!gridProps.confirmDelete) gridApi.setIsLoading(false);
                     else if (messageBox) messageBox.destroy();
-
-                    //this._callbacks?.onSubmitSuccess?.(values, promiseResult.data || values, this);
-                    //this._callbacks?.onSubmitComplete?.(values, errors, this);
                 })
                 .catch((error) => {
-                    //if (!this.isFormMounted()) return;
+                    if (!gridApi.getIsMounted()) return;
                     if (!gridProps.confirmDelete) gridApi.setIsLoading(false);
                     else if (messageBox) messageBox.destroy();
-
-                    //this._callbacks?.onSubmitError?.(values, error.message, error.code, this);
-                    //this._callbacks?.onSubmitComplete?.(values, errors, this);
-
                     MessageBox.alert({content: error.message, type: 'error'});
                 });
             return;
         }
 
-        gridApi.deleteRows(selectedRowKeys, true);
+        gridApi.deleteRows(selectedRows, true);
         if (messageBox) messageBox.destroy();
     };
 

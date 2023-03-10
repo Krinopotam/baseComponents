@@ -11,7 +11,7 @@ import {Row} from '@tanstack/table-core/src/types';
 type IVerticalAlign = 'top' | 'bottom' | 'middle';
 
 export interface IGridApi {
-    /* Get grid ID */
+    /** Get grid ID */
     getGridId: () => string;
 
     /** Get current data set*/
@@ -27,10 +27,7 @@ export interface IGridApi {
     updateRows: (rowData: IGridRowData | IGridRowData[], updateActiveRow?: boolean) => IGridRowData[];
 
     /** Delete existed row/rows by keys */
-    //deleteRowsByKey: (keys: IGridRowData['id'] | IGridRowData['id'][], updateSelection?: boolean) => IGridRowData[];
-
-    /** Remove existed row/rows */
-    //deleteRows: (rowData: IGridRowData | IGridRowData[], updateSelection?: boolean) => IGridRowData[];
+    deleteRows: (keys: string | string[], updateActiveRow?: boolean) => IGridRowData[];
 
     /** Set active row */
     setActiveRowKey: (id: string | null, selectActive?: boolean, clearPrevSelection?: boolean, scrollAlign?: IVerticalAlign) => void;
@@ -58,9 +55,6 @@ export interface IGridApi {
 
     /** gey selected mrGrid rows */
     getSelectedRowsData: (asArray?: boolean) => Record<string, IGridRowData> | IGridRowData[];
-
-    /** Set selected row/rows */
-    //setSelectedRows: (row: IGridRowData | IGridRowData[] | null, clearOldSelection?: boolean) => void;
 
     /** Select all rows*/
     // selectAll: () => void;
@@ -127,15 +121,12 @@ export const useInitGridApi = ({
     gridApi.getRowByKey = useApiGetRowByKey(tableRef);
     gridApi.insertRows = useApiInsertRows(gridApi);
     gridApi.updateRows = useApiUpdateRows(gridApi);
+    gridApi.deleteRows = useApiDeleteRows(gridApi);
 
     gridApi.scrollToRowKey = useApiScrollToRowKey(gridApi);
-    /* gridApi.dataSet = useApiDataSet(dataSet, setDataSet);
-    gridApi.deleteRowsByKey = useApiDeleteRowsByKey(gridApi);
-    gridApi.deleteRows = useApiDeleteRows(gridApi);
-    gridApi.getSelectedRowKeys = useApiGetSelectedRowKeys(selectedRowKeys);
-    gridApi.setSelectedRowKeys = useApiSetSelectedRowKeys(gridApi, setSelectedRowKeys);
+    /*
 
-    gridApi.setSelectedRows = useApiSetSelectedRows(gridApi);
+    gridApi.deleteRowsByKey = useApiDeleteRowsByKey(gridApi);
     gridApi.selectAll = useApiSelectAll(gridApi);
     gridApi.getRowByKey = useApiGetRowByKey(rowsMap);
     gridApi.getRowsListByKeys = useApiGetRowsListByKeys(rowsMap);
@@ -426,41 +417,41 @@ const useApiInsertRows = (gridApi: IGridApi): IGridApi['insertRows'] => {
             const gridProps = gridApi.gridProps;
             if (!place) place = 'after';
 
-            const _dataSet = [...gridApi.getDataSet()];
+            const clonedDataSet = [...gridApi.getDataSet()];
 
-            const _rows: IGridRowData[] = isArray(rows) ? [...(rows as IGridRowData[])] : [rows as IGridRowData];
+            const clonedRows: IGridRowData[] = isArray(rows) ? [...(rows as IGridRowData[])] : [rows as IGridRowData];
 
             if (!id) {
                 if (place === 'before') {
-                    for (const row of _rows) {
+                    for (const row of clonedRows) {
                         if (!row.id) row.id = getUuid();
-                        _dataSet.unshift(row);
+                        clonedDataSet.unshift(row);
                     }
                 } else {
-                    for (const row of _rows) {
+                    for (const row of clonedRows) {
                         if (!row.id) row.id = getUuid();
-                        _dataSet.push(row);
+                        clonedDataSet.push(row);
                     }
                 }
             } else {
-                let index = findIndexInObjectsArray(_dataSet, 'id', id);
+                let index = findIndexInObjectsArray(clonedDataSet, 'id', id);
 
-                if (index < 0) index = place === 'before' ? 0 : _dataSet.length;
+                if (index < 0) index = place === 'before' ? 0 : clonedDataSet.length;
                 else if (place === 'after') index = index + 1;
 
-                for (let i = _rows.length - 1; i >= 0; i--) {
-                    const row = _rows[i];
+                for (let i = clonedRows.length - 1; i >= 0; i--) {
+                    const row = clonedRows[i];
                     if (!row.id) row.id = getUuid();
-                    _dataSet.splice(index, 0, row);
+                    clonedDataSet.splice(index, 0, row);
                 }
             }
 
-            const newDataSet = gridProps?.callbacks?.onDataSetChange?.(_dataSet) || _dataSet;
+            const newDataSet = gridProps?.callbacks?.onDataSetChange?.(clonedDataSet) || clonedDataSet;
             gridApi.setDataSet(newDataSet);
 
-            if (updateActiveRow && _rows[0]) gridApi.setActiveRowKey(_rows[0].id, true, true, 'bottom');
+            if (updateActiveRow && clonedRows[0]) gridApi.setActiveRowKey(clonedRows[0].id, true, true, 'bottom');
 
-            return _dataSet;
+            return clonedDataSet;
         },
         [gridApi]
     );
@@ -470,149 +461,23 @@ const useApiUpdateRows = (gridApi: IGridApi): IGridApi['updateRows'] => {
     return useCallback(
         (rows: IGridRowData[] | IGridRowData, updateActiveRow?: boolean): IGridRowData[] => {
             const gridProps = gridApi.gridProps;
-            const _dataSet = [...gridApi.getDataSet()];
+            const clonedDataSet = [...gridApi.getDataSet()];
 
-            const _rows: IGridRowData[] = isArray(rows) ? [...(rows as IGridRowData[])] : [rows as IGridRowData];
+            const clonedRows: IGridRowData[] = isArray(rows) ? [...(rows as IGridRowData[])] : [rows as IGridRowData];
 
-            for (let i = _rows.length - 1; i >= 0; i--) {
-                const row = _rows[i];
-                const index = findIndexInObjectsArray(_dataSet, 'id', row.id);
+            for (let i = clonedRows.length - 1; i >= 0; i--) {
+                const row = clonedRows[i];
+                const index = findIndexInObjectsArray(clonedDataSet, 'id', row.id);
                 if (index < 0) continue;
-                _dataSet[index] = row;
+                clonedDataSet[index] = row;
             }
 
-            const newDataSet = gridProps?.callbacks?.onDataSetChange?.(_dataSet) || _dataSet;
+            const newDataSet = gridProps?.callbacks?.onDataSetChange?.(clonedDataSet) || clonedDataSet;
             gridApi.setDataSet(newDataSet);
 
-            gridApi.setDataSet(_dataSet);
+            if (updateActiveRow && clonedRows[0]) gridApi.setActiveRowKey(clonedRows[0].id, true, true, 'middle');
 
-            if (updateActiveRow && _rows[0]) gridApi.setActiveRowKey(_rows[0].id, true, true, 'middle');
-
-            return _dataSet;
-        },
-        [gridApi]
-    );
-};
-
-/*
-const useApiDataSet = (dataSet: IGridRowData[], setDataSet: (dataSet: IGridRowData[]) => void): IGridApi['dataSet'] => {
-    return useCallback(
-        (rows: IGridRowData[] | null | undefined): IGridRowData[] => {
-            if (typeof rows === 'undefined') return dataSet;
-            const _rows = rows ? rows : [];
-            setDataSet(_rows);
-            return _rows;
-        },
-        [dataSet, setDataSet]
-    );
-};
-
-const useApiInsertRows = (gridApi: IGridApi): IGridApi['insertRows'] => {
-    return useCallback(
-        (rows: IGridRowData[] | IGridRowData, place?: 'before' | 'after', id?: string | number, updateSelection?: boolean): IGridRowData[] => {
-            const gridProps = gridApi.gridProps;
-            if (!place) place = 'after';
-
-            const _dataSet = [...gridApi.dataSet()];
-
-            const _rows: IGridRowData[] = isArray(rows) ? [...(rows as IGridRowData[])] : [rows as IGridRowData];
-
-            if (!id) {
-                if (place === 'before') {
-                    for (const row of _rows) {
-                        if (!row.id) row.id = getUuid();
-                        _dataSet.unshift(row);
-                    }
-                } else {
-                    for (const row of _rows) {
-                        if (!row.id) row.id = getUuid();
-                        _dataSet.push(row);
-                    }
-                }
-            } else {
-                let index = findIndexInObjectsArray(_dataSet, 'id', id);
-
-                if (index < 0) index = place === 'before' ? 0 : _dataSet.length;
-                else if (place === 'after') index = index + 1;
-
-                for (let i = _rows.length - 1; i >= 0; i--) {
-                    const row = _rows[i];
-                    if (!row.id) row.id = getUuid();
-                    _dataSet.splice(index, 0, row);
-                }
-            }
-
-            gridApi.dataSet(_dataSet);
-            gridProps.callbacks?.onDataSetChange?.(_dataSet);
-
-            if (updateSelection && _rows[0]) {
-                gridApi.setSelectedRowKeys(_rows[0].id, true);
-                gridApi.scrollToRowKey(_rows[0].id, true);
-            }
-
-            return _dataSet;
-        },
-        [gridApi]
-    );
-};
-
-const useApiUpdateRows = (gridApi: IGridApi): IGridApi['updateRows'] => {
-    return useCallback(
-        (rows: IGridRowData[] | IGridRowData, updateSelection?: boolean): IGridRowData[] => {
-            const gridProps = gridApi.gridProps;
-            const _dataSet = [...gridApi.dataSet()];
-
-            const _rows: IGridRowData[] = isArray(rows) ? [...(rows as IGridRowData[])] : [rows as IGridRowData];
-
-            for (let i = _rows.length - 1; i >= 0; i--) {
-                const row = _rows[i];
-                const index = findIndexInObjectsArray(_dataSet, 'id', row.id);
-                if (index < 0) continue;
-                _dataSet[index] = row;
-            }
-
-            gridApi.dataSet(_dataSet);
-            gridProps.callbacks?.onDataSetChange?.(_dataSet);
-
-            if (updateSelection && _rows[0]) {
-                gridApi.setSelectedRowKeys(_rows[0].id, true);
-                gridApi.scrollToRowKey(_rows[0].id, true);
-            }
-
-            return _dataSet;
-        },
-        [gridApi]
-    );
-};
-
-const useApiDeleteRowsByKey = (gridApi: IGridApi): IGridApi['deleteRowsByKey'] => {
-    return useCallback(
-        (keys: IGridRowData['id'][] | string | number, updateSelection?: boolean): IGridRowData[] => {
-            const gridProps = gridApi.gridProps;
-            const _dataSet = [...gridApi.dataSet()];
-
-            const _keys: IGridRowData['id'][] = isArray(keys) ? [...(keys as IGridRowData['id'][])] : [keys as IGridRowData['id']];
-
-            let newSelectedId: IGridRowData['id'] = '';
-            for (const key of _keys) {
-                const index = findIndexInObjectsArray(_dataSet, 'id', key);
-                if (index < 0) continue;
-                if (newSelectedId === key) newSelectedId = '';
-                if (!newSelectedId && _dataSet[index + 1]) newSelectedId = _dataSet[index + 1].id;
-                _dataSet.splice(index, 1);
-            }
-
-            gridApi.dataSet(_dataSet);
-            gridProps.callbacks?.onDataSetChange?.(_dataSet);
-
-            if (!newSelectedId && _dataSet[_dataSet.length - 1]) newSelectedId = _dataSet[_dataSet.length - 1].id;
-
-            if (updateSelection && newSelectedId) {
-                gridApi.setSelectedRowKeys(newSelectedId, true);
-                gridApi.setSelectedRowKeys(newSelectedId, true);
-            }
-
-            return _dataSet;
+            return clonedDataSet;
         },
         [gridApi]
     );
@@ -620,81 +485,40 @@ const useApiDeleteRowsByKey = (gridApi: IGridApi): IGridApi['deleteRowsByKey'] =
 
 const useApiDeleteRows = (gridApi: IGridApi): IGridApi['deleteRows'] => {
     return useCallback(
-        (rows: IGridRowData | IGridRowData[], updateSelection?: boolean): IGridRowData[] => {
-            const _rows: IGridRowData[] = isArray(rows) ? [...(rows as IGridRowData[])] : [rows as IGridRowData];
-            const keys = [];
-            for (const row of _rows) keys.push(row.id);
-            return gridApi.deleteRowsByKey(keys, updateSelection);
+        (keys: string[] | string, updateActiveRow?: boolean): IGridRowData[] => {
+            const gridProps = gridApi.gridProps;
+            const clonedDataSet = [...gridApi.getDataSet()];
+
+            const clonedKeys: string[] = isArray(keys) ? [...(keys as string[])] : [keys as string];
+
+            let newSelectedId = '';
+            for (const key of clonedKeys) {
+                const index = findIndexInObjectsArray(clonedDataSet, 'id', key);
+                if (index < 0) continue;
+                if (newSelectedId === key) newSelectedId = '';
+                if (!newSelectedId && clonedDataSet[index + 1]) newSelectedId = clonedDataSet[index + 1].id;
+                clonedDataSet.splice(index, 1);
+            }
+
+            if (!newSelectedId && clonedDataSet[clonedDataSet.length - 1]) newSelectedId = clonedDataSet[clonedDataSet.length - 1].id;
+
+            const newDataSet = gridProps?.callbacks?.onDataSetChange?.(clonedDataSet) || clonedDataSet;
+            gridApi.setDataSet(newDataSet);
+
+            if (updateActiveRow && newSelectedId) gridApi.setActiveRowKey(newSelectedId, true, true, 'bottom');
+
+            return clonedDataSet;
         },
         [gridApi]
     );
 };
 
-const useApiGetSelectedRowKeys = (selectedRowKeys: (string | number)[]): IGridApi['getSelectedRowKeys'] => {
-    return useCallback(() => {
-        return selectedRowKeys;
-    }, [selectedRowKeys]);
-};
-
-
-
-const useApiGetSelectedRows = (gridApi: IGridApi): IGridApi['getSelectedRows'] => {
-    return useCallback(() => {
-        const selectedKeys = gridApi.getSelectedRowKeys();
-        return gridApi.getRowsListByKeys(selectedKeys, true) as IGridRowData[];
-    }, [gridApi]);
-};
-
-const useApiSetSelectedRows = (gridApi: IGridApi) => {
-    return useCallback(
-        (row: IGridRowData | IGridRowData[] | null, clearOldSelection?: boolean) => {
-            if (!row) {
-                gridApi.setSelectedRowKeys(null);
-            }
-
-            const rows: IGridRowData[] = isArray(row) ? (row as IGridRowData[]) : [row as IGridRowData];
-            const keys = [];
-            for (const curRow of rows) {
-                keys.push(curRow.id);
-            }
-
-            gridApi.setSelectedRowKeys(keys, clearOldSelection);
-        },
-        [gridApi]
-    );
-};
+/*
 
 const useApiSelectAll = (gridApi: IGridApi) => {
     return useCallback(() => {
         gridApi.setSelectedRows(gridApi.dataSet(), true);
     }, [gridApi]);
-};
-
-const useApiSelectNextRow = (gridApi: IGridApi) => {
-    return useCallback(
-        (direction: 'next' | 'previous', ensureVisible?: boolean) => {
-            const rows = gridApi.dataSet();
-            if (rows.length === 0) return;
-            const currentSelected = gridApi.getSelectedRowKeys();
-            let nextRowId: IGridRowData['id'];
-
-            if (currentSelected.length > 0) {
-                const curIndex = findIndexInObjectsArray(rows, 'id', currentSelected[currentSelected.length - 1]);
-                if (curIndex < 0) nextRowId = rows[0].id;
-                else {
-                    if (direction === 'next') nextRowId = rows[curIndex + 1] ? rows[curIndex + 1].id : rows[rows.length - 1].id;
-                    else nextRowId = rows[curIndex - 1] ? rows[curIndex - 1].id : rows[0].id;
-                }
-            } else {
-                nextRowId = rows[0].id;
-            }
-
-            gridApi.setSelectedRowKeys(nextRowId, true);
-
-            if (ensureVisible) gridApi.scrollToRowKey(nextRowId, true);
-        },
-        [gridApi]
-    );
 };
 
 const useApiSelectFirstRow = (gridApi: IGridApi) => {

@@ -116,17 +116,23 @@ const getDeleteButton = (gridApi: IGridApi, selectedRowKeys: string[]): IFormBut
         danger: true,
         size: 'small',
         disabled: !selectedRowKeys || selectedRowKeys.length===0,
-        onClick: () => {//TODO rework wait form and data submit
+        onClick: () => {
             const selectedRows = gridApi.getSelectedRowsData(true) as IGridRowData[]
+            const deleteHandler = () => {
+                gridApi.deleteRows(selectedRowKeys, true);
+                gridProps.callbacks?.onDelete?.(selectedRows);
+            }
+
             if (gridProps.confirmDelete) {
-                MessageBox.confirm({
+                MessageBox.confirmWaiter({
                     content: gridProps.rowDeleteMessage || 'Удалить выбранные строки?',
                     type: 'error',
-                    onOk: () => {
-                        gridApi.deleteRows(selectedRows, true);
-                        gridProps.callbacks?.onDelete?.(selectedRows);
-                    },
+                    onOk: deleteHandler,
                 });
+            }
+            else {
+                //gridApi.buttonsApi.loading('delete', true)
+                deleteHandler()
             }
         },
     };

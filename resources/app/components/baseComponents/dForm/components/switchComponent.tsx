@@ -28,19 +28,19 @@ export interface IDFormFieldSwitchProps extends IDFormFieldProps {
 
 export const SwitchComponent = ({formApi, formProps, fieldName}: IDFormComponentProps): JSX.Element => {
     const fieldProps = formProps.fieldsProps[fieldName] as IDFormFieldSwitchProps;
-    const value = formApi.model.getValue(fieldName) as boolean | undefined;
+    const value = formApi.model.getFieldValue(fieldName) as boolean | undefined;
 
     const onChange = useCallback(
         (checked: boolean) => {
-            formApi.model.setValue(fieldName, checked || false);
-            formApi.model.setDirty(fieldName, true);
-            formApi.model.setTouched(fieldName, true);
+            formApi.model.setFieldValue(fieldName, checked || false);
+            formApi.model.setFieldDirty(fieldName, true);
+            formApi.model.setFieldTouched(fieldName, true);
         },
         [fieldName, formApi.model]
     );
 
     useEffect(() => {
-        formApi.model.setReady(fieldName, true);
+        formApi.model.setFieldReady(fieldName, true);
     }, [fieldName, formApi.model]);
 
     return (
@@ -48,7 +48,7 @@ export const SwitchComponent = ({formApi, formProps, fieldName}: IDFormComponent
             autoFocus={fieldProps.autoFocus}
             checked={value}
             checkedChildren={fieldProps.checkedChildren}
-            disabled={formApi.model.isDisabled(fieldName) || formApi.model.isReadOnly(fieldName)}
+            disabled={formApi.model.isFieldDisabled(fieldName) || formApi.model.isFieldReadOnly(fieldName)}
             loading={fieldProps.loading}
             onChange={onChange}
             unCheckedChildren={fieldProps.unCheckedChildren}

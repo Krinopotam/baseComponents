@@ -157,17 +157,17 @@ export interface IDFormFieldSelectProps extends IDFormFieldProps {
  */
 export const SelectComponent = ({formApi, formProps, fieldName}: IDFormComponentProps): JSX.Element => {
     const fieldProps = formProps.fieldsProps[fieldName] as IDFormFieldSelectProps;
-    const value = formApi.model.getValue(fieldName) as string | string[] | number | number[] | LabeledValue | LabeledValue[];
+    const value = formApi.model.getFieldValue(fieldName) as string | string[] | number | number[] | LabeledValue | LabeledValue[];
 
     const onChange = useCallback(
         (value: ValueType) => {
-            formApi.model.setValue(fieldName, value);
-            formApi.model.setDirty(fieldName, true);
+            formApi.model.setFieldValue(fieldName, value);
+            formApi.model.setFieldDirty(fieldName, true);
         },
         [fieldName, formApi.model]
     );
     const onBlur = useCallback(() => {
-        formApi.model.setTouched(fieldName, true);
+        formApi.model.setFieldTouched(fieldName, true);
     }, [fieldName, formApi.model]);
 
     // make options list
@@ -191,7 +191,7 @@ export const SelectComponent = ({formApi, formProps, fieldName}: IDFormComponent
     }
 
     useEffect(() => {
-        formApi.model.setReady(fieldName, true);
+        formApi.model.setFieldReady(fieldName, true);
     }, [fieldName, formApi.model]);
 
     return (
@@ -202,7 +202,7 @@ export const SelectComponent = ({formApi, formProps, fieldName}: IDFormComponent
             clearIcon={fieldProps.clearIcon}
             defaultActiveFirstOption={fieldProps.defaultActiveFirstOption}
             defaultOpen={fieldProps.defaultOpen}
-            disabled={formApi.model.isDisabled(fieldName) || formApi.model.isReadOnly(fieldName)}
+            disabled={formApi.model.isFieldDisabled(fieldName) || formApi.model.isFieldReadOnly(fieldName)}
             fieldNames={fieldProps.fieldNames}
             filterOption={fieldProps.filterOption}
             filterSort={fieldProps.filterSort}

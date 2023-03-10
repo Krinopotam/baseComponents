@@ -97,6 +97,16 @@ const mgGridFormConfig = new DFormModalConfig<Person>()
         new InputComponentConfig('city').label('Город'),
         new InputComponentConfig('state').label('Штат')
     )
+    .callbacks({
+        onSubmit: (values) => {
+            return new Promise((resolve, reject) => {
+                setTimeout(() => {
+                    if (Math.random() < 0.5) reject({message: 'Ошибка сохранения', code: 400});
+                    else resolve({data: values});
+                }, 2000);
+            });
+        },
+    })
     .confirmChanges(true)
     .getConfig();
 
@@ -104,17 +114,25 @@ export const MrGridWithFormAsyncSubmit = (): JSX.Element => {
     return (
         <>
             <MRGrid
-                dataSet={gridDataSet}
+                //dataSet={gridDataSet}
                 columns={columns}
                 editFormProps={mgGridFormConfig}
                 confirmDelete
                 callbacks={{
+                    onDataFetch:()=>{
+                        return new Promise((resolve, reject) => {
+                            setTimeout(() => {
+                                if (Math.random() < 0.9) reject({message: 'Ошибка загрузки данных', code: 400});
+                                else resolve({data: gridDataSet});
+                            }, 2000);
+                        });
+                    },
                     onDelete: () => {
                         return new Promise((resolve, reject) => {
                             setTimeout(() => {
                                 if (Math.random() < 0.5) reject({message: 'Ошибка удаления строк', code: 400});
                                 else resolve({data: {result: 'OK'}});
-                            }, 3000);
+                            }, 2000);
                         });
                     },
                 }}

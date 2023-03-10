@@ -55,16 +55,16 @@ export const DragAndDropComponent = ({formApi, formProps, fieldName}: IDFormComp
 
     const onChange = useCallback(
         (e: UploadChangeParam<UploadFile<unknown>>) => {
-            formApi.model.setValue(fieldName, e.fileList || null);
-            formApi.model.setDirty(fieldName, true);
-            formApi.model.setTouched(fieldName, true);
+            formApi.model.setFieldValue(fieldName, e.fileList || null);
+            formApi.model.setFieldDirty(fieldName, true);
+            formApi.model.setFieldTouched(fieldName, true);
             fieldProps.onChange?.(e);
         },
         [fieldName, fieldProps, formApi.model]
     );
 
     useEffect(() => {
-        formApi.model.setReady(fieldName, true);
+        formApi.model.setFieldReady(fieldName, true);
     }, [fieldName, formApi.model]);
 
     // TODO comb, display help depending on the settings
@@ -76,7 +76,7 @@ export const DragAndDropComponent = ({formApi, formProps, fieldName}: IDFormComp
             data={fieldProps.data}
             defaultFileList={fieldProps.defaultFileList}
             directory={fieldProps.directory}
-            disabled={formApi.model.isReadOnly(fieldName) || formApi.model.isDisabled(fieldName)}
+            disabled={formApi.model.isFieldReadOnly(fieldName) || formApi.model.isFieldDisabled(fieldName)}
             fileList={fieldProps.fileList}
             headers={fieldProps.headers}
             iconRender={fieldProps.iconRender}

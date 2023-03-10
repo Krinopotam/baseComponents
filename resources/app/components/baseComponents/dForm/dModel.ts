@@ -1,6 +1,6 @@
 /**
  * @DynamicFormModel
- * @version 0.0.38.15
+ * @version 0.0.38.16
  * @link omegatester@gmail.com
  * @author Maksim Zaytsev
  * @license MIT
@@ -343,7 +343,7 @@ export class DModel {
      * @param fieldName - field name
      * @returns field label
      */
-    public getLabel(fieldName: string) {
+    public getFieldLabel(fieldName: string) {
         return this._labels[fieldName];
     }
 
@@ -353,8 +353,8 @@ export class DModel {
      * @param value - new label value
      * @param noEvents
      */
-    public setLabel(fieldName: string, value: React.ReactNode | undefined, noEvents?: boolean) {
-        const prevValue = this.getLabel(fieldName);
+    public setFieldLabel(fieldName: string, value: React.ReactNode | undefined, noEvents?: boolean) {
+        const prevValue = this.getFieldLabel(fieldName);
         this._labels[fieldName] = value;
         if (noEvents || prevValue === value) return;
         this._callbacks?.onFieldLabelChanged?.(fieldName, value, prevValue, this);
@@ -366,7 +366,7 @@ export class DModel {
      * @param fieldName - field name
      * @returns field value
      */
-    public getValue(fieldName: string): unknown {
+    public getFieldValue(fieldName: string): unknown {
         return this._values[fieldName];
     }
 
@@ -377,8 +377,8 @@ export class DModel {
      * @param value - new value
      * @param noEvents- does not raise events/callbacks and the field rerender
      */
-    public setValue(fieldName: string, value: unknown, noEvents?: boolean) {
-        const prevValue = this.getValue(fieldName);
+    public setFieldValue(fieldName: string, value: unknown, noEvents?: boolean) {
+        const prevValue = this.getFieldValue(fieldName);
 
         const values = this.getFormValues();
         values[fieldName] = value;
@@ -399,7 +399,7 @@ export class DModel {
      * @param fieldName - field name
      * @returns the field touched status
      */
-    public isTouched(fieldName: string): boolean {
+    public isFieldTouched(fieldName: string): boolean {
         return !!this._touched[fieldName];
     }
 
@@ -409,8 +409,8 @@ export class DModel {
      * @param value - touched status
      * @param noEvents - does not raise events/callbacks
      */
-    public setTouched(fieldName: string, value: boolean, noEvents?: boolean) {
-        const prevValue = this.isTouched(fieldName);
+    public setFieldTouched(fieldName: string, value: boolean, noEvents?: boolean) {
+        const prevValue = this.isFieldTouched(fieldName);
         this._touched[fieldName] = value;
         if (!noEvents && prevValue !== value) this._callbacks?.onFieldTouchedStateChanged?.(fieldName, value, this);
     }
@@ -420,7 +420,7 @@ export class DModel {
      * @param fieldName - field name
      * @returns field dirty status
      */
-    public isDirty(fieldName: string): boolean {
+    public isFieldDirty(fieldName: string): boolean {
         return !!this._dirty[fieldName];
     }
 
@@ -430,15 +430,15 @@ export class DModel {
      * @param value - dirty status
      * @param noEvents - does not raise events/callbacks
      */
-    public setDirty(fieldName: string, value: boolean, noEvents?: boolean) {
-        const prevValue = this.isDirty(fieldName);
+    public setFieldDirty(fieldName: string, value: boolean, noEvents?: boolean) {
+        const prevValue = this.isFieldDirty(fieldName);
         this._dirty[fieldName] = value;
         if (!noEvents && prevValue !== value) this._callbacks?.onFieldDirtyStateChanged?.(fieldName, value, this);
 
         let formDirty = value;
         if (!value) {
             for (const key in this._dirty) {
-                if (this.isDirty(key)) {
+                if (this.isFieldDirty(key)) {
                     formDirty = true;
                     break;
                 }
@@ -453,7 +453,7 @@ export class DModel {
      * @param fieldName - field name
      * @returns field disable status
      */
-    public isDisabled(fieldName: string): boolean {
+    public isFieldDisabled(fieldName: string): boolean {
         return !!this._disabled[fieldName];
     }
 
@@ -463,8 +463,8 @@ export class DModel {
      * @param value - disabled status
      * @param noEvents
      */
-    public setDisabled(fieldName: string, value: boolean, noEvents?: boolean) {
-        const prevValue = this.isDisabled(fieldName);
+    public setFieldDisabled(fieldName: string, value: boolean, noEvents?: boolean) {
+        const prevValue = this.isFieldDisabled(fieldName);
         this._disabled[fieldName] = value;
         if (noEvents || prevValue === value) return;
         this._callbacks?.onFieldDisabledStateChanged?.(fieldName, value, this);
@@ -476,7 +476,7 @@ export class DModel {
      * @param fieldName - field name
      * @returns field read only status
      */
-    public isReadOnly(fieldName: string): boolean {
+    public isFieldReadOnly(fieldName: string): boolean {
         return !!this._readOnly[fieldName];
     }
 
@@ -486,8 +486,8 @@ export class DModel {
      * @param value - read only status
      * @param noEvents
      */
-    public setReadOnly(fieldName: string, value: boolean, noEvents?: boolean) {
-        const prevValue = this.isReadOnly(fieldName);
+    public setFieldReadOnly(fieldName: string, value: boolean, noEvents?: boolean) {
+        const prevValue = this.isFieldReadOnly(fieldName);
         this._readOnly[fieldName] = value;
         if (noEvents || prevValue === value) return;
         this._callbacks?.onFieldReadOnlyStateChanged?.(fieldName, value, this);
@@ -499,7 +499,7 @@ export class DModel {
      * @param fieldName - field name
      * @returns field hidden status
      */
-    public isHidden(fieldName: string): boolean {
+    public isFieldHidden(fieldName: string): boolean {
         return !!this._hidden[fieldName];
     }
 
@@ -509,15 +509,15 @@ export class DModel {
      * @param value - hidden status
      * @param noEvents
      */
-    public setHidden(fieldName: string, value: boolean, noEvents?: boolean) {
-        const prevValue = this.isHidden(fieldName);
+    public setFieldHidden(fieldName: string, value: boolean, noEvents?: boolean) {
+        const prevValue = this.isFieldHidden(fieldName);
 
         let prevGroupValue = false;
         const field = this.getFieldsProps()[fieldName];
         if (field && field.tab && field.inlineGroup) prevGroupValue = this.isGroupHidden(field.tab, field.inlineGroup);
 
         this._hidden[fieldName] = value;
-        if (value) this.setReady(fieldName, false, true); //the hidden fields are not ready because they are not rendered, but form ready status not changed
+        if (value) this.setFieldReady(fieldName, false, true); //the hidden fields are not ready because they are not rendered, but form ready status not changed
 
         if (noEvents || prevValue === value) return;
 
@@ -535,7 +535,7 @@ export class DModel {
      * @param fieldName - field name
      * @returns field ready status
      */
-    public isReady(fieldName: string): boolean {
+    public isFieldReady(fieldName: string): boolean {
         return !!this._ready[fieldName];
     }
 
@@ -545,8 +545,8 @@ export class DModel {
      * @param value - ready status
      * @param noEvents
      */
-    public setReady(fieldName: string, value: boolean, noEvents?: boolean) {
-        const prevValue = this.isReady(fieldName);
+    public setFieldReady(fieldName: string, value: boolean, noEvents?: boolean) {
+        const prevValue = this.isFieldReady(fieldName);
         if (prevValue === value) return;
 
         this._ready[fieldName] = value;
@@ -559,7 +559,7 @@ export class DModel {
      * @param fieldName - field name
      * @returns the error text of the field
      */
-    public getError(fieldName: string): string {
+    public getFieldError(fieldName: string): string {
         const errors = this.getFormErrors();
         return errors[fieldName] || '';
     }
@@ -570,8 +570,8 @@ export class DModel {
      * @param value - error text
      * @param noEvents - does not raise events/callbacks
      */
-    public setError(fieldName: string, value: string, noEvents?: boolean) {
-        const prevValue = this.getError(fieldName);
+    public setFieldError(fieldName: string, value: string, noEvents?: boolean) {
+        const prevValue = this.getFieldError(fieldName);
         const errors = this.getFormErrors();
 
         if (!value) delete errors[fieldName];
@@ -597,22 +597,49 @@ export class DModel {
      * @returns error text
      */
     public validateField(fieldName: string, noEvents?: boolean): string {
-        let error = '';
-
         //hidden fields shouldn't be validated
-        error = !this.isHidden(fieldName)
-            ? this._validator.validateValue(this.getValue(fieldName), this._validationRules[fieldName], this.getFormValues())
+        const error = !this.isFieldHidden(fieldName)
+            ? this._validator.validateValue(this.getFieldValue(fieldName), this._validationRules[fieldName], this.getFormValues())
             : '';
 
-        this.setError(fieldName, error, noEvents);
+        this.setFieldError(fieldName, error, noEvents);
 
-        if (!noEvents && !this.isHidden(fieldName)) {
-            this._callbacks?.onFieldValidated?.(fieldName, this.getValue(fieldName), error, this.isFormSubmitting(), this);
+        if (!noEvents && !this.isFieldHidden(fieldName)) {
+            this._callbacks?.onFieldValidated?.(fieldName, this.getFieldValue(fieldName), error, this.isFormSubmitting(), this);
             this.emitFieldRender(fieldName);
         }
         return error;
     }
 
+    /**
+     * Get field props
+     * @param fieldName
+     */
+    public getFieldProps(fieldName: string) {
+        return this.getFieldsProps()[fieldName];
+    }
+
+    /**
+     * Set field props
+     * @param fieldName
+     * @param fieldProps
+     */
+    public setFieldProps(fieldName: string, fieldProps: IDFormFieldProps) {
+        if (!this.getFieldProps(fieldName)) return;
+        this._fieldsProps[fieldName] = fieldProps;
+        this.emitFormRender();
+    }
+
+    /**
+     * partial update field props
+     * @param fieldName
+     * @param updatedProps
+     */
+    public updateFieldProps(fieldName: string, updatedProps: Partial<IDFormFieldProps>) {
+        const curProps = this.getFieldProps(fieldName);
+        if (!curProps) return;
+        this.setFieldProps(fieldName, {...curProps, ...updatedProps});
+    }
     //endregion
 
     //region Groups
@@ -624,7 +651,7 @@ export class DModel {
         if (!this._tabsProps[tabName] || !this._tabsProps[tabName][groupName]) return true;
 
         for (const fieldName in this._tabsProps[tabName][groupName]) {
-            if (!this.isHidden(fieldName)) return false;
+            if (!this.isFieldHidden(fieldName)) return false;
         }
 
         return true;
@@ -641,8 +668,8 @@ export class DModel {
 
         let prevValue = this.isGroupHidden(tabName, groupName);
         for (const fieldName in this._tabsProps[tabName][groupName]) {
-            if (!this.isHidden(fieldName)) prevValue = false;
-            this.setHidden(fieldName, value);
+            if (!this.isFieldHidden(fieldName)) prevValue = false;
+            this.setFieldHidden(fieldName, value);
         }
 
         if (prevValue === value) return;
@@ -659,7 +686,7 @@ export class DModel {
         if (!this._tabsProps[tabName] || !this._tabsProps[tabName][groupName]) return undefined;
 
         for (const fieldName in this._tabsProps[tabName][groupName]) {
-            if (!this.isHidden(fieldName)) return this.getFieldsProps()[fieldName];
+            if (!this.isFieldHidden(fieldName)) return this.getFieldsProps()[fieldName];
         }
 
         return undefined;
@@ -692,7 +719,7 @@ export class DModel {
 
         for (const groupName in tab) {
             const group = tab[groupName];
-            for (const fieldName in group) this.setHidden(fieldName, value, true);
+            for (const fieldName in group) this.setFieldHidden(fieldName, value, true);
         }
 
         if (prevValue !== value) this._callbacks?.onTabHiddenStateChanged?.(tabName, value, this);
@@ -724,7 +751,7 @@ export class DModel {
 
         for (const groupName in tab) {
             const group = tab[groupName];
-            for (const fieldName in group) this.setReadOnly(fieldName, value, true);
+            for (const fieldName in group) this.setFieldReadOnly(fieldName, value, true);
         }
 
         if (prevValue !== value) this._callbacks?.onTabReadOnlyStateChanged?.(tabName, value, this);
@@ -756,7 +783,7 @@ export class DModel {
 
         for (const groupName in tab) {
             const group = tab[groupName];
-            for (const fieldName in group) this.setDisabled(fieldName, value, true);
+            for (const fieldName in group) this.setFieldDisabled(fieldName, value, true);
         }
 
         if (prevValue !== value) this._callbacks?.onTabDisabledStateChanged?.(tabName, value, this);
@@ -781,7 +808,7 @@ export class DModel {
         this._dataSet = newDataSet;
         const fieldsProps = this.getFieldsProps();
         for (const fieldName in fieldsProps) {
-            this.setValue(fieldName, newDataSet?.[fieldName]);
+            this.setFieldValue(fieldName, newDataSet?.[fieldName]);
         }
     }
 
@@ -881,8 +908,8 @@ export class DModel {
             const fieldsProps = this.getFieldsProps();
             //set form ready status only if every visible field from fieldsProps has set ready status
             for (const fieldName in fieldsProps) {
-                if (this.isHidden(fieldName)) continue;
-                if (!isObjectHasOwnProperty(this._ready, fieldName) || !this.isReady(fieldName)) {
+                if (this.isFieldHidden(fieldName)) continue;
+                if (!isObjectHasOwnProperty(this._ready, fieldName) || !this.isFieldReady(fieldName)) {
                     value = false;
                     break;
                 }
@@ -956,7 +983,7 @@ export class DModel {
     public isFormHasError() {
         const errors = this.getFormErrors();
         for (const fieldName in errors) {
-            if (this.getError(fieldName)) return true;
+            if (this.getFieldError(fieldName)) return true;
         }
 
         return false;
@@ -1159,7 +1186,7 @@ export class DModel {
         for (const childName in fieldsProps) {
             const childProps = fieldsProps[childName];
             if (!childProps || !childProps.dependsOn || childProps.dependsOn.indexOf(fieldName) < 0) continue;
-            this.setHidden(childName, this.isFieldMustBeHidden(childName, fieldsProps, this.getFormValues(), this._hidden));
+            this.setFieldHidden(childName, this.isFieldMustBeHidden(childName, fieldsProps, this.getFormValues(), this._hidden));
         }
     }
 

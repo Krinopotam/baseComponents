@@ -21,10 +21,10 @@ export interface IDFormFieldLinkProps extends IDFormFieldProps {
 
 export const LinkComponent = ({formApi, formProps, fieldName}: IDFormComponentProps): JSX.Element => {
     const fieldProps = formProps.fieldsProps[fieldName] as IDFormFieldLinkProps;
-    const value = formApi.model.getValue(fieldName) as string | undefined;
+    const value = formApi.model.getFieldValue(fieldName) as string | undefined;
 
     useEffect(() => {
-        formApi.model.setReady(fieldName, true);
+        formApi.model.setFieldReady(fieldName, true);
     }, [fieldName, formApi.model]);
 
     return (

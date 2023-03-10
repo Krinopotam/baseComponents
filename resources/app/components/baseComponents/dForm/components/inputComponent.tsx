@@ -25,33 +25,33 @@ export interface IDFormFieldInputProps extends IDFormFieldProps {
 
 export const InputComponent = ({formApi, formProps, fieldName}: IDFormComponentProps): JSX.Element => {
     const fieldProps = formProps.fieldsProps[fieldName] as IDFormFieldInputProps;
-    const value = formApi.model.getValue(fieldName) as string | number | undefined;
+    const value = formApi.model.getFieldValue(fieldName) as string | number | undefined;
 
     const onChange = useCallback(
         (e: React.ChangeEvent<HTMLInputElement>) => {
-            formApi.model.setValue(fieldName, e.target.value || null);
-            formApi.model.setDirty(fieldName, true);
+            formApi.model.setFieldValue(fieldName, e.target.value || null);
+            formApi.model.setFieldDirty(fieldName, true);
         },
         [fieldName, formApi.model]
     );
     const onBlur = useCallback(() => {
-        formApi.model.setTouched(fieldName, true);
+        formApi.model.setFieldTouched(fieldName, true);
     }, [fieldName, formApi.model]);
 
     useEffect(() => {
-        formApi.model.setReady(fieldName, true);
+        formApi.model.setFieldReady(fieldName, true);
     }, [fieldName, formApi.model]);
 
     return (
         <Input
             autoFocus={fieldProps.autoFocus}
-            disabled={formApi.model.isDisabled(fieldName)}
+            disabled={formApi.model.isFieldDisabled(fieldName)}
             maxLength={fieldProps.maxLength}
             name={fieldName}
             onBlur={onBlur}
             onChange={onChange}
             placeholder={fieldProps.placeholder}
-            readOnly={formApi.model.isReadOnly(fieldName)}
+            readOnly={formApi.model.isFieldReadOnly(fieldName)}
             showCount={fieldProps.showCount}
             value={value}
         />

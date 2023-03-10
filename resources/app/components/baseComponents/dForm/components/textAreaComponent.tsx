@@ -35,21 +35,21 @@ export interface IDFormFieldTextAreaProps extends IDFormFieldInputProps {
 
 export const TextAreaComponent = ({formApi, formProps, fieldName}: IDFormComponentProps): JSX.Element => {
     const fieldProps = formProps.fieldsProps[fieldName] as IDFormFieldTextAreaProps;
-    const value = formApi.model.getValue(fieldName) as string | number | readonly string[] | undefined;
+    const value = formApi.model.getFieldValue(fieldName) as string | number | readonly string[] | undefined;
 
     const onChange = useCallback(
         (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-            formApi.model.setValue(fieldName, e.target.value || null);
-            formApi.model.setDirty(fieldName, true);
+            formApi.model.setFieldValue(fieldName, e.target.value || null);
+            formApi.model.setFieldDirty(fieldName, true);
         },
         [fieldName, formApi.model]
     );
     const onBlur = useCallback(() => {
-        formApi.model.setTouched(fieldName, true);
+        formApi.model.setFieldTouched(fieldName, true);
     }, [fieldName, formApi.model]);
 
     useEffect(() => {
-        formApi.model.setReady(fieldName, true);
+        formApi.model.setFieldReady(fieldName, true);
     }, [fieldName, formApi.model]);
 
     return (
@@ -57,13 +57,13 @@ export const TextAreaComponent = ({formApi, formProps, fieldName}: IDFormCompone
             autoFocus={fieldProps.autoFocus}
             autoSize={fieldProps.autoSize}
             cols={fieldProps.cols}
-            disabled={formApi.model.isDisabled(fieldName)}
+            disabled={formApi.model.isFieldDisabled(fieldName)}
             maxLength={fieldProps.maxLength}
             name={fieldName}
             onBlur={onBlur}
             onChange={onChange}
             placeholder={fieldProps.placeholder}
-            readOnly={formApi.model.isReadOnly(fieldName)}
+            readOnly={formApi.model.isFieldReadOnly(fieldName)}
             rows={fieldProps.rows}
             showCount={fieldProps.showCount}
             value={value}

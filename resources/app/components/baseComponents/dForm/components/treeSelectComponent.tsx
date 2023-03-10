@@ -31,12 +31,12 @@ export interface IDFormFieldTreeSelectProps extends IDFormFieldTreeSelectProps_ 
 
 export const TreeSelectComponent = ({formApi, formProps, fieldName}: IDFormComponentProps): JSX.Element => {
     const fieldProps = formProps.fieldsProps[fieldName] as IDFormFieldTreeSelectProps;
-    const value = formApi.model.getValue(fieldName) as ITreeSelectNode | ITreeSelectNode[] | undefined;
+    const value = formApi.model.getFieldValue(fieldName) as ITreeSelectNode | ITreeSelectNode[] | undefined;
 
     const onChange = useCallback(
         (value: ITreeSelectValue) => {
-            formApi.model.setValue(fieldName, value || null);
-            formApi.model.setDirty(fieldName, true);
+            formApi.model.setFieldValue(fieldName, value || null);
+            formApi.model.setFieldDirty(fieldName, true);
 
             if (fieldProps.onCustomChange !== undefined && typeof fieldProps.onCustomChange === 'function') {
                 fieldProps.onCustomChange(value);
@@ -45,18 +45,18 @@ export const TreeSelectComponent = ({formApi, formProps, fieldName}: IDFormCompo
         [fieldName, fieldProps, formApi.model]
     );
     const onBlur = useCallback(() => {
-        formApi.model.setTouched(fieldName, true);
+        formApi.model.setFieldTouched(fieldName, true);
     }, [fieldName, formApi.model]);
 
     const onClear = useCallback(() => {
-        formApi.model.setDirty(fieldName, true);
-        formApi.model.setTouched(fieldName, true);
+        formApi.model.setFieldDirty(fieldName, true);
+        formApi.model.setFieldTouched(fieldName, true);
     }, [fieldName, formApi.model]);
 
     const dataSource = usePrepareDataSource(formApi, fieldProps);
 
     useEffect(() => {
-        formApi.model.setReady(fieldName, true);
+        formApi.model.setFieldReady(fieldName, true);
     }, [fieldName, formApi.model]);
 
     return (
@@ -65,8 +65,8 @@ export const TreeSelectComponent = ({formApi, formProps, fieldName}: IDFormCompo
             defaultValueCallback={fieldProps.defaultValueCallback}
             dataSourceAdditionalData={fieldProps.dataSourceAdditionalData}
             style={{width: '100%'}}
-            disabled={formApi.model.isDisabled(fieldName)}
-            readOnly={formApi.model.isReadOnly(fieldName)}
+            disabled={formApi.model.isFieldDisabled(fieldName)}
+            readOnly={formApi.model.isFieldReadOnly(fieldName)}
             value={value}
             dataSource={dataSource}
             placeholder={fieldProps.placeholder || 'Выберите из списка'}
@@ -106,7 +106,7 @@ const usePrepareDataSource = (formApi: IDFormApi, fieldProps: IDFormFieldTreeSel
 
         const values: Record<string, unknown> = {};
         // Get a list of fields values which this field depends on
-        for (const name of fieldProps.dependsOn) values[name] = formApi.model.getValue(name);
+        for (const name of fieldProps.dependsOn) values[name] = formApi.model.getFieldValue(name);
 
         const dataSourceExtra = {parameters: {data: values || {}}};
 

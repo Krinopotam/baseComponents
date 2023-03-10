@@ -23,10 +23,10 @@ export interface IDFormFieldMrGridProps extends IDFormFieldProps {
 
 export const MrGridComponent = ({formApi, formProps, fieldName}: IDFormComponentProps): JSX.Element => {
     const fieldProps = formProps.fieldsProps[fieldName] as IDFormFieldMrGridProps;
-    const value = formApi.model.getValue(fieldName) as boolean;
+    const value = formApi.model.getFieldValue(fieldName) as boolean;
 
     useEffect(() => {
-        formApi.model.setReady(fieldName, true);
+        formApi.model.setFieldReady(fieldName, true);
     }, [fieldName, formApi.model]);
 
     return <MRGrid columns={fieldProps.columns} dataSet={fieldProps.dataSet} />;

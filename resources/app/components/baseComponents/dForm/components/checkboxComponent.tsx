@@ -23,25 +23,25 @@ export interface IDFormFieldCheckBoxProps extends IDFormFieldProps {
 
 export const CheckboxComponent = ({formApi, formProps, fieldName}: IDFormComponentProps): JSX.Element => {
     const fieldProps = formProps.fieldsProps[fieldName] as IDFormFieldCheckBoxProps;
-    const value = formApi.model.getValue(fieldName) as boolean;
+    const value = formApi.model.getFieldValue(fieldName) as boolean;
 
     const onChange = useCallback(
         (e: CheckboxChangeEvent) => {
-            formApi.model.setValue(fieldName, e.target.checked || false);
-            formApi.model.setTouched(fieldName, true);
-            formApi.model.setDirty(fieldName, true);
+            formApi.model.setFieldValue(fieldName, e.target.checked || false);
+            formApi.model.setFieldTouched(fieldName, true);
+            formApi.model.setFieldDirty(fieldName, true);
         },
         [fieldName, formApi.model]
     );
 
     useEffect(() => {
-        formApi.model.setReady(fieldName, true);
+        formApi.model.setFieldReady(fieldName, true);
     }, [fieldName, formApi.model]);
 
     return (
         <Checkbox
             checked={value}
-            disabled={formApi.model.isDisabled(fieldName) || formApi.model.isReadOnly(fieldName)}
+            disabled={formApi.model.isFieldDisabled(fieldName) || formApi.model.isFieldReadOnly(fieldName)}
             onChange={onChange}
             autoFocus={fieldProps.autoFocus}
             indeterminate={fieldProps.indeterminate}

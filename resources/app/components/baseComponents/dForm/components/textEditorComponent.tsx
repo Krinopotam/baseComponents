@@ -79,7 +79,7 @@ const defaultToolbar = [
 
 export const TextEditorComponent = ({formApi, formProps, fieldName}: IDFormComponentProps): JSX.Element => {
     const fieldProps = formProps.fieldsProps[fieldName] as IDFormTextEditorProps;
-    const value = formApi.model.getValue(fieldName) as string | undefined;
+    const value = formApi.model.getFieldValue(fieldName) as string | undefined;
     const formats = fieldProps.formats || defaultFormats;
     const toolbar = fieldProps.toolbar || defaultToolbar;
 
@@ -90,17 +90,17 @@ export const TextEditorComponent = ({formApi, formProps, fieldName}: IDFormCompo
     //TODO improve disabled mode
     const onChange = useCallback(
         (value: string) => {
-            formApi.model.setValue(fieldName, value || undefined);
-            formApi.model.setDirty(fieldName, true);
+            formApi.model.setFieldValue(fieldName, value || undefined);
+            formApi.model.setFieldDirty(fieldName, true);
         },
         [fieldName, formApi.model]
     );
     const onBlur = useCallback(() => {
-        formApi.model.setTouched(fieldName, true);
+        formApi.model.setFieldTouched(fieldName, true);
     }, [fieldName, formApi.model]);
 
     useEffect(() => {
-        formApi.model.setReady(fieldName, true);
+        formApi.model.setFieldReady(fieldName, true);
     }, [fieldName, formApi.model]);
 
     return (
@@ -111,7 +111,7 @@ export const TextEditorComponent = ({formApi, formProps, fieldName}: IDFormCompo
             onBlur={onBlur}
             modules={modules}
             formats={formats}
-            readOnly={formApi.model.isReadOnly(fieldName) || formApi.model.isDisabled(fieldName)}
+            readOnly={formApi.model.isFieldReadOnly(fieldName) || formApi.model.isFieldDisabled(fieldName)}
         />
     );
 };

@@ -105,7 +105,7 @@ export const DateTimeComponent = ({formApi, formProps, fieldName}: IDFormCompone
     const defaultTimeFormat = 'HH:mm:ss';
     const dateTimeFormat = format || defaultDateFormat + (fieldPros.showTime ? ' ' + defaultTimeFormat : '');
 
-    let value = formApi.model.getValue(fieldName) as string | undefined;
+    let value = formApi.model.getFieldValue(fieldName) as string | undefined;
     let fieldValue = value ? dayjs(value, dateTimeFormat) : undefined;
 
     let defaultValue: Dayjs | undefined;
@@ -113,34 +113,34 @@ export const DateTimeComponent = ({formApi, formProps, fieldName}: IDFormCompone
     else if (defaultFieldValue && typeof defaultFieldValue === 'string') defaultValue = dayjs(defaultFieldValue, dateTimeFormat);
     else if (dayjs.isDayjs(defaultFieldValue)) defaultValue = defaultFieldValue;
 
-    if (!formApi.model.isTouched(fieldName) && !value && defaultValue) {
+    if (!formApi.model.isFieldTouched(fieldName) && !value && defaultValue) {
         // Workaround: update the field model value to the calculated default value.
         // The form model should be the only data source. It does not keep track of the state of the DatePicker.defaultValue prop
         value = defaultValue?.format(dateTimeFormat);
-        formApi.model.setValue(fieldName, value, true);
+        formApi.model.setFieldValue(fieldName, value, true);
         fieldValue = defaultValue;
     }
 
     const onChange = useCallback(
         (e: dayjs.Dayjs | null) => {
-            formApi.model.setValue(fieldName, e?.format(dateTimeFormat));
-            formApi.model.setDirty(fieldName, true);
+            formApi.model.setFieldValue(fieldName, e?.format(dateTimeFormat));
+            formApi.model.setFieldDirty(fieldName, true);
         },
         [dateTimeFormat, fieldName, formApi.model]
     );
     const onBlur = useCallback(() => {
-        formApi.model.setTouched(fieldName, true);
+        formApi.model.setFieldTouched(fieldName, true);
     }, [fieldName, formApi.model]);
 
     useEffect(() => {
-        formApi.model.setReady(fieldName, true);
+        formApi.model.setFieldReady(fieldName, true);
     }, [fieldName, formApi.model]);
 
     return (
         <DatePicker
             {...fieldPros}
-            disabled={formApi.model.isDisabled(fieldName)}
-            readOnly={formApi.model.isReadOnly(fieldName)}
+            disabled={formApi.model.isFieldDisabled(fieldName)}
+            readOnly={formApi.model.isFieldReadOnly(fieldName)}
             format={dateTimeFormat}
             name={fieldName}
             onBlur={onBlur}

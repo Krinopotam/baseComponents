@@ -102,9 +102,9 @@ export const BaseComponent = ({fieldName, formApi, formProps, noLabel}: IDFormCo
 
     const fieldProps = formProps.fieldsProps[fieldName];
 
-    const error = formApi.model.getError(fieldName);
-    const fieldTouched = formApi.model.isTouched(fieldName);
-    const fieldHidden = formApi.model.isHidden(fieldName);
+    const error = formApi.model.getFieldError(fieldName);
+    const fieldTouched = formApi.model.isFieldTouched(fieldName);
+    const fieldHidden = formApi.model.isFieldHidden(fieldName);
     const formSubmitCount = formApi.model.getSubmitCount();
 
     const Component = formProps.fieldsProps[fieldName].component;

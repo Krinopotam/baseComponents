@@ -80,7 +80,7 @@ export const useApiValidateForm = (formApi: IDFormApi) => {
                     {messageContent}:
                     <Space direction="vertical" size={0}>
                         {Object.keys(errors).map((key) => {
-                            const fieldLabel = formApi.model.getLabel(key) || key;
+                            const fieldLabel = formApi.model.getFieldLabel(key) || key;
                             return (
                                 <Typography.Text key={key} style={{fontSize: 12}} type="secondary">
                                     {fieldLabel}: {errors[key]}

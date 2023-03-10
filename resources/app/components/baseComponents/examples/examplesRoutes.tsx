@@ -2,6 +2,7 @@
     import React from 'react';
     import {Route, Routes} from 'react-router-dom';
     import {ExamplesLayout} from './examplesLayout';
+    import {FormBetweenFieldsPage} from './pages/formBetweenFieldsPage';
     import {FormDependedFieldPage} from './pages/formDependedFieldPage';
     import {FormSimplePage} from './pages/formSimplePage';
     import {FormWithTemplatedFieldsPage} from './pages/formWithTemplatedFieldsPage';
@@ -22,7 +23,6 @@
     import {SimpleFormModalSubmittingPage} from './pages/simpleFormModalSubmittingPage';
     import {SimpleFormSubmittingPage} from './pages/simpleFormSubmittingPage';
     import {SimpleValidationPage} from './pages/simpleValidationPage';
-    import {DependenceBetweenFields} from './pages/dependenceBetweenFields';
 
 
 export const ExamplesRoutes = () => {
@@ -30,6 +30,7 @@ export const ExamplesRoutes = () => {
         <Routes>
             <Route path="/" element={<ExamplesLayout />}>
                 <Route index element={<HomePage />} />
+                <Route path="FormBetweenFields" element={<FormBetweenFieldsPage />} />;
                 <Route path="FormDependedField" element={<FormDependedFieldPage />} />;
                 <Route path="FormSimple" element={<FormSimplePage />} />;
                 <Route path="FormWithTemplatedFields" element={<FormWithTemplatedFieldsPage />} />;
@@ -50,7 +51,7 @@ export const ExamplesRoutes = () => {
                 <Route path="SimpleFormModalSubmitting" element={<SimpleFormModalSubmittingPage />} />;
                 <Route path="SimpleFormSubmitting" element={<SimpleFormSubmittingPage />} />;
                 <Route path="SimpleValidation" element={<SimpleValidationPage />} />;
-                <Route path="DependenceBetweenFields" element={<DependenceBetweenFields />} />;
+
                 <Route path="*" element={<HomePage />} />
             </Route>
         </Routes>

@@ -74,21 +74,21 @@ export interface IDFormFieldNumberProps extends IDFormFieldProps {
 export const NumberComponent = ({formApi, formProps, fieldName}: IDFormComponentProps): JSX.Element => {
     const fieldProps = formProps.fieldsProps[fieldName] as IDFormFieldNumberProps;
 
-    const value = formApi.model.getValue(fieldName) as number | undefined;
+    const value = formApi.model.getFieldValue(fieldName) as number | undefined;
 
     const onChange = useCallback(
         (val: string | number | null) => {
-            formApi.model.setValue(fieldName, val || 0);
-            formApi.model.setDirty(fieldName, true);
+            formApi.model.setFieldValue(fieldName, val || 0);
+            formApi.model.setFieldDirty(fieldName, true);
         },
         [fieldName, formApi.model]
     );
     const onBlur = useCallback(() => {
-        formApi.model.setTouched(fieldName, true);
+        formApi.model.setFieldTouched(fieldName, true);
     }, [fieldName, formApi.model]);
 
     useEffect(() => {
-        formApi.model.setReady(fieldName, true);
+        formApi.model.setFieldReady(fieldName, true);
     }, [fieldName, formApi.model]);
 
     return (
@@ -99,7 +99,7 @@ export const NumberComponent = ({formApi, formProps, fieldName}: IDFormComponent
             className={fieldProps.className}
             controls={fieldProps.controls}
             decimalSeparator={fieldProps.decimalSeparator}
-            disabled={formApi.model.isDisabled(fieldName)}
+            disabled={formApi.model.isFieldDisabled(fieldName)}
             downHandler={fieldProps.downHandler}
             formatter={fieldProps.formatter}
             keyboard={fieldProps.keyboard}
@@ -114,7 +114,7 @@ export const NumberComponent = ({formApi, formProps, fieldName}: IDFormComponent
             precision={fieldProps.precision}
             prefix={fieldProps.prefix}
             prefixCls={fieldProps.prefixCls}
-            readOnly={formApi.model.isReadOnly(fieldName)}
+            readOnly={formApi.model.isFieldReadOnly(fieldName)}
             step={fieldProps.step}
             stringMode={fieldProps.stringMode}
             style={{width: '100%'}}

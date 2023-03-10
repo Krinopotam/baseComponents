@@ -39,7 +39,7 @@ export interface IDFormFieldGridProps extends IDFormFieldProps {
 
 export const GridComponent = ({formApi, formProps, fieldName}: IDFormComponentProps): JSX.Element => {
     const fieldProps = formProps.fieldsProps[fieldName] as IDFormFieldGridProps;
-    const value = formApi.model.getValue(fieldName) as IGridRowData[];
+    const value = formApi.model.getFieldValue(fieldName) as IGridRowData[];
 
     const [gridMenuVisible, setGridMenuVisible] = useState(false);
 
@@ -52,16 +52,16 @@ export const GridComponent = ({formApi, formProps, fieldName}: IDFormComponentPr
             },
 
             onDataSetChange: (dataSet: IGridRowData[]) => {
-                formApi.model.setValue(fieldName, dataSet || null);
-                formApi.model.setDirty(fieldName, true);
-                formApi.model.setTouched(fieldName, true);
+                formApi.model.setFieldValue(fieldName, dataSet || null);
+                formApi.model.setFieldDirty(fieldName, true);
+                formApi.model.setFieldTouched(fieldName, true);
             },
         }),
         [fieldName, formApi.model]
     );
 
     useEffect(() => {
-        formApi.model.setReady(fieldName, true); //TODO rework ready state
+        formApi.model.setFieldReady(fieldName, true); //TODO rework ready state
     }, [fieldName, formApi.model]);
 
     return (
@@ -75,7 +75,7 @@ export const GridComponent = ({formApi, formProps, fieldName}: IDFormComponentPr
             editFormProps={fieldProps.editFormProps}
             multiSelect={true}
             noHover={true}
-            readonly={formApi.model.isDisabled(fieldName) || formApi.model.isReadOnly(fieldName)}
+            readonly={formApi.model.isFieldDisabled(fieldName) || formApi.model.isFieldReadOnly(fieldName)}
             rowSelection={{showSelectionColumn: false}}
             size="small"
             sticky={gridSticky}

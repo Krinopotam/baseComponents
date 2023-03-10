@@ -405,7 +405,6 @@ const useApiScrollToRowKey = (gridApi: IGridApi): IGridApi['scrollToRowKey'] => 
                 if (!key) return;
 
                 const $row = document.querySelector('.grid-container-' + gridApi.getGridId() + ' tr[data-row-key="' + key + '"]') as HTMLElement;
-                console.log($row)
                 if (!$row) return;
 
                 const $container = document.querySelector('.grid-container-' + gridApi.getGridId()) as HTMLElement;
@@ -436,12 +435,7 @@ const useApiScrollToRowKey = (gridApi: IGridApi): IGridApi['scrollToRowKey'] => 
                 });
             };
 
-            //setTimeout(scrollMethod, 0); //need timeout because often at the time of the call the grid has not yet been redrawn and the row IDs have not been set
-            new Promise((resolve)=>{
-                resolve(true)
-            }).then(()=>{
-                scrollMethod()
-            })
+            setTimeout(scrollMethod, 10); //need timeout because often at the time of the call the grid has not yet been redrawn and the row IDs have not been set
         },
         [gridApi]
     );

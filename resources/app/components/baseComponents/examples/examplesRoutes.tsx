@@ -24,6 +24,9 @@
     import {MrGridWithFormPage} from './pages/mrGridWithFormPage';
     import {MrGridWithFormAsyncPage} from './pages/mrGridWithFormAsyncPage';
     import {PlayGroundPage} from './pages/playGroundPage';
+    import {TabulatorGridSimplePage} from './pages/tabulatorGridSimplePage';
+    import {TabulatorGridWithFormPage} from './pages/tabulatorGridWithFormPage';
+    import {TabulatorGridWithFormAsyncPage} from './pages/tabulatorGridWithFormAsyncPage';
 
 
 export const ExamplesRoutes = () => {
@@ -52,6 +55,9 @@ export const ExamplesRoutes = () => {
                 <Route path="MrGridWithForm" element={<MrGridWithFormPage />} />;
                 <Route path="MrGridWithFormAsync" element={<MrGridWithFormAsyncPage />} />;
                 <Route path="PlayGround" element={<PlayGroundPage />} />;
+                <Route path="TabulatorGridSimple" element={<TabulatorGridSimplePage />} />;
+                <Route path="TabulatorGridWithForm" element={<TabulatorGridWithFormPage />} />;
+                <Route path="TabulatorGridWithFormAsync" element={<TabulatorGridWithFormAsyncPage />} />;
 
                 <Route path="*" element={<Home />} />
             </Route>

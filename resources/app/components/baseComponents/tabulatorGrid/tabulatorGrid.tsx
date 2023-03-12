@@ -1,59 +1,95 @@
 import 'tabulator-tables/dist/css/tabulator_simple.css';
-import React from 'react';
-import ReactTabulator, {IReactTabulatorProps} from 'baseComponents/tabulatorGrid/reactTabulator/reactTabulator';
-import {Stylization} from 'baseComponents/tabulatorGrid/stylization';
+import React, {useRef, useState} from 'react';
+import {IReactTabulatorProps} from 'baseComponents/tabulatorGrid/reactTabulator/reactTabulator';
+import {IButtonsRowApi, IFormButton, IFormButtons} from "baseComponents/buttonsRow";
+import {IDFormModalProps} from "baseComponents/dFormModal/dFormModal";
+import {TPromise} from "baseComponents/serviceTypes";
+import {IGridApi, useInitGridApi} from './hooks/api';
+import {IDFormModalApi} from "baseComponents/dFormModal/hooks/api";
+import {Tabulator} from "tabulator-tables";
+import {useInitialFetchData} from "baseComponents/tabulatorGrid/hooks/initialFetchRows";
+import {GridRender} from "baseComponents/tabulatorGrid/renders/gridRender";
 
-const columns: IReactTabulatorProps['columns'] = [
-    {title: 'Name', field: 'name'},
-    {title: 'Age', field: 'age', hozAlign: 'left', formatter: 'progress'},
-    {title: 'Favourite Color', field: 'col'},
-    {title: 'Date Of Birth', field: 'dob', hozAlign: 'center'},
-    {title: 'Rating', field: 'rating', hozAlign: 'center', formatter: 'star'},
-    {title: 'Passed?', field: 'passed', hozAlign: 'center', formatter: 'tickCross'},
-];
+export interface IGridRowData extends Record<string, unknown> {
+    /** Row id */
+    id: string | number;
+    children?: IGridRowData[];
+}
 
-const data: IReactTabulatorProps['data'] = [
-    {id: 1, name: 'Oli Bob', age: '12', col: 'red', dob: ''},
-    {id: 2, name: 'Mary May', age: '1', col: 'blue', dob: '14/05/1982'},
-    {id: 3, name: 'Christine Lobowski', age: '42', col: 'green', dob: '22/05/1982'},
-    {id: 4, name: 'Brendon Philips', age: '125', col: 'orange', dob: '01/08/1980'},
-    {id: 5, name: 'Margret Marmajuke', age: '16', col: 'yellow', dob: '31/01/1999'},
-    {id: 6, name: 'Oli Bob', age: '12', col: 'red', dob: ''},
-    {id: 7, name: 'Mary May', age: '1', col: 'blue', dob: '14/05/1982'},
-    {id: 8, name: 'Christine Lobowski', age: '42', col: 'green', dob: '22/05/1982'},
-    {id: 9, name: 'Brendon Philips', age: '125', col: 'orange', dob: '01/08/1980'},
-    {id: 10, name: 'Margret Marmajuke', age: '16', col: 'yellow', dob: '31/01/1999'},
-    {id: 11, name: 'Oli Bob', age: '12', col: 'red', dob: ''},
-    {id: 12, name: 'Mary May', age: '1', col: 'blue', dob: '14/05/1982'},
-    {id: 13, name: 'Christine Lobowski', age: '42', col: 'green', dob: '22/05/1982'},
-    {id: 14, name: 'Brendon Philips', age: '125', col: 'orange', dob: '01/08/1980'},
-    {id: 15, name: 'Margret Marmajuke', age: '16', col: 'yellow', dob: '31/01/1999'},
-    {id: 16, name: 'Oli Bob', age: '12', col: 'red', dob: ''},
-    {id: 17, name: 'Mary May', age: '1', col: 'blue', dob: '14/05/1982'},
-    {id: 18, name: 'Christine Lobowski', age: '42', col: 'green', dob: '22/05/1982'},
-    {id: 19, name: 'Brendon Philips', age: '125', col: 'orange', dob: '01/08/1980'},
-    {id: 20, name: 'Margret Marmajuke', age: '16', col: 'yellow', dob: '31/01/1999'},
-];
+export interface IGridProps {
+    /** Grid Id */
+    id?: string;
 
-export const TabulatorGrid = (): JSX.Element => {
-    return (
-        <>
-            <Stylization />
-            <ReactTabulator
-                data={data}
-                columns={columns}
-                //options={options}
-                layout={'fitColumns'}
-                height={300}
-                width={'100%'}
-                selectable={true}
+    /** Grid columns */
+    columns: IReactTabulatorProps['columns'];
 
-                events={{
-                    headerClick: () => {
-                        alert('!!!!!');
-                    },
-                }}
-            />
-        </>
-    );
+    /** Grid data set */
+    dataSet?: IGridRowData[];
+
+    /** Grid height */
+    bodyHeight?: number | string | 'fill';
+
+    /** Grid class name */
+    className?: string;
+
+    /** table style size */
+    size?: 'small' | 'middle' | 'large';
+
+    buttons?: Record<'view' | 'create' | 'clone' | 'update' | 'delete', IFormButton | null> | IFormButtons;
+
+    /** Table can't be edited */
+    readonly?: boolean;
+
+    /** Edit modal controls parameters */
+    editFormProps?: IDFormModalProps;
+
+    /** Rows multiSelect */
+    multiSelect?: boolean;
+
+    /** Disable row hover effect */
+    noHover?: boolean;
+
+    /** Grid callbacks */
+    callbacks?: IGridCallbacks;
+
+    /** Confirm message before rows delete */
+    rowDeleteMessage?: React.ReactNode;
+
+    /** Tree view mode */
+    treeMode?: boolean;
+
+    /** Should confirm before delete */
+    confirmDelete?: boolean;
+}
+
+export interface IGridCallbacks {
+    /** Fires when menu visibility status changed */
+    onMenuVisibilityChanged?: (isVisible: boolean, gridApi: IGridApi) => void;
+
+    /** Fires, when the dataSet changed. User can modify the dataSet before dataSet will apply */
+    onDataSetChange?: (dataSet: IGridRowData[], gridApi: IGridApi) => IGridRowData[] | void;
+
+    /** fires when the grid trying to fetch data */
+    onDataFetch?: (gridApi: IGridApi) => IGridDataSourcePromise | undefined | void;
+
+    /** Callback executed when selected rows change */
+    onSelectionChange?: (keys: string[], selectedRows: IGridRowData[], gridApi: IGridApi) => void;
+
+    /** Callback executed when selected rows delete */
+    onDelete?: (selectedRows: IGridRowData[], gridApi: IGridApi) => IGridDeletePromise | void | undefined;
+}
+
+export type IGridDataSourcePromise = TPromise<{data: Record<string, unknown>[]}, {message: string; code: number}>;
+export type IGridDeletePromise = TPromise<{data: Record<string, unknown>}, {message: string; code: number}>;
+
+const TabulatorGrid = (props: IGridProps): JSX.Element => {
+    const tableRef = useRef<Tabulator>(null);
+    const [editFormApi] = useState<IDFormModalApi>({} as IDFormModalApi);
+    const [buttonsApi] = useState({} as IButtonsRowApi);
+    const gridApi = useInitGridApi({props, tableRef, editFormApi, buttonsApi});
+    useInitialFetchData(gridApi);
+
+    return <GridRender tableRef={tableRef} gridApi={gridApi} />;
 };
+
+export default TabulatorGrid;

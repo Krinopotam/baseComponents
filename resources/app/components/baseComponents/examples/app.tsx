@@ -17,10 +17,10 @@ dayjs.locale('ru');
         <ConfigProvider
             locale={ruRU}
             theme={{
-                token: {
+                /*token: {
                     colorPrimary: '#00b96b',
                     borderRadius: 4,
-                },
+                },*/
                 components: {Modal: {paddingContentHorizontal: 0}},
                 algorithm: theme.defaultAlgorithm,
             }}

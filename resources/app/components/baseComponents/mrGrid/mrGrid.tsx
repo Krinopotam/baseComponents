@@ -85,7 +85,6 @@ export type IGridDeletePromise = TPromise<{data: Record<string, unknown>}, {mess
 //nested data is ok, see accessorKeys in ColumnDef below
 
 const MRGrid = (props: IGridProps): JSX.Element => {
-    useWhyDidYouUpdate('MRGrid', props);
     const tableRef = useRef<MRT_TableInstance>(null);
     const [editFormApi] = useState<IDFormModalApi>({} as IDFormModalApi);
     const [buttonsApi] = useState({} as IButtonsRowApi);

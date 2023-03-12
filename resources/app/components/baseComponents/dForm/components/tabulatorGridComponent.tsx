@@ -9,25 +9,25 @@
 import React, {useEffect} from 'react';
 
 import {IDFormComponentProps, IDFormFieldProps} from './baseComponent';
-import MRGrid, {IGridRowData} from 'baseComponents/mrGrid/mrGrid';
-import {MRT_ColumnDef} from 'material-react-table';
+import TabulatorGrid, {IGridRowData} from "baseComponents/tabulatorGrid/tabulatorGrid";
+import {IReactTabulatorProps} from "baseComponents/tabulatorGrid/reactTabulator/reactTabulator";
 
 // !used in configGenerator parsing. Don't use curly brackets and multi rows comments!
-export interface IDFormFieldMrGridProps extends IDFormFieldProps {
+export interface IDFormFieldTabulatorGridProps extends IDFormFieldProps {
     /** Grid columns */
-    columns: MRT_ColumnDef[];
+    columns:  IReactTabulatorProps['columns'] ;
 
     /** Grid data set */
     dataSet?: IGridRowData[];
 }
 
-export const MrGridComponent = ({formApi, formProps, fieldName}: IDFormComponentProps): JSX.Element => {
-    const fieldProps = formProps.fieldsProps[fieldName] as IDFormFieldMrGridProps;
+export const TabulatorGridComponent = ({formApi, formProps, fieldName}: IDFormComponentProps): JSX.Element => {
+    const fieldProps = formProps.fieldsProps[fieldName] as IDFormFieldTabulatorGridProps;
     //const value = formApi.model.getFieldValue(fieldName) as boolean;
 
     useEffect(() => {
         formApi.model.setFieldReady(fieldName, true);
     }, [fieldName, formApi.model]);
 
-    return <MRGrid columns={fieldProps.columns} dataSet={fieldProps.dataSet} />;
+    return <TabulatorGrid columns={fieldProps.columns} dataSet={fieldProps.dataSet} />;
 };

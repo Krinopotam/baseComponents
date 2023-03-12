@@ -6,11 +6,11 @@ const {useToken} = theme;
 
 interface ITabulatorStyle {
     containerBgColor: string;
-    selectedBgColor:string
-    selectedHoverBgColor:string;
+    selectedBgColor: string;
+    selectedHoverBgColor: string;
     colColor: string;
     borderRadius: number;
-    borderColor:string;
+    borderColor: string;
     textColor: string;
     textFontSize: number;
 }
@@ -43,6 +43,12 @@ const TabulatorCss = createGlobalStyle`
         .tabulator-col-sorter {
           color: ${(props: ITabulatorStyle) => props.textColor};
         }
+
+        /* Workaround to hide/show headerFilter */
+        .tabulator-header-filter {
+          display: none;
+        }
+        /* ------- */
       }
     }
     
@@ -88,18 +94,15 @@ export const Stylization = (): JSX.Element => {
     const {token} = useToken();
 
     return (
-            <TabulatorCss
-                containerBgColor={token.colorBgContainer}
-                selectedBgColor={token.colorPrimaryBg}
-                selectedHoverBgColor={token.colorPrimaryBgHover}
-                borderRadius={token.borderRadius}
-                borderColor={token.colorBorderSecondary}
-                textColor={token.colorText}
-                textFontSize={token.fontSize}
-                colColor={token.colorFillQuaternary}
-
-
-            />
-
+        <TabulatorCss
+            containerBgColor={token.colorBgContainer}
+            selectedBgColor={token.colorPrimaryBg}
+            selectedHoverBgColor={token.colorPrimaryBgHover}
+            borderRadius={token.borderRadius}
+            borderColor={token.colorBorderSecondary}
+            textColor={token.colorText}
+            textFontSize={token.fontSize}
+            colColor={token.colorFillQuaternary}
+        />
     );
 };

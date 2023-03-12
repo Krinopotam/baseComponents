@@ -1,14 +1,14 @@
 import {IFormButton, IFormButtons} from 'baseComponents/buttonsRow';
-import React, {useCallback, useMemo, useState} from 'react';
-import {CopyOutlined, DeleteOutlined, EditOutlined, EyeOutlined, PlusOutlined} from '@ant-design/icons';
+import React, {useCallback, useMemo, useRef, useState} from 'react';
+import {CopyOutlined, DeleteOutlined, EditOutlined, EyeOutlined, FilterFilled, FilterOutlined, PlusOutlined} from '@ant-design/icons';
 import {MessageBox} from 'baseComponents/messageBox';
 import {isPromise, mergeObjects} from 'helpers/helpersObjects';
 import {MessageBoxApi} from 'components/baseComponents/messageBox/messageBoxApi';
-import {IGridApi} from "baseComponents/tabulatorGrid/hooks/api";
-import {IGridDeletePromise, IGridRowData} from "baseComponents/tabulatorGrid/tabulatorGrid";
+import {IGridApi} from 'baseComponents/tabulatorGrid/hooks/api';
+import {IGridDeletePromise, IGridRowData} from 'baseComponents/tabulatorGrid/tabulatorGrid';
 
 export const useInitButtons = (gridApi: IGridApi): IFormButtons => {
-    const [,refreshButtons] = useState({});
+    const [, refreshButtons] = useState({});
     const buttons = gridApi.gridProps.buttons;
     const activeRowKey = gridApi.getActiveRowKey();
     const selectedRows = gridApi.getSelectedRows() as IGridRowData[];
@@ -20,30 +20,32 @@ export const useInitButtons = (gridApi: IGridApi): IFormButtons => {
     const cloneButton = useGetCloneButton(gridApi, activeRowKey, selectedRows);
     const updateButton = useGetUpdateButton(gridApi, activeRowKey, selectedRows);
     const deleteButton = useGetDeleteButton(gridApi, selectedRows);
+    const filterToggleButton = useGetFilterToggleButton(gridApi);
 
-    const gridButtons = useMemo(()=>{
+    const gridButtons = useMemo(() => {
         const defaultButtons = {
             view: vewButton,
             create: createButton,
             clone: cloneButton,
             update: updateButton,
             delete: deleteButton,
+            filterToggle: filterToggleButton,
         } as IFormButtons;
 
         return mergeObjects(defaultButtons, buttons);
-    }, [buttons, cloneButton, createButton, deleteButton, updateButton, vewButton])
+    }, [buttons, cloneButton, createButton, deleteButton, filterToggleButton, updateButton, vewButton]);
 
     return gridButtons;
 };
 
-const useRefreshButtons = ( refreshButtons: React.Dispatch<React.SetStateAction<Record<string, unknown>>>)=>{
-    return useCallback(()=>{
-        refreshButtons({})
-    }, [refreshButtons])
-}
+const useRefreshButtons = (refreshButtons: React.Dispatch<React.SetStateAction<Record<string, unknown>>>) => {
+    return useCallback(() => {
+        refreshButtons({});
+    }, [refreshButtons]);
+};
 
 /** Get view button props */
-const useGetViewButton = (gridApi: IGridApi, activeRowKey: string|number|undefined, selectedRow: IGridRowData[]): IFormButton | undefined => {
+const useGetViewButton = (gridApi: IGridApi, activeRowKey: string | number | undefined, selectedRow: IGridRowData[]): IFormButton | undefined => {
     return useMemo(() => {
         const gridProps = gridApi.gridProps;
         const editFormApi = gridApi.editFormApi;
@@ -86,7 +88,7 @@ const useGetCreateButton = (gridApi: IGridApi): IFormButton | undefined => {
 };
 
 /** Get clone button props */
-const useGetCloneButton = (gridApi: IGridApi, activeRowKey: string|number|undefined, selectedRow: IGridRowData[]): IFormButton | undefined => {
+const useGetCloneButton = (gridApi: IGridApi, activeRowKey: string | number | undefined, selectedRow: IGridRowData[]): IFormButton | undefined => {
     return useMemo(() => {
         const gridProps = gridApi.gridProps;
         const editFormApi = gridApi.editFormApi;
@@ -108,7 +110,7 @@ const useGetCloneButton = (gridApi: IGridApi, activeRowKey: string|number|undefi
 };
 
 /** Get update button props */
-const useGetUpdateButton = (gridApi: IGridApi, activeRowKey: string|number|undefined, selectedRow: IGridRowData[]): IFormButton | undefined => {
+const useGetUpdateButton = (gridApi: IGridApi, activeRowKey: string | number | undefined, selectedRow: IGridRowData[]): IFormButton | undefined => {
     return useMemo(() => {
         const gridProps = gridApi.gridProps;
         const editFormApi = gridApi.editFormApi;
@@ -188,4 +190,56 @@ const deleteHandler = (gridApi: IGridApi) => {
     } else {
         removeRows();
     }
+};
+
+/** Get update button props */
+const useGetFilterToggleButton = (gridApi: IGridApi): IFormButton | undefined => {
+    const toggle = useRef(false);
+    return useMemo(() => {
+        const gridProps = gridApi.gridProps;
+        if (gridProps.buttons?.filterToggle === null) return undefined;
+
+        return {
+            title: '',
+            icon: <FilterOutlined />,
+            position: 'right',
+            size: 'small',
+            //disabled: !activeRowKey || selectedRow.length !== 1,
+            onClick: () => {
+                // Show/hide filters
+                // *Workaround:
+                // Tabulator allows to show/hide headerFilter only via updateColumnDefinition, which is very slow and leads to glitches and regenerates all columns
+                // Let's use a workaround. We include headerFilter on grid initialization and hide it in CSS. When necessary, we display it, but this requires additional style calculations.
+                const filterHeight = 33;
+                const tableHolder = document.querySelector<HTMLElement>('#' + gridApi.getGridId() + ' .tabulator-tableholder');
+                const headerElements = document.querySelectorAll<HTMLElement>('#' + gridApi.getGridId() + ' .tabulator-col');
+                const filterElements = document.querySelectorAll<HTMLElement>('#' + gridApi.getGridId() + ' .tabulator-header-filter');
+                if (!tableHolder || !headerElements || !filterElements) return;
+
+                toggle.current = !toggle.current;
+                if (!toggle.current) gridApi.tableApi?.clearHeaderFilter();
+
+                filterElements.forEach((elem) => {
+                    elem.style.display = !toggle.current ? 'none' : 'block';
+                });
+
+                let headerHeight = 0;
+                headerElements.forEach((elem) => {
+                    headerHeight = elem.offsetHeight;
+                    elem.style.height = elem.offsetHeight + filterHeight * (toggle.current ? 1 : -1) + 'px';
+                });
+
+                const tableHolderOffset = headerHeight + filterHeight * (toggle.current ? 1 : -1)
+                tableHolder.style.minHeight = 'calc(100% - ' + tableHolderOffset + 'px)';
+                tableHolder.style.height = 'calc(100% - ' + tableHolderOffset + 'px)';
+                tableHolder.style.maxHeight = 'calc(100% - ' + tableHolderOffset + 'px)';
+
+                gridApi.buttonsApi.updateButtons({
+                    filterToggle: {
+                        active: toggle.current,
+                    },
+                });
+            },
+        };
+    }, [gridApi]);
 };

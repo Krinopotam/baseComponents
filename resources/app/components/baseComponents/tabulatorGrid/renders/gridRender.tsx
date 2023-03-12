@@ -5,6 +5,7 @@ import {IGridApi} from 'baseComponents/tabulatorGrid/hooks/api';
 
 export const GridRender = ({tableRef, gridApi}: {tableRef: React.MutableRefObject<Tabulator | null>; gridApi: IGridApi}): JSX.Element => {
     const gridProps = gridApi.gridProps;
+    const columnDef = useColumnDef(gridProps.columnDefaults);
     return useMemo(() => {
         let tableBuilt = false;
         return (
@@ -44,7 +45,7 @@ export const GridRender = ({tableRef, gridApi}: {tableRef: React.MutableRefObjec
                 initialFilter={gridProps.initialFilter}
                 initialSort={gridProps.initialSort}
                 headerVisible={gridProps.headerVisible !== false}
-                columnDefaults={gridProps.columnDefaults || ({} as ColumnDefinition)}
+                columnDefaults={columnDef}
                 sortMode={gridProps.gridMode}
                 filterMode={gridProps.gridMode}
                 rowFormatter={(row: RowComponent) => {
@@ -58,9 +59,6 @@ export const GridRender = ({tableRef, gridApi}: {tableRef: React.MutableRefObjec
                     tableBuilt: () => {
                         tableBuilt = true;
                     },
-                    dataChanged: () => {
-                        gridProps.callbacks?.onDataSetChange?.(gridApi.tableApi?.getData() || [], gridApi);
-                    },
                     activeRowChanged: () => {
                         gridApi.buttonsApi.refreshButtons();
                     },
@@ -68,10 +66,9 @@ export const GridRender = ({tableRef, gridApi}: {tableRef: React.MutableRefObjec
             />
         );
     }, [
+        columnDef,
         gridApi,
-        gridProps.callbacks,
         gridProps.className,
-        gridProps.columnDefaults,
         gridProps.columns,
         gridProps.frozenRows,
         gridProps.frozenRowsField,
@@ -102,4 +99,16 @@ export const GridRender = ({tableRef, gridApi}: {tableRef: React.MutableRefObjec
         gridProps.width,
         tableRef,
     ]);
+};
+
+export const useColumnDef = (columnDef: ColumnDefinition | undefined) => {
+    return useMemo(() => {
+        const colDef: Partial<ColumnDefinition> = {
+            resizable: 'header',
+            headerFilter: true,
+        };
+
+        const userColDef = columnDef || {};
+        return {...colDef, ...userColDef} as ColumnDefinition;
+    }, [columnDef]);
 };

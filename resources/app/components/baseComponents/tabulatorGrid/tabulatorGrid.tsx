@@ -35,7 +35,7 @@ export interface IGridProps {
     /** Grid class name */
     className?: string;
 
-    buttons?: Record<'view' | 'create' | 'clone' | 'update' | 'delete', IFormButton | null> | IFormButtons;
+    buttons?: Record<'view' | 'create' | 'clone' | 'update' | 'delete' | 'filterToggle', IFormButton | null> | IFormButtons;
 
     /** Table can't be edited */
     readOnly?: boolean;

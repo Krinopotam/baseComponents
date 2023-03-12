@@ -122,7 +122,6 @@ export const useInitGridApi = ({
     buttonsApi: IGridApi['buttonsApi'];
 }): IGridApi => {
     const [gridApi] = useState({} as IGridApi);
-    const [dataSet, setDataSet] = useState(props.dataSet);
     const [isLoading, setIsLoading] = useState(false);
     const unmountRef = useUnmountedRef();
 
@@ -132,8 +131,8 @@ export const useInitGridApi = ({
     gridApi.buttonsApi = buttonsApi;
     gridApi.getIsMounted = useApiIsMounted(unmountRef);
     gridApi.getGridId = useApiGetGridId(gridApi);
-    gridApi.getDataSet = useApiGetDataSet(dataSet || [], gridApi);
-    gridApi.setDataSet = useApiSetDataSet(setDataSet, gridApi);
+    gridApi.getDataSet = useApiGetDataSet(props.dataSet || [], gridApi);
+    gridApi.setDataSet = useApiSetDataSet(gridApi);
     gridApi.getIsLoading = useApiGetIsLoading(isLoading);
     gridApi.setIsLoading = useApiSetIsLoading(setIsLoading);
     gridApi.setActiveRowKey = useApiSetActiveRowKey(gridApi);
@@ -179,13 +178,14 @@ const useApiGetDataSet = (dataSet: IGridRowData[], gridApi: IGridApi): IGridApi[
     }, [dataSet, gridApi.tableApi]);
 };
 
-const useApiSetDataSet = (setDataSet: React.Dispatch<React.SetStateAction<IGridRowData[] | undefined>>, gridApi: IGridApi): IGridApi['setDataSet'] => {
+const useApiSetDataSet = (gridApi: IGridApi): IGridApi['setDataSet'] => {
     return useCallback(
         (dataSet: IGridRowData[] | null) => {
+            gridApi.tableApi?.clearData();
             const newDataSet = gridApi.gridProps.callbacks?.onDataSetChange?.(dataSet || [], gridApi) || dataSet;
-            setDataSet(newDataSet || []);
+            gridApi.tableApi?.addData(newDataSet || []);
         },
-        [gridApi, setDataSet]
+        [gridApi]
     );
 };
 
@@ -336,7 +336,9 @@ const useApiInsertRows = (gridApi: IGridApi): IGridApi['insertRows'] => {
             const above = place === 'above';
 
             const clonedRows: IGridRowData[] = isArray(rows) ? [...(rows as IGridRowData[])] : [rows as IGridRowData];
-            gridApi.tableApi?.addData(clonedRows, above, key); //add new data above existing row with index of 3
+            gridApi.tableApi?.addData(clonedRows, above, key).then(() => {
+                gridApi.gridProps.callbacks?.onDataSetChange?.(gridApi.tableApi?.getData() || [], gridApi);
+            });
 
             if (updateActiveRow && clonedRows[0]) gridApi.setActiveRowKey(clonedRows[0].id, true, 'center');
         },
@@ -348,7 +350,9 @@ const useApiUpdateRows = (gridApi: IGridApi): IGridApi['updateRows'] => {
     return useCallback(
         (rows: IGridRowData[] | IGridRowData, updateActiveRow?: boolean) => {
             const clonedRows: IGridRowData[] = isArray(rows) ? [...(rows as IGridRowData[])] : [rows as IGridRowData];
-            gridApi.tableApi?.updateData(clonedRows);
+            gridApi.tableApi?.updateData(clonedRows).then(() => {
+                gridApi.gridProps.callbacks?.onDataSetChange?.(gridApi.tableApi?.getData() || [], gridApi);
+            });
 
             if (updateActiveRow && clonedRows[0]) gridApi.setActiveRowKey(clonedRows[0].id, true, 'center');
         },
@@ -377,6 +381,7 @@ const useApiDeleteRowsByKeys = (gridApi: IGridApi): IGridApi['deleteRowsByKeys']
             } else gridApi.tableApi?.setActiveRow(null, true);
 
             gridApi.tableApi?.deleteRow(clonedKeys);
+            gridApi.gridProps.callbacks?.onDataSetChange?.(gridApi.tableApi?.getData() || [], gridApi);
         },
         [gridApi]
     );
@@ -388,7 +393,7 @@ const useApiDeleteRows = (gridApi: IGridApi): IGridApi['deleteRows'] => {
             const clonedRows: IGridRowData[] = isArray(rows) ? [...(rows as IGridRowData[])] : [rows as IGridRowData];
             const keys = [];
             for (const row of clonedRows) keys.push(row.id);
-            return gridApi.deleteRowsByKeys(keys);
+            gridApi.deleteRowsByKeys(keys);
         },
         [gridApi]
     );

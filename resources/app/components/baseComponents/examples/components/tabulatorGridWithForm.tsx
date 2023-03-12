@@ -60,7 +60,7 @@ export const TabulatorGridWithForm = (): JSX.Element => {
             {/*Description Start*/}
             <h1>Пример простого грида Tabulator с формой редактирование</h1>
             {/*Description End*/}
-            <TabulatorGrid id={'TabulatorGridWithForm'} columns={columns} dataSet={data} editFormProps={editFormConfig} confirmDelete />
+            <TabulatorGrid id={'TabulatorGridWithForm'} columns={columns} dataSet={data} editFormProps={editFormConfig} confirmDelete height={500} layout={'fitColumns'} />
         </>
     );
 };

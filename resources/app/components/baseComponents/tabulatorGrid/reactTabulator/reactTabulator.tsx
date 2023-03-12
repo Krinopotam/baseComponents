@@ -1,18 +1,22 @@
 import {TabulatorFull as Tabulator, Options, EventCallBackMethods, RowComponent} from 'tabulator-tables';
 import React from 'react';
-import {getUuid} from 'helpers/helpersString';
 import {useInit} from 'baseComponents/tabulatorGrid/reactTabulator/hooks/init';
 import {
     IActiveSelectionModuleRow,
-    IActiveSelectionModuleTable, IActiveSelectionModuleTableEvents,
-    IActiveSelectionModuleTableOptions
+    IActiveSelectionModuleTable,
+    IActiveSelectionModuleTableEvents,
+    IActiveSelectionModuleTableOptions,
 } from 'baseComponents/tabulatorGrid/reactTabulator/modules/activeSelectionModule';
+import {getUuid} from 'helpers/helpersString';
 
-export type ITabulator = Tabulator & IActiveSelectionModuleTable
+export type ITabulator = Tabulator & IActiveSelectionModuleTable;
 
-export type ITabulatorRow = RowComponent & IActiveSelectionModuleRow
+export type ITabulatorRow = RowComponent & IActiveSelectionModuleRow;
 
 export interface IReactTabulatorProps extends IActiveSelectionModuleTableOptions, Omit<Options, 'footerElement'> {
+    /** Grid ID*/
+    gridId?: string;
+
     /** Grid footer element*/
     footerElement?: JSX.Element;
 
@@ -25,18 +29,33 @@ export interface IReactTabulatorProps extends IActiveSelectionModuleTableOptions
     /** Grid container width*/
     width?: string | number;
 
+    /** Grid container max width*/
+    minWidth?: string | number;
+
+    /** Grid container max width*/
+    maxWidth?: string | number;
+
+    /** If set to true, then when you resize a column its neighbouring column has the opposite resize applied to keep to total width of columns the same */
+    resizableColumnFit?: boolean;
+
     /** On the tableRef ready callback */
     onTableRef?: (ref: React.MutableRefObject<ITabulator | null>) => void;
 }
 
-const ReactTabulator = ({events, onTableRef, containerClassName, width, ...props}: IReactTabulatorProps): JSX.Element => {
+const ReactTabulator = ({gridId, events, onTableRef, containerClassName, width, minWidth, maxWidth, ...props}: IReactTabulatorProps): JSX.Element => {
     const containerRef = React.useRef<HTMLDivElement>(null);
     const tableRef = React.useRef<ITabulator>(null);
-    const [mainId] = React.useState(getUuid());
+
+    const [newId] = React.useState(getUuid());
 
     useInit({props, events, containerRef, tableRef, onTableRef});
 
-    return <div ref={containerRef} data-instance={mainId} className={containerClassName} style={{width: width}} />;
+    const containerStyle: React.CSSProperties = {};
+    containerStyle.width = width;
+    containerStyle.maxWidth = maxWidth;
+    containerStyle.minWidth = minWidth;
+
+    return <div ref={containerRef} id={gridId || newId} data-instance={gridId || newId} className={containerClassName} style={containerStyle} />;
 };
 
 export default ReactTabulator;

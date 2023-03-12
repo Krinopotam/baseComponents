@@ -50,9 +50,7 @@ const initTabulator = async ({
     const $container = containerRef.current as HTMLDivElement; // mounted DOM element
     const propOptions = await propsToOptions(props);
 
-    //tableRef.current = new Tabulator($container, propOptions) as ITabulator;
-    tableRef.current = await initTabulatorClass($container, propOptions);
-
+    tableRef.current = initTabulatorClass($container, propOptions);
     onTableRef?.(tableRef);
 
     if (events) {
@@ -77,47 +75,43 @@ const propsToOptions = async (props: IReactTabulatorProps) => {
         // convert from JSX to HTML string (tabulator's footerElement accepts string)
         const el = await syncRender(props['footerElement'], document.createElement('div'));
         output.footerElement = el.innerHTML;
-        output.layout = props.layout || 'fitColumns';
+        //output.layout = props.layout || 'fitColumns';
     }
     return output;
 };
 
-const initTabulatorClass = async ($container: HTMLDivElement, options: Options):Promise<ITabulator> => {
-    return new Promise((resolve) => {
-        Tabulator.registerModule(ActiveSelectionModule);
+const initTabulatorClass = ($container: HTMLDivElement, options: Options): ITabulator => {
+    Tabulator.registerModule(ActiveSelectionModule);
 
-        const tableApi = new Tabulator($container, options) as ITabulator;
+    const tableApi = new Tabulator($container, options) as ITabulator;
 
-        //!TODO: Monkey patch. Check if the developer fixed it
-        tableApi.rowManager['scrollToRow'] = scrollToRow.bind(tableApi.rowManager);
+    //!TODO: Monkey patch. Check if the developer fixed it
+    tableApi.rowManager['scrollToRow'] = scrollToRow.bind(tableApi.rowManager);
 
-        Tabulator.extendModule('keybindings', 'actions', {
-            navUp: function (e: KeyboardEvent) {
-                e.preventDefault();
-                const curRow = tableApi?.getActiveRow();
-                if (!curRow) {
-                    tableApi?.setActiveRow(tableApi?.getFirstRow(), true, 'top');
-                    return;
-                }
-                const nextRow = curRow.getPrevRow();
-                if (nextRow) tableApi?.setActiveRow(nextRow, true, 'top');
-                else tableApi?.setActiveRow(tableApi?.getFirstRow(), true, 'top');
-            },
-            navDown: (e: KeyboardEvent) => {
-                e.preventDefault();
-                const curRow = tableApi?.getActiveRow();
-                if (!curRow) {
-                    tableApi?.setActiveRow(tableApi?.getFirstRow(), true, 'bottom');
-                    return;
-                }
-                const nextRow = curRow.getNextRow();
-                if (nextRow) tableApi?.setActiveRow(nextRow, true, 'bottom');
-                else tableApi?.setActiveRow(tableApi?.getLastRow(), true, 'bottom');
-            },
-        });
-
-        tableApi.on('tableBuilt', () => {
-            resolve(tableApi);
-        });
+    Tabulator.extendModule('keybindings', 'actions', {
+        navUp: function (e: KeyboardEvent) {
+            e.preventDefault();
+            const curRow = tableApi?.getActiveRow();
+            if (!curRow) {
+                tableApi?.setActiveRow(tableApi?.getFirstRow(), true, 'top');
+                return;
+            }
+            const nextRow = curRow.getPrevRow();
+            if (nextRow) tableApi?.setActiveRow(nextRow, true, 'top');
+            else tableApi?.setActiveRow(tableApi?.getFirstRow(), true, 'top');
+        },
+        navDown: (e: KeyboardEvent) => {
+            e.preventDefault();
+            const curRow = tableApi?.getActiveRow();
+            if (!curRow) {
+                tableApi?.setActiveRow(tableApi?.getFirstRow(), true, 'bottom');
+                return;
+            }
+            const nextRow = curRow.getNextRow();
+            if (nextRow) tableApi?.setActiveRow(nextRow, true, 'bottom');
+            else tableApi?.setActiveRow(tableApi?.getLastRow(), true, 'bottom');
+        },
     });
+
+    return tableApi;
 };

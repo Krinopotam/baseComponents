@@ -60,7 +60,8 @@ const useApiFormOpen = (formApi: IDFormModalApi) => {
                 return;
             }
 
-            const clonedDataSet = dataSet ? cloneObject(dataSet) : undefined;
+            const newDataSet = dataSet || formApi.getFormProps().dataSet;
+            const clonedDataSet = newDataSet ? cloneObject(newDataSet) : undefined;
             const clonedParentData = parentDataSet ? parentDataSet : undefined;
             const modalFormProps = formApi.getFormProps();
             if (modalFormProps?.callbacks?.onOpen?.(formApi, clonedDataSet, clonedParentData) === false) return;

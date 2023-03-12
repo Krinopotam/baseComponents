@@ -8,21 +8,21 @@
 
 import './css/antdAnimation.css';
 
-import { DModel, IDFormModelCallbacks, IDFormSubmitResultObject, IDFormSubmitResultPromise } from './dModel';
-import { IButtonsRowApi, IFormButtons } from 'baseComponents/buttonsRow';
-import { IDFormApi, useInitFormApi } from 'baseComponents/dForm/hooks/api';
-import React, { useEffect, useRef, useState } from 'react';
+import {DModel, IDFormModelCallbacks, IDFormSubmitResultObject, IDFormSubmitResultPromise} from './dModel';
+import {IButtonsRowApi, IFormButtons} from 'baseComponents/buttonsRow';
+import {IDFormApi, useInitFormApi} from 'baseComponents/dForm/hooks/api';
+import React, {useEffect, useRef, useState} from 'react';
 
-import { FormRender } from './renders/formRender';
-import { IDFormFieldsProps } from 'baseComponents/dForm/components/baseComponent';
-import { IFormType } from '../modal';
-import { IRuleType } from './validators/baseValidator';
-import { TPromise } from 'baseComponents/serviceTypes';
-import { getUuid } from 'helpers/helpersString';
-import { useCallbacks } from 'baseComponents/dForm/hooks/callbacks';
-import { useGetActualProps } from 'baseComponents/dForm/hooks/actualProps';
-import { useGetButtons } from './hooks/buttons';
-import { useUpdateMessageBoxTheme } from 'baseComponents/messageBox/hooks/updateModalTheme';
+import {FormRender} from './renders/formRender';
+import {IDFormFieldsProps} from 'baseComponents/dForm/components/baseComponent';
+import {IFormType} from '../modal';
+import {IRuleType} from './validators/baseValidator';
+import {TPromise} from 'baseComponents/serviceTypes';
+import {getUuid} from 'helpers/helpersString';
+import {useCallbacks} from 'baseComponents/dForm/hooks/callbacks';
+import {useGetActualProps} from 'baseComponents/dForm/hooks/actualProps';
+import {useGetButtons} from './hooks/buttons';
+import {useUpdateMessageBoxTheme} from 'baseComponents/messageBox/hooks/updateModalTheme';
 
 //import './dynamicForm.css';
 
@@ -108,19 +108,8 @@ export interface IDFormTabsProps {
 export type IDFormMode = 'view' | 'create' | 'update' | 'clone' | 'delete';
 
 /** Form data set type */
-export type IDFormDataSet =
-    | {
-          /** Row id */
-          id: string | number;
-          [key: string]: unknown;
-      }
-    | Record<string, never>;
-
-/** Form data source interface */
-export interface IDFormDataSource {
-    url: string;
-    parameters: Record<string, unknown> | undefined;
-    method: 'get' | 'post';
+export interface IDFormDataSet extends Record<string, unknown> {
+    id?: string | number;
 }
 
 export type IDFormDataSourcePromise = TPromise<{data: Record<string, unknown>}, {message: string; code: number}>;
@@ -213,7 +202,7 @@ export interface IDFormCallbacks {
     onSubmitComplete?: (values: Record<string, unknown>, errors: Record<string, string | undefined>, formApi: IDFormApi) => boolean | void;
 
     /** fires, when the dataSet change */
-    onDataSetChange?: (dataSet: IDFormDataSet| undefined, FormApi: IDFormApi) => IDFormDataSet| undefined
+    onDataSetChange?: (dataSet: IDFormDataSet | undefined, FormApi: IDFormApi) => IDFormDataSet | undefined;
 }
 
 //endregion

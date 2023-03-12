@@ -1178,7 +1178,7 @@ export class DModel {
      * @param fieldName
      * @returns
      */
-    private hideDependedFields(fieldName: string) {
+    public hideDependedFields(fieldName: string) {
         const fieldsProps = this.getFieldsProps();
         const fieldProps = fieldsProps[fieldName];
         if (!fieldProps) return;

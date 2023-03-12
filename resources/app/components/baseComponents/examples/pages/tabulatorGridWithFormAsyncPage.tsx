@@ -78,6 +78,7 @@ export const TabulatorGridWithFormAsync = (): JSX.Element => {
     return (
         <>
             <TabulatorGrid
+                id={'TabulatorGridWithFormAsync'}
                 columns={columns}
                 editFormProps={editFormConfig}
                 confirmDelete

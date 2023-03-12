@@ -1,7 +1,7 @@
 import {TabulatorFull as Tabulator, Module, ScrollToRowPosition, Options, RowComponent} from 'tabulator-tables';
 
 export interface IActiveSelectionModuleTableEvents {
-    activeRowChanged?: (row:RowComponent)=>void;
+    activeRowChanged?: (row: RowComponent) => void;
 }
 
 export interface IActiveSelectionModuleTableOptions {
@@ -135,7 +135,7 @@ export class ActiveSelectionModule extends Module {
         if (!row) return;
 
         row.select();
-        if (scrollPosition) this.table.scrollToRow(row, scrollPosition, false).then();
+        if (scrollPosition && !row.isFrozen()) this.table.scrollToRow(row, scrollPosition, false).then();
         row.reformat();
     }
 
@@ -167,7 +167,10 @@ export class ActiveSelectionModule extends Module {
     public getFirstRow() {
         const rows = this.table.getRows('active');
         if (!rows || rows.length === 0) return undefined;
-        return rows[0];
+        for (const row of rows) {
+            if (!row.isFrozen()) return row;
+        }
+        return undefined;
     }
 
     public getLastRow() {

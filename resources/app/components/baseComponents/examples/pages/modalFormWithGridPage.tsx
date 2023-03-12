@@ -14,9 +14,9 @@ import {IDFormModalApi} from 'baseComponents/dFormModal/hooks/api';
 import {DFormModalConfig} from 'baseComponents/dForm/configBuilder/dFormModalConfig';
 import {IReactTabulatorProps} from 'baseComponents/tabulatorGrid/reactTabulator/reactTabulator';
 import {IGridRowData} from 'baseComponents/tabulatorGrid/tabulatorGrid';
-import {InputComponentConfig} from "baseComponents/dForm/configBuilder/inputComponentConfig";
-import {NumberComponentConfig} from "baseComponents/dForm/configBuilder/numberComponentConfig";
-import {TabulatorGridComponentConfig} from "baseComponents/dForm/configBuilder/tabulatorGridComponentConfig";
+import {InputComponentConfig} from 'baseComponents/dForm/configBuilder/inputComponentConfig';
+import {NumberComponentConfig} from 'baseComponents/dForm/configBuilder/numberComponentConfig';
+import {TabulatorGridComponentConfig} from 'baseComponents/dForm/configBuilder/tabulatorGridComponentConfig';
 
 /** Tabulator grid edit form type */
 type IPerson = {
@@ -41,7 +41,7 @@ const columns: IReactTabulatorProps['columns'] = [
     {title: 'Passed?', field: 'passed', hozAlign: 'center', formatter: 'tickCross'},
 ];
 
-const dataSet: IGridRowData[] = [
+const gridDefaultData: IGridRowData[] = [
     {id: '1', name: 'Oli Bob1', age: '12', col: 'red', dob: ''},
     {id: '2', name: 'Mary May1', age: '1', col: 'blue', dob: '14/05/1982'},
     {id: '3', name: 'Christine Lobowski1', age: '42', col: 'green', dob: '22/05/1982'},
@@ -67,13 +67,15 @@ const dataSet: IGridRowData[] = [
 const formApi = {} as IDFormModalApi;
 
 /** Tabulator edit form props */
-const editFormProps = new DFormModalConfig<IPerson>().layout('horizontal')
+const editFormProps = new DFormModalConfig<IPerson>()
+    .layout('horizontal')
     .addFields(
         new InputComponentConfig('name').label('Name'),
         new NumberComponentConfig('age').label('Age'),
         new InputComponentConfig('col').label('Favourite Color'),
-        new InputComponentConfig('dob').label('Day of Birth'),
-    ).confirmChanges(true)
+        new InputComponentConfig('dob').label('Day of Birth')
+    )
+    .confirmChanges(true)
     .getConfig();
 
 /** main modal form props */
@@ -82,13 +84,19 @@ const formProps = new DFormModalConfig<IUsers>()
     .name('Test form')
     .confirmChanges(true)
     .addFields(
-        new TabulatorGridComponentConfig('users').label('Пользователи').columns(columns).dataSet(dataSet).editFormProps(editFormProps).confirmDelete(true)
+        new TabulatorGridComponentConfig('users')
+            .label('Пользователи')
+            .columns(columns)
+            //.default(gridDefaultData)
+            .height(300)
+            .editFormProps(editFormProps)
+            .confirmDelete(true)
     )
     .getConfig();
 
 export const ModalFormWithGrid = (): JSX.Element => {
     const onClick = useCallback(() => {
-        formApi.open('create');
+        formApi.open('update', {users: gridDefaultData});
     }, []);
 
     return (

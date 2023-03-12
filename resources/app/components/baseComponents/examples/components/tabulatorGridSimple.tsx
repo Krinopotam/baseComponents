@@ -40,7 +40,7 @@ export const TabulatorGridSimple = (): JSX.Element => {
             {/*Description Start*/}
             <h1>Пример простого грида Tabulator</h1>
             {/*Description End*/}
-            <TabulatorGrid columns={columns} dataSet={data} />
+            <TabulatorGrid id={'TabulatorGridSimple'} columns={columns} dataSet={data} />
         </>
     );
 };

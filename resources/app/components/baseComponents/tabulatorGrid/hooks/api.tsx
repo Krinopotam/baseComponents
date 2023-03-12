@@ -1,5 +1,4 @@
 import React, {MutableRefObject, useCallback, useRef, useState} from 'react';
-import {findIndexInObjectsArray, isArray} from 'helpers/helpersObjects';
 import {getUuid} from 'helpers/helpersString';
 import {IDFormModalApi} from 'baseComponents/dFormModal/hooks/api';
 import {IButtonsRowApi} from 'baseComponents/buttonsRow';
@@ -9,6 +8,7 @@ import {MessageBox} from 'baseComponents/messageBox';
 import {IGridProps, IGridRowData} from '../tabulatorGrid';
 import {RowComponent, ScrollToRowPosition, TabulatorFull as Tabulator} from 'tabulator-tables';
 import {ITabulator} from 'baseComponents/tabulatorGrid/reactTabulator/reactTabulator';
+import {isArray} from 'components/baseComponents/libs/helpers/helpersObjects';
 
 type IRowKey = IGridRowData['id'];
 type IRowKeys = IRowKey | IRowKey[];
@@ -131,8 +131,8 @@ export const useInitGridApi = ({
     gridApi.editFormApi = editFormApi;
     gridApi.buttonsApi = buttonsApi;
     gridApi.getIsMounted = useApiIsMounted(unmountRef);
-    gridApi.getGridId = useApiGetGridId();
-    gridApi.getDataSet = useApiGetDataSet(dataSet || []);
+    gridApi.getGridId = useApiGetGridId(gridApi);
+    gridApi.getDataSet = useApiGetDataSet(dataSet || [], gridApi);
     gridApi.setDataSet = useApiSetDataSet(setDataSet, gridApi);
     gridApi.getIsLoading = useApiGetIsLoading(isLoading);
     gridApi.setIsLoading = useApiSetIsLoading(setIsLoading);
@@ -162,8 +162,8 @@ export const useInitGridApi = ({
     return gridApi;
 };
 
-const useApiGetGridId = (): IGridApi['getGridId'] => {
-    const [gridId] = useState(getUuid());
+const useApiGetGridId = (gridApi: IGridApi): IGridApi['getGridId'] => {
+    const [gridId] = useState(gridApi.gridProps.id || getUuid());
     return useCallback(() => gridId, [gridId]);
 };
 
@@ -171,10 +171,12 @@ const useApiIsMounted = (unmountRef: React.MutableRefObject<boolean>): IGridApi[
     return useCallback(() => !unmountRef.current, [unmountRef]);
 };
 
-const useApiGetDataSet = (dataSet: IGridRowData[]): IGridApi['getDataSet'] => {
+const useApiGetDataSet = (dataSet: IGridRowData[], gridApi: IGridApi): IGridApi['getDataSet'] => {
     return useCallback(() => {
+        const gridDataSet = gridApi.tableApi?.getData();
+        if (gridDataSet) return gridDataSet;
         return dataSet || [];
-    }, [dataSet]);
+    }, [dataSet, gridApi.tableApi]);
 };
 
 const useApiSetDataSet = (setDataSet: React.Dispatch<React.SetStateAction<IGridRowData[] | undefined>>, gridApi: IGridApi): IGridApi['setDataSet'] => {

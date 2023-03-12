@@ -65,7 +65,7 @@ const editFormConfig = new DFormModalConfig<Person>().layout('horizontal')
 export const TabulatorGridWithForm = (): JSX.Element => {
     return (
         <>
-            <TabulatorGrid columns={columns} dataSet={data} editFormProps={editFormConfig} confirmDelete />
+            <TabulatorGrid id={'TabulatorGridWithForm'} columns={columns} dataSet={data} editFormProps={editFormConfig} confirmDelete />
         </>
     );
 };

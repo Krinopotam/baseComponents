@@ -47,7 +47,7 @@ const useGetViewButton = (gridApi: IGridApi, activeRowKey: string|number|undefin
     return useMemo(() => {
         const gridProps = gridApi.gridProps;
         const editFormApi = gridApi.editFormApi;
-        if (!gridProps.editFormProps || !gridProps.readonly || gridProps.buttons?.view === null) return undefined;
+        if (!gridProps.editFormProps || !gridProps.readOnly || gridProps.buttons?.view === null) return undefined;
 
         return {
             title: 'Просмотреть',
@@ -70,7 +70,7 @@ const useGetCreateButton = (gridApi: IGridApi): IFormButton | undefined => {
         const gridProps = gridApi.gridProps;
 
         const editFormApi = gridApi.editFormApi;
-        if (!gridProps.editFormProps || gridProps.readonly || gridProps.buttons?.create === null) return undefined;
+        if (!gridProps.editFormProps || gridProps.readOnly || gridProps.buttons?.create === null) return undefined;
         return {
             title: 'Создать',
             icon: <PlusOutlined />,
@@ -90,7 +90,7 @@ const useGetCloneButton = (gridApi: IGridApi, activeRowKey: string|number|undefi
     return useMemo(() => {
         const gridProps = gridApi.gridProps;
         const editFormApi = gridApi.editFormApi;
-        if (!gridProps.editFormProps || gridProps.readonly || gridProps.buttons?.clone === null) return undefined;
+        if (!gridProps.editFormProps || gridProps.readOnly || gridProps.buttons?.clone === null) return undefined;
 
         return {
             title: 'Клонировать',
@@ -112,7 +112,7 @@ const useGetUpdateButton = (gridApi: IGridApi, activeRowKey: string|number|undef
     return useMemo(() => {
         const gridProps = gridApi.gridProps;
         const editFormApi = gridApi.editFormApi;
-        if (!gridProps.editFormProps || gridProps.readonly || gridProps.buttons?.update === null) return undefined;
+        if (!gridProps.editFormProps || gridProps.readOnly || gridProps.buttons?.update === null) return undefined;
 
         return {
             title: 'Редактировать',
@@ -133,7 +133,7 @@ const useGetUpdateButton = (gridApi: IGridApi, activeRowKey: string|number|undef
 const useGetDeleteButton = (gridApi: IGridApi, selectedRows: IGridRowData[]): IFormButton | undefined => {
     return useMemo(() => {
         const gridProps = gridApi.gridProps;
-        if (!gridProps.editFormProps || gridProps.readonly || gridProps.buttons?.delete === null) return undefined;
+        if (!gridProps.editFormProps || gridProps.readOnly || gridProps.buttons?.delete === null) return undefined;
 
         return {
             title: 'Удалить',

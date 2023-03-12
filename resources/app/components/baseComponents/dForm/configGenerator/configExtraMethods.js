@@ -49,14 +49,6 @@ module.exports.getValidationRules = `/** Get validation rules */
         return this._validationRules;
     }`;
 
-/** alternative editFormProps method for gridComponent */
-module.exports.altEditFormProps = `/** Edit controls properties */
-    editFormProps(value: IDFormFieldGridProps['editFormProps'] | DFormModalConfig) {
-        if (value instanceof  DFormModalConfig) this._config.editFormProps = value.getConfig();
-        else this._config.editFormProps = value;
-        return this;
-    }`;
-
 module.exports.addValidationRules =`/** Add validation rules */
     validationRules(...args: IRuleType[]) {
         for (const rule of args) {

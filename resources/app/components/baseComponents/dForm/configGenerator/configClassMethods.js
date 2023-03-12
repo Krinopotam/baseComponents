@@ -1,9 +1,9 @@
 /**
  * @typedef {Object} IClassProps
  * @property {string} className
- * @property {[{typePath: string, typeName: string}]} [imports] - import props
- * @property {[{access: string, name: string, [value]:string, type:string}]} [fields] - fields props
- * @property {{parameters: [{var: 'id', type: 'string'}], rows:string[]}} [constructor] - constructor props
+ * @property {{typePath: string, typeName: string}[]} [imports] - import props
+ * @property {{access: string, name: string, [value]:string, type:string}[]} [fields] - fields props
+ * @property {{parameters: {var: string, type: string}[], rows:string[]}} [constructor] - constructor props
  * @property {Object.<string, {name: string, type: string, sourceType: string, comment}>} [propMethods] - propMethods
  * @property {string[]} [additionalMethods] - additional methods props
  * @property {string} [types] - types props
@@ -13,7 +13,6 @@
 
 /**
  * Generate class text
- * @param {string} className
  * @param {IClassProps} props
  * @returns {string}
  */

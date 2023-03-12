@@ -3,7 +3,6 @@ import {Layout, Menu, MenuProps, theme} from 'antd';
 import {Link, Outlet} from 'react-router-dom';
 
 import React from 'react';
-import {TabulatorGridWithFormAsync} from "baseComponents/examples/components/tabulatorGridWithFormAsync";
 
 const {Header, Sider, Content} = Layout;
 
@@ -40,13 +39,6 @@ const items: MenuProps['items'] = [
         getItem(<Link to="ModalFormWithGrid">Модальная форма с гридом</Link>, 'ModalFormWithGrid'),
         getItem(<Link to="ModalFormFetching">Загрузка данных модальной формы с сервера</Link>, 'ModalFormFetching'),
         getItem(<Link to="ModalFormSubmitting">Отправка данных модальной формы на сервер</Link>, 'ModalFormSubmitting'),
-    ]),
-    getItem('MRGrid - грид', 'mrGrid', <FolderOutlined />, [
-        getItem(<Link to="MrGridSimple">Простой грид</Link>, 'MrGridSimple'),
-        getItem(<Link to="MrGridSimpleTree">Древовидный грид</Link>, 'MrGridSimpleTree'),
-        getItem(<Link to="MrGridWithComplexDataSet">Грид с комлексным набором данных</Link>, 'MrGridWithComplexDataSet'),
-        getItem(<Link to="MrGridWithForm">Грид с формой редактирования</Link>, 'MrGridWithForm'),
-        getItem(<Link to="MrGridWithFormAsync">Грид с асинхронной загрузкой и сохранением</Link>, 'MrGridWithFormAsync'),
     ]),
     getItem('TabulatorGrid - грид', 'TabulatorGrid', <FolderOutlined />, [
         getItem(<Link to="TabulatorGridSimple">Простой грид</Link>, 'TabulatorGridSimple'),

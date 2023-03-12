@@ -18,11 +18,6 @@
     import {ModalFormWithGroupsPage} from './pages/modalFormWithGroupsPage';
     import {ModalFormWithTabsPage} from './pages/modalFormWithTabsPage';
     import {ModalFormWithTabsGroupsPage} from './pages/modalFormWithTabsGroupsPage';
-    import {MrGridSimplePage} from './pages/mrGridSimplePage';
-    import {MrGridSimpleTreePage} from './pages/mrGridSimpleTreePage';
-    import {MrGridWithComplexDataSetPage} from './pages/mrGridWithComplexDataSetPage';
-    import {MrGridWithFormPage} from './pages/mrGridWithFormPage';
-    import {MrGridWithFormAsyncPage} from './pages/mrGridWithFormAsyncPage';
     import {PlayGroundPage} from './pages/playGroundPage';
     import {TabulatorGridSimplePage} from './pages/tabulatorGridSimplePage';
     import {TabulatorGridWithFormPage} from './pages/tabulatorGridWithFormPage';
@@ -49,11 +44,6 @@ export const ExamplesRoutes = () => {
                 <Route path="ModalFormWithGroups" element={<ModalFormWithGroupsPage />} />;
                 <Route path="ModalFormWithTabs" element={<ModalFormWithTabsPage />} />;
                 <Route path="ModalFormWithTabsGroups" element={<ModalFormWithTabsGroupsPage />} />;
-                <Route path="MrGridSimple" element={<MrGridSimplePage />} />;
-                <Route path="MrGridSimpleTree" element={<MrGridSimpleTreePage />} />;
-                <Route path="MrGridWithComplexDataSet" element={<MrGridWithComplexDataSetPage />} />;
-                <Route path="MrGridWithForm" element={<MrGridWithFormPage />} />;
-                <Route path="MrGridWithFormAsync" element={<MrGridWithFormAsyncPage />} />;
                 <Route path="PlayGround" element={<PlayGroundPage />} />;
                 <Route path="TabulatorGridSimple" element={<TabulatorGridSimplePage />} />;
                 <Route path="TabulatorGridWithForm" element={<TabulatorGridWithFormPage />} />;

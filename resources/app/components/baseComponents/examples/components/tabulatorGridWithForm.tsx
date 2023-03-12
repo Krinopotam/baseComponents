@@ -5,7 +5,7 @@ import {DFormModalConfig} from "baseComponents/dForm/configBuilder/dFormModalCon
 import {InputComponentConfig} from "baseComponents/dForm/configBuilder/inputComponentConfig";
 import {NumberComponentConfig} from "baseComponents/dForm/configBuilder/numberComponentConfig";
 
-type Person = {
+type IPerson = {
     id: string;
     name: string;
     age: number;
@@ -45,7 +45,7 @@ const data: IGridRowData[] = [
     {id: '20', name: 'Margret Marmajuke4', age: '16', col: 'yellow', dob: '31/01/1999'},
 ];
 
-const editFormConfig = new DFormModalConfig<Person>().layout('horizontal')
+const editFormConfig = new DFormModalConfig<IPerson>().layout('horizontal')
     .addFields(
         new InputComponentConfig('name').label('Name'),
         new NumberComponentConfig('age').label('Age'),

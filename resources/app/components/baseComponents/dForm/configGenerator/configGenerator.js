@@ -34,7 +34,6 @@ const componentsList = [
     {name: 'checkboxComponent', interface: 'IDFormFieldCheckBoxProps'},
     {name: 'dateTimeComponent', interface: 'IDFormFieldDateTimeProps'},
     {name: 'dragAndDropComponent', interface: 'IDFormFieldDragAndDropProps'},
-    {name: 'gridComponent', interface: 'IDFormFieldGridProps'},
     {name: 'inputComponent', interface: 'IDFormFieldInputProps'},
     {name: 'linkComponent', interface: 'IDFormFieldLinkProps'},
     {name: 'numberComponent', interface: 'IDFormFieldNumberProps'},
@@ -44,7 +43,6 @@ const componentsList = [
     {name: 'textAreaComponent', interface: 'IDFormFieldTextAreaProps'},
     {name: 'textEditorComponent', interface: 'IDFormTextEditorProps'},
     {name: 'treeSelectComponent', interface: 'IDFormFieldTreeSelectProps'},
-	{name: 'mrGridComponent', interface: 'IDFormFieldMrGridProps'},
     {name: 'tabulatorGridComponent', interface: 'IDFormFieldTabulatorGridProps'},
 ];
 
@@ -143,7 +141,7 @@ function generateFormConfigClass() {
             extraMethods.addTabs,
             extraMethods.addFieldsConfig,
             extraMethods.updateFieldsProps,
-            '/** Get form config */\n    getConfig() {\n        return this._config as unknown as ' + formOptions.typeName + '\n    }'
+            '/** Get form config */\n    getConfig() {\n        return this._config as unknown as ' + formOptions.typeName + '\n    }',
         ],
     };
     const classTxt = classMethods.generateClass(classProps);
@@ -154,39 +152,34 @@ function generateFormConfigClass() {
 
 /**
  * Generate  modal form config class
-  * @returns {void}
+ * @returns {void}
  */
 function generateModalFormConfigClass() {
     const componentName = 'DFormModal';
     const componentClassName = componentName + 'Config';
-    const formOptions =  options.formModalProps
+    const formOptions = options.formModalProps;
     let parseResult = parsingMethods.parseProperties(formOptions);
     if (parseResult.error) {
         showStatusMsg(componentClassName, parseResult.error.operation, parseResult.error.message);
         return;
     }
-    const properties = parseResult.properties
+    const properties = parseResult.properties;
 
     /**
      * @type {IClassProps}
      */
     const classProps = {
         className: componentClassName + '<T>',
-        extends:'DFormConfig<T>',
-        imports: [
-            formOptions,
-            {typeName: 'DFormConfig', typePath: './dFormConfig'},
-            {typeName: 'IDFormModalProps', typePath: formOptions.typePath},
-        ],
+        extends: 'DFormConfig<T>',
+        imports: [formOptions, {typeName: 'DFormConfig', typePath: './dFormConfig'}, {typeName: 'IDFormModalProps', typePath: formOptions.typePath}],
         propMethods: properties,
-        additionalMethods:['/** Get form config */\n    getConfig() {\n        return this._config as unknown as IDFormModalProps \n    }'],
+        additionalMethods: ['/** Get form config */\n    getConfig() {\n        return this._config as unknown as IDFormModalProps \n    }'],
     };
     const classTxt = classMethods.generateClass(classProps);
 
     const saveResult = parsingMethods.saveFile(formOptions.savePath, classTxt);
     showStatusMsg(componentClassName, 'saving', saveResult, true);
 }
-
 
 /**
  * generate components config classes
@@ -224,7 +217,7 @@ function generaBaseComponentConfigClass() {
      * @type {IClassProps}
      */
     const classProps = {
-        className: baseClassName+'<T>',
+        className: baseClassName + '<T>',
         imports: [baseOptions, {typeName: 'IRuleType', typePath: '../validators/baseValidator'}],
         fields: [
             {access: 'protected', name: '_config', type: 'Record<string, unknown>', value: '{}'},
@@ -236,7 +229,12 @@ function generaBaseComponentConfigClass() {
             rows: [`this._id = id`],
         },
         propMethods: baseProperties,
-        additionalMethods: [extraMethods.addValidationRules, extraMethods.getValidationRules, extraMethods.getId, '/** Get field config */\n    getConfig() {\n        return this._config as unknown as ' + baseOptions.typeName + '\n    }'],
+        additionalMethods: [
+            extraMethods.addValidationRules,
+            extraMethods.getValidationRules,
+            extraMethods.getId,
+            '/** Get field config */\n    getConfig() {\n        return this._config as unknown as ' + baseOptions.typeName + '\n    }',
+        ],
     };
     const classTxt = classMethods.generateClass(classProps);
 
@@ -264,14 +262,8 @@ function generateComponentConfigClass(componentName) {
     delete properties['component'];
 
     //region unique components extra processing
-    let altEditFormProps = undefined;
-    let formConfigImport = undefined;
     let treeSelectImport = undefined;
-    if (componentName === 'gridComponent') {
-        delete properties['editFormProps'];
-        altEditFormProps = extraMethods.altEditFormProps;
-        formConfigImport = {typeName: 'DFormModalConfig', typePath: './dFormModalConfig'};
-    } else if (componentName === 'treeSelectComponent') {
+    if (componentName === 'treeSelectComponent') {
         const treeSelectResult = parsingMethods.parseProperties(options.treeSelectProps);
 
         if (treeSelectResult.error) {
@@ -289,12 +281,11 @@ function generateComponentConfigClass(componentName) {
      * @type {IClassProps}
      */
     const classProps = {
-        className: componentClassName+'<T>',
+        className: componentClassName + '<T>',
         imports: [
             componentOptions,
             {typeName: 'BaseComponentConfig', typePath: './baseComponentConfig'},
             {typeName: capitalizeFirstLetter(componentName), typePath: componentOptions.typePath},
-            formConfigImport,
             treeSelectImport,
         ],
         extends: 'BaseComponentConfig<T>',
@@ -303,7 +294,7 @@ function generateComponentConfigClass(componentName) {
             rows: ['super(id)', `this._config.component = ${capitalizeFirstLetter(componentName)}`],
         },
         propMethods: properties,
-        additionalMethods: [altEditFormProps, '/** Get field config */\n    getConfig() {\n        return this._config as unknown as ' + componentOptions.typeName + '\n    }'],
+        additionalMethods: ['/** Get field config */\n    getConfig() {\n        return this._config as unknown as ' + componentOptions.typeName + '\n    }'],
     };
     const classTxt = classMethods.generateClass(classProps);
 
@@ -328,3 +319,16 @@ async function run() {
 }
 
 run().then(null);
+
+/**
+ * @typedef {Object} IClassProps
+ * @property {string} className
+ * @property {{typePath: string, typeName: string}[]} [imports] - import props
+ * @property {{access: string, name: string, [value]:string, type:string}[]} [fields] - fields props
+ * @property {{parameters: {var: string, type: string}[], rows:string[]}} [constructor] - constructor props
+ * @property {Object.<string, {name: string, type: string, sourceType: string, comment}>} [propMethods] - propMethods
+ * @property {string[]} [additionalMethods] - additional methods props
+ * @property {string} [types] - types props
+ * @property {string} [implements] - types props
+ * @property {string} [extends] - types props
+ **/

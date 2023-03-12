@@ -1,6 +1,6 @@
 import {IFormButton, IFormButtons} from 'baseComponents/buttonsRow';
 import React, {useCallback, useMemo, useRef, useState} from 'react';
-import {CopyOutlined, DeleteOutlined, EditOutlined, EyeOutlined, FilterFilled, FilterOutlined, PlusOutlined} from '@ant-design/icons';
+import {CopyOutlined, DeleteOutlined, EditOutlined, EyeOutlined, FilterOutlined, PlusOutlined} from '@ant-design/icons';
 import {MessageBox} from 'baseComponents/messageBox';
 import {isPromise, mergeObjects} from 'helpers/helpersObjects';
 import {MessageBoxApi} from 'components/baseComponents/messageBox/messageBoxApi';
@@ -11,7 +11,7 @@ export const useInitButtons = (gridApi: IGridApi): IFormButtons => {
     const [, refreshButtons] = useState({});
     const buttons = gridApi.gridProps.buttons;
     const activeRowKey = gridApi.getActiveRowKey();
-    const selectedRows = gridApi.getSelectedRows() as IGridRowData[];
+    const selectedRows = gridApi.getSelectedRows();
 
     gridApi.buttonsApi.refreshButtons = useRefreshButtons(refreshButtons);
 
@@ -22,7 +22,7 @@ export const useInitButtons = (gridApi: IGridApi): IFormButtons => {
     const deleteButton = useGetDeleteButton(gridApi, selectedRows);
     const filterToggleButton = useGetFilterToggleButton(gridApi);
 
-    const gridButtons = useMemo(() => {
+    return useMemo(() => {
         const defaultButtons = {
             view: vewButton,
             create: createButton,
@@ -34,8 +34,6 @@ export const useInitButtons = (gridApi: IGridApi): IFormButtons => {
 
         return mergeObjects(defaultButtons, buttons);
     }, [buttons, cloneButton, createButton, deleteButton, filterToggleButton, updateButton, vewButton]);
-
-    return gridButtons;
 };
 
 const useRefreshButtons = (refreshButtons: React.Dispatch<React.SetStateAction<Record<string, unknown>>>) => {
@@ -153,7 +151,7 @@ const useGetDeleteButton = (gridApi: IGridApi, selectedRows: IGridRowData[]): IF
 
 const deleteHandler = (gridApi: IGridApi) => {
     const gridProps = gridApi.gridProps;
-    const selectedRows = gridApi.getSelectedRows() as IGridRowData[];
+    const selectedRows = gridApi.getSelectedRows();
 
     let messageBox: MessageBoxApi;
     const removeRows = () => {
@@ -229,7 +227,7 @@ const useGetFilterToggleButton = (gridApi: IGridApi): IFormButton | undefined =>
                     elem.style.height = elem.offsetHeight + filterHeight * (toggle.current ? 1 : -1) + 'px';
                 });
 
-                const tableHolderOffset = headerHeight + filterHeight * (toggle.current ? 1 : -1)
+                const tableHolderOffset = headerHeight + filterHeight * (toggle.current ? 1 : -1);
                 tableHolder.style.minHeight = 'calc(100% - ' + tableHolderOffset + 'px)';
                 tableHolder.style.height = 'calc(100% - ' + tableHolderOffset + 'px)';
                 tableHolder.style.maxHeight = 'calc(100% - ' + tableHolderOffset + 'px)';

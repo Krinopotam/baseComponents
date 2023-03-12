@@ -1,8 +1,6 @@
 import React from 'react';
-import TabulatorGrid, {IGridRowData} from "baseComponents/tabulatorGrid/tabulatorGrid";
-import {IReactTabulatorProps} from "baseComponents/tabulatorGrid/reactTabulator/reactTabulator";
-
-
+import TabulatorGrid, {IGridRowData} from 'baseComponents/tabulatorGrid/tabulatorGrid';
+import {IReactTabulatorProps} from 'baseComponents/tabulatorGrid/reactTabulator/reactTabulator';
 
 const columns: IReactTabulatorProps['columns'] = [
     {title: 'Name', field: 'name'},
@@ -35,7 +33,6 @@ const data: IGridRowData[] = [
     {id: '19', name: 'Brendon Philips4', age: '125', col: 'orange', dob: '01/08/1980'},
     {id: '20', name: 'Margret Marmajuke4', age: '16', col: 'yellow', dob: '31/01/1999'},
 ];
-
 
 export const TabulatorGridSimple = (): JSX.Element => {
     return (

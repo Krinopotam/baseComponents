@@ -31,7 +31,7 @@ export interface IReactTabulatorProps extends IActiveSelectionModuleTableOptions
 
 const ReactTabulator = ({events, onTableRef, containerClassName, width, ...props}: IReactTabulatorProps): JSX.Element => {
     const containerRef = React.useRef<HTMLDivElement>(null);
-    const tableRef = React.useRef<Tabulator>(null);
+    const tableRef = React.useRef<ITabulator>(null);
     const [mainId] = React.useState(getUuid());
 
     useInit({props, events, containerRef, tableRef, onTableRef});

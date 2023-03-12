@@ -3,7 +3,7 @@ import {EventCallBackMethods, Options, TabulatorFull as Tabulator} from 'tabulat
 import {IReactTabulatorProps, ITabulator} from 'baseComponents/tabulatorGrid/reactTabulator/reactTabulator';
 import {render} from 'react-dom';
 import {ActiveSelectionModule} from '../modules/activeSelectionModule';
-import {scrollToRow} from "baseComponents/tabulatorGrid/reactTabulator/patches/scrollToRowPositionPatсh";
+import {scrollToRow} from 'baseComponents/tabulatorGrid/reactTabulator/patches/scrollToRowPositionPatсh';
 
 export const useInit = ({
     props,
@@ -16,7 +16,7 @@ export const useInit = ({
     events?: Partial<EventCallBackMethods>;
     containerRef: React.RefObject<HTMLDivElement>;
     tableRef: React.MutableRefObject<ITabulator | null>;
-    onTableRef?: (ref: React.MutableRefObject<Tabulator | null>) => void;
+    onTableRef?: (ref: React.MutableRefObject<ITabulator | null>) => void;
 }) => {
     React.useEffect(() => {
         initTabulator({props, events, containerRef, tableRef, onTableRef}).then();
@@ -45,43 +45,13 @@ const initTabulator = async ({
     events?: Partial<EventCallBackMethods>;
     containerRef: React.RefObject<HTMLDivElement>;
     tableRef: React.MutableRefObject<ITabulator | null>;
-    onTableRef?: (ref: React.MutableRefObject<Tabulator | null>) => void;
+    onTableRef?: (ref: React.MutableRefObject<ITabulator | null>) => void;
 }) => {
     const $container = containerRef.current as HTMLDivElement; // mounted DOM element
     const propOptions = await propsToOptions(props);
 
-    Tabulator.registerModule(ActiveSelectionModule);
-    tableRef.current = new Tabulator($container, propOptions) as ITabulator;
-
-    //!TODO: Monkey patch. Check if the developer fixed it
-    tableRef.current.rowManager['scrollToRow']=	scrollToRow.bind(tableRef.current.rowManager)
-
-    Tabulator.extendModule('keybindings', 'actions', {
-        navUp: function (e: KeyboardEvent) {
-            e.preventDefault();
-            const tableApi = tableRef.current;
-            const curRow = tableApi?.getActiveRow();
-            if (!curRow) {
-                tableApi?.setActiveRow(tableApi?.getFirstRow(), true, 'top');
-                return;
-            }
-            const nextRow = curRow.getPrevRow();
-            if (nextRow) tableApi?.setActiveRow(nextRow, true, 'top');
-            else tableApi?.setActiveRow(tableApi?.getFirstRow(), true, 'top');
-        },
-        navDown: (e: KeyboardEvent) => {
-            e.preventDefault();
-            const tableApi = tableRef.current;
-            const curRow = tableApi?.getActiveRow();
-            if (!curRow) {
-                tableApi?.setActiveRow(tableApi?.getFirstRow(), true, 'bottom');
-                return;
-            }
-            const nextRow = curRow.getNextRow();
-            if (nextRow) tableApi?.setActiveRow(nextRow, true, 'bottom');
-            else tableApi?.setActiveRow(tableApi?.getLastRow(), true, 'bottom');
-        },
-    });
+    //tableRef.current = new Tabulator($container, propOptions) as ITabulator;
+    tableRef.current = await initTabulatorClass($container, propOptions);
 
     onTableRef?.(tableRef);
 
@@ -110,4 +80,44 @@ const propsToOptions = async (props: IReactTabulatorProps) => {
         output.layout = props.layout || 'fitColumns';
     }
     return output;
+};
+
+const initTabulatorClass = async ($container: HTMLDivElement, options: Options):Promise<ITabulator> => {
+    return new Promise((resolve) => {
+        Tabulator.registerModule(ActiveSelectionModule);
+
+        const tableApi = new Tabulator($container, options) as ITabulator;
+
+        //!TODO: Monkey patch. Check if the developer fixed it
+        tableApi.rowManager['scrollToRow'] = scrollToRow.bind(tableApi.rowManager);
+
+        Tabulator.extendModule('keybindings', 'actions', {
+            navUp: function (e: KeyboardEvent) {
+                e.preventDefault();
+                const curRow = tableApi?.getActiveRow();
+                if (!curRow) {
+                    tableApi?.setActiveRow(tableApi?.getFirstRow(), true, 'top');
+                    return;
+                }
+                const nextRow = curRow.getPrevRow();
+                if (nextRow) tableApi?.setActiveRow(nextRow, true, 'top');
+                else tableApi?.setActiveRow(tableApi?.getFirstRow(), true, 'top');
+            },
+            navDown: (e: KeyboardEvent) => {
+                e.preventDefault();
+                const curRow = tableApi?.getActiveRow();
+                if (!curRow) {
+                    tableApi?.setActiveRow(tableApi?.getFirstRow(), true, 'bottom');
+                    return;
+                }
+                const nextRow = curRow.getNextRow();
+                if (nextRow) tableApi?.setActiveRow(nextRow, true, 'bottom');
+                else tableApi?.setActiveRow(tableApi?.getLastRow(), true, 'bottom');
+            },
+        });
+
+        tableApi.on('tableBuilt', () => {
+            resolve(tableApi);
+        });
+    });
 };

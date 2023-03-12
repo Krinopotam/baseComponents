@@ -4,77 +4,78 @@ import {Button} from 'baseComponents/button';
 import {DFormModal} from 'baseComponents/dFormModal/dFormModal';
 import {IDFormModalApi} from 'baseComponents/dFormModal/hooks/api';
 import {DFormModalConfig} from 'baseComponents/dForm/configBuilder/dFormModalConfig';
-import {MrGridComponentConfig} from 'baseComponents/dForm/configBuilder/mrGridComponentConfig';
-import {MRT_ColumnDef} from "material-react-table";
+import {IReactTabulatorProps} from 'baseComponents/tabulatorGrid/reactTabulator/reactTabulator';
+import {IGridRowData} from 'baseComponents/tabulatorGrid/tabulatorGrid';
+import {InputComponentConfig} from "baseComponents/dForm/configBuilder/inputComponentConfig";
+import {NumberComponentConfig} from "baseComponents/dForm/configBuilder/numberComponentConfig";
+import {TabulatorGridComponentConfig} from "baseComponents/dForm/configBuilder/tabulatorGridComponentConfig";
 
-interface IFields {
-    permissions: Record<string, unknown>[];
-}
-
-type Person = {
+/** Tabulator grid edit form type */
+type IPerson = {
     id: string;
-    firstName: string;
-    lastName: string;
-    permission: string;
+    name: string;
+    age: number;
+    col: string;
+    dob: string;
 };
 
-//should be memoized or stable
-const columns: MRT_ColumnDef[] = [
-    {
-        accessorKey: 'firstName',
-        header: 'Имя',
-    },
-    {
-        accessorKey: 'lastName',
-        header: 'Фамилия',
-    },
-    {
-        accessorKey: 'permission',
-        header: 'Доступ',
-    },
+/** Main modal form type */
+interface IUsers {
+    users: Record<string, unknown>[];
+}
+
+const columns: IReactTabulatorProps['columns'] = [
+    {title: 'Name', field: 'name'},
+    {title: 'Age', field: 'age', hozAlign: 'left', formatter: 'progress'},
+    {title: 'Favourite Color', field: 'col'},
+    {title: 'Date Of Birth', field: 'dob', hozAlign: 'center'},
+    {title: 'Rating', field: 'rating', hozAlign: 'center', formatter: 'star'},
+    {title: 'Passed?', field: 'passed', hozAlign: 'center', formatter: 'tickCross'},
 ];
 
-const gridDataSet: Person[] = [
-    {
-        id: '1',
-        firstName: 'John',
-        lastName: 'Doe',
-        permission: 'write',
-    },
-    {
-        id: '2',
-        firstName: 'Jane',
-        lastName: 'Doe',
-        permission: 'read',
-    },
-    {
-        id: '3',
-        firstName: 'Joe',
-        lastName: 'Doe',
-        permission: 'write',
-    },
-    {
-        id: '4',
-        firstName: 'Kevin',
-        lastName: 'Vend',
-        permission: 'write',
-    },
-    {
-        id: '5',
-        firstName: 'Joshua',
-        lastName: 'Rudolf',
-        permission: 'Read',
-    },
+const dataSet: IGridRowData[] = [
+    {id: '1', name: 'Oli Bob1', age: '12', col: 'red', dob: ''},
+    {id: '2', name: 'Mary May1', age: '1', col: 'blue', dob: '14/05/1982'},
+    {id: '3', name: 'Christine Lobowski1', age: '42', col: 'green', dob: '22/05/1982'},
+    {id: '4', name: 'Brendon Philips1', age: '125', col: 'orange', dob: '01/08/1980'},
+    {id: '5', name: 'Margret Marmajuke1', age: '16', col: 'yellow', dob: '31/01/1999'},
+    {id: '6', name: 'Oli Bob2', age: '12', col: 'red', dob: ''},
+    {id: '7', name: 'Mary May2', age: '1', col: 'blue', dob: '14/05/1982'},
+    {id: '8', name: 'Christine Lobowski2', age: '42', col: 'green', dob: '22/05/1982'},
+    {id: '9', name: 'Brendon Philips2', age: '125', col: 'orange', dob: '01/08/1980'},
+    {id: '10', name: 'Margret Marmajuke2', age: '16', col: 'yellow', dob: '31/01/1999'},
+    {id: '11', name: 'Oli Bob3', age: '12', col: 'red', dob: ''},
+    {id: '12', name: 'Mary May3', age: '1', col: 'blue', dob: '14/05/1982'},
+    {id: '13', name: 'Christine Lobowski3', age: '42', col: 'green', dob: '22/05/1982'},
+    {id: '14', name: 'Brendon Philips3', age: '125', col: 'orange', dob: '01/08/1980'},
+    {id: '15', name: 'Margret Marmajuke3', age: '16', col: 'yellow', dob: '31/01/1999'},
+    {id: '16', name: 'Oli Bob4', age: '12', col: 'red', dob: ''},
+    {id: '17', name: 'Mary May4', age: '1', col: 'blue', dob: '14/05/1982'},
+    {id: '18', name: 'Christine Lobowski4', age: '42', col: 'green', dob: '22/05/1982'},
+    {id: '19', name: 'Brendon Philips4', age: '125', col: 'orange', dob: '01/08/1980'},
+    {id: '20', name: 'Margret Marmajuke4', age: '16', col: 'yellow', dob: '31/01/1999'},
 ];
-
 
 const formApi = {} as IDFormModalApi;
 
-const formProps = new DFormModalConfig<IFields>()
+/** Tabulator edit form props */
+const editFormProps = new DFormModalConfig<IPerson>().layout('horizontal')
+    .addFields(
+        new InputComponentConfig('name').label('Name'),
+        new NumberComponentConfig('age').label('Age'),
+        new InputComponentConfig('col').label('Favourite Color'),
+        new InputComponentConfig('dob').label('Day of Birth'),
+    ).confirmChanges(true)
+    .getConfig();
+
+/** main modal form props */
+const formProps = new DFormModalConfig<IUsers>()
     .apiRef(formApi)
     .name('Test form')
     .confirmChanges(true)
-    .addFields(new MrGridComponentConfig('permissions').label('Полномочия').columns(columns).dataSet(gridDataSet))
+    .addFields(
+        new TabulatorGridComponentConfig('users').label('Пользователи').columns(columns).dataSet(dataSet).editFormProps(editFormProps).confirmDelete(true)
+    )
     .getConfig();
 
 export const ModalFormWithGrid = (): JSX.Element => {
@@ -85,7 +86,7 @@ export const ModalFormWithGrid = (): JSX.Element => {
     return (
         <>
             {/*Description Start*/}
-            <h1>Пример модальной формы с простым гридом</h1>
+            <h1>Пример модальной формы с гридом Tabulator</h1>
             {/*Description End*/}
 
             <div style={{maxWidth: 500}}>

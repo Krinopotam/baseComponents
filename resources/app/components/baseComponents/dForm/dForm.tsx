@@ -96,6 +96,10 @@ export interface IDFormProps {
     /** Confirm message before the form submitting */
     submitConfirmMessage?: React.ReactNode;
 
+    /** Additional values */
+    additionalValues?: Record<string, unknown>;
+
+
     // /** Close dirty controls confirm message. If null or empty string - no confirm */
     // closeFormConfirmMessage?: string | null;
 }

@@ -5,12 +5,8 @@ import {IRuleType} from '../validators/baseValidator';
 import {IApiAction} from "../../../../../app/applib/api/ApiAction";
 import {getUuid} from "baseComponents/libs/helpers/helpersString";
 import {IDFormApi} from 'baseComponents/dForm/hooks/api';
-
 export class DFormConfig<T>  {
     protected _config: Record<string, unknown> = {};
-
-
-
 
     /** A mutable object to merge with these controls api */
     apiRef(value: IDFormProps['apiRef']) {
@@ -138,7 +134,6 @@ export class DFormConfig<T>  {
         return this;
     }
 
-
     /** Add fields or fields inline groups */
     addFields(...args: BaseComponentConfig<T>[]) {
         this.addFieldsConfig(undefined, args);
@@ -177,42 +172,56 @@ export class DFormConfig<T>  {
         if (typeof tabName !== 'undefined') formFieldsProps[id].tab = tabName;
     }
 
-        /**
+    /** Additional values  */
+    setAdditionalValues(value: IDFormProps['additionalValues']) {
+        this._config.additionalValues = value;
+        return this;
+    }
+
+    /**
      * Set storage action for update
      * @param storageAction
      * @param additionalValues
      */
-        setActionUpdate(storageAction: IApiAction) {
-            if (!this._config.callbacks) this._config.callbacks = {};
-            // define submit action throw webservices object
-            this._config.callbacks.onSubmit = (values: Record<string, unknown>, formApi: IDFormApi): Promise<unknown> => {
-                return new Promise((resolve, reject) => {
-                    const isNew = formApi.model._formMode === 'create' ||  formApi.model._formMode === 'clone';
-                    if (isNew && !values.id) values.id = getUuid();
-    
-                    // set action parameters
-                    storageAction.param = {
-                        values : values,
-                        changes: formApi.model._dirty,
-                        isNew  : isNew,
+    setActionUpdate(storageAction: IApiAction) {
+        if (!this._config.callbacks) this._config.callbacks = {};
+        // define submit action throw webservices object
+        this._config.callbacks.onSubmit = (values: Record<string, unknown>, formApi: IDFormApi): Promise<unknown> => {
+            return new Promise((resolve, reject) => {
+                const formProps = formApi.getFormProps();
+                const isNew = formProps.formMode === 'create' ||  formProps.formMode === 'clone';
+                
+                if (formProps.dataSet?.id) {
+                    values.id = formProps.dataSet?.id;
+                }
+                
+                if (isNew) {
+                    values.id = getUuid();
+                }
+                
+                // set action parameters
+                storageAction.param = {
+                    values : {...values, ...formProps.additionalValues},
+                    changes: formApi.model._dirty,
+                    isNew  : isNew,
+                };
+                const onSuccess = () => {
+                    resolve({result: 'success', data: values, code: 200, message: ''});
+                }
+                const onFail = () => {
+                    const result = {
+                        code   : (storageAction.errors && storageAction.errors.length > 0) ? storageAction.errors[0].error : 500,
+                        message: (storageAction.errors && storageAction.errors.length > 0) ? storageAction.errors[0].message : 'Неизвестная ошибка',
                     };
-                    const onSuccess = () => {
-                        resolve({result: 'success', data: values, code: 200, message: ''});
-                    }
-                    const onFail = () => {
-                        const result = {
-                            code   : (storageAction.errors && storageAction.errors.length > 0) ? storageAction.errors[0].error : 500,
-                            message: (storageAction.errors && storageAction.errors.length > 0) ? storageAction.errors[0].message : 'Неизвестная ошибка',
-                        };
-                        reject(result);
-                    }
-                    // make fetch
-                    storageAction.fetch(undefined, true, onSuccess, onFail);
-                });
-            };
-            
-            return this;
-        }
+                    reject(result);
+                }
+                // make fetch
+                storageAction.fetch(undefined, true, onSuccess, onFail);
+            });
+        };
+        
+        return this;
+    }
 
     /** Get form config */
     getConfig() {

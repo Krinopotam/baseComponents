@@ -187,7 +187,7 @@ export class DFormConfig<T>  {
             // define submit action throw webservices object
             this._config.callbacks.onSubmit = (values: Record<string, unknown>, formApi: IDFormApi): Promise<unknown> => {
                 return new Promise((resolve, reject) => {
-                    const isNew = this._config.formMode === 'create' ||  this._config.formMode === 'clone';
+                    const isNew = formApi.model._formMode === 'create' ||  formApi.model._formMode === 'clone';
                     if (isNew && !values.id) values.id = getUuid();
     
                     // set action parameters

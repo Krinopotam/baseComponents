@@ -21,7 +21,8 @@ export interface IDFormFieldCheckBoxProps extends IDFormFieldProps {
     indeterminate?: boolean;
 }
 
-export const CheckboxComponent = ({formApi, formProps, fieldName}: IDFormComponentProps): JSX.Element => {
+export const CheckboxComponent = ({formApi, fieldName}: IDFormComponentProps): JSX.Element => {
+    const formProps = formApi.getFormProps();
     const fieldProps = formProps.fieldsProps[fieldName] as IDFormFieldCheckBoxProps;
     const value = formApi.model.getFieldValue(fieldName) as boolean;
 

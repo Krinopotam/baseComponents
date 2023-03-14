@@ -13,9 +13,8 @@ interface IFields {
 
 const formApi = {} as IDFormModalApi;
 
-const formProps = new DFormConfig<IFields>()
+const formProps = new DFormConfig<IFields>('Test form')
     .apiRef(formApi)
-    .name('Test form')
     .confirmChanges(true)
     .addFields(
         new InputComponentConfig('position').label('Должность'),

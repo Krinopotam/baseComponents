@@ -29,7 +29,8 @@ export interface IDFormFieldTreeSelectProps extends IDFormFieldTreeSelectProps_ 
 
 //endregion
 
-export const TreeSelectComponent = ({formApi, formProps, fieldName}: IDFormComponentProps): JSX.Element => {
+export const TreeSelectComponent = ({formApi, fieldName}: IDFormComponentProps): JSX.Element => {
+    const formProps = formApi.getFormProps();
     const fieldProps = formProps.fieldsProps[fieldName] as IDFormFieldTreeSelectProps;
     const value = formApi.model.getFieldValue(fieldName) as ITreeSelectNode | ITreeSelectNode[] | undefined;
 

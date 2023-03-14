@@ -162,7 +162,7 @@ export const useInitGridApi = ({
 };
 
 const useApiGetGridId = (gridApi: IGridApi): IGridApi['getGridId'] => {
-    const [gridId] = useState(gridApi.gridProps.id || getUuid());
+    const [gridId] = useState(gridApi.gridProps.id || 'grid-' +  getUuid());
     return useCallback(() => gridId, [gridId]);
 };
 

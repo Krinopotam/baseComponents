@@ -26,7 +26,8 @@ export interface IDFormFieldSwitchProps extends IDFormFieldProps {
     loading?: boolean;
 }
 
-export const SwitchComponent = ({formApi, formProps, fieldName}: IDFormComponentProps): JSX.Element => {
+export const SwitchComponent = ({formApi, fieldName}: IDFormComponentProps): JSX.Element => {
+    const formProps = formApi.getFormProps();
     const fieldProps = formProps.fieldsProps[fieldName] as IDFormFieldSwitchProps;
     const value = formApi.model.getFieldValue(fieldName) as boolean | undefined;
 

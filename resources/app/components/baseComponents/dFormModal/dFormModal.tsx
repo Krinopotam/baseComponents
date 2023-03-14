@@ -13,7 +13,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import {DFormModalRender} from './renders/dFormModalRender';
 import {IButtonsRowApi} from 'baseComponents/buttonsRow';
 import {getUuid} from 'helpers/helpersString';
-import { splitObject } from 'helpers/helpersObjects';
+import {splitObject } from 'helpers/helpersObjects';
 import {useCallbacks} from 'baseComponents/dFormModal/hooks/callbacks';
 import {useGetActualProps} from 'baseComponents/dForm/hooks/actualProps';
 import {useInitButtons} from 'baseComponents/dFormModal/hooks/buttons';
@@ -82,7 +82,7 @@ export interface IDFormModalCallbacks extends IDFormCallbacks {
 export const DFormModal = (props: IDFormModalProps): JSX.Element => {
     useUpdateMessageBoxTheme(); //set current theme to messageBox
 
-    const [modalId] = useState(getUuid());
+    const [formId] = useState(props.formId || 'dFormModal-' + getUuid());
     const [modalFormProps, updateModalFormProps] = useGetActualProps(props); //props can be set both by parent component and via api
 
     const [formProps] = useSeparateProps(modalFormProps); // separates form props from modal props
@@ -91,7 +91,7 @@ export const DFormModal = (props: IDFormModalProps): JSX.Element => {
     const [formApi, setFormApi] = useState((modalFormProps.apiRef || {}) as IDFormModalApi);
     const [buttonsApi] = useState({} as IButtonsRowApi);
     const buttons = useInitButtons(formApi, modalFormProps);
-    useInitModalFormApi(formApi, modalFormProps, buttonsApi, updateModalFormProps);
+    useInitModalFormApi(formId, formApi, modalFormProps, buttonsApi, updateModalFormProps);
 
     //endregion
 
@@ -108,7 +108,7 @@ export const DFormModal = (props: IDFormModalProps): JSX.Element => {
 
     return (
         <DFormModalRender
-            modalId={modalId}
+            formId={formId}
             formApi={formApi}
             modalFormProps={modalFormProps}
             formProps={formProps}
@@ -134,6 +134,7 @@ const useSeparateProps = (props: IDFormModalProps) => {
             'resizable',
             'isOpened',
             'closeFormConfirmMessage',
+            'formId',
             
             //---Common props ------
             'apiRef',
@@ -143,7 +144,6 @@ const useSeparateProps = (props: IDFormModalProps) => {
 
         //const modalProps = result[0] as IDFormModalBaseProps;
         const formProps = result[1] as IDFormProps;
-
         formProps.buttons = null; //clear form buttons because the modal form has it own buttons
 
         return [formProps];

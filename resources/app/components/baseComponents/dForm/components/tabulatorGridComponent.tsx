@@ -133,7 +133,8 @@ export interface IDFormFieldTabulatorGridProps extends IDFormFieldProps {
     columnDefaults?: IReactTabulatorProps['columnDefaults'];
 }
 
-export const TabulatorGridComponent = ({formApi, formProps, fieldName}: IDFormComponentProps): JSX.Element => {
+export const TabulatorGridComponent = ({formApi, fieldName}: IDFormComponentProps): JSX.Element => {
+    const formProps = formApi.getFormProps();
     const fieldProps = formProps.fieldsProps[fieldName] as IDFormFieldTabulatorGridProps;
     const value = formApi.model.getFieldValue(fieldName) as IGridRowData[];
 

@@ -18,9 +18,7 @@ const password = <T,>() => {
     return new PasswordComponentConfig<T>('password' as keyof T).label('Пароль');
 };
 
-const formProps = new DFormConfig<IFields>()
-    .name('Test form')
-
+const formProps = new DFormConfig<IFields>('Test form')
     .confirmChanges(true)
     .addFields(
         login().label('Имя пользователя'),

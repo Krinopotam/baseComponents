@@ -19,7 +19,8 @@ export interface IDFormFieldLinkProps extends IDFormFieldProps {
     target?: '_blank' | '_self' | '_parent' | '_top';
 }
 
-export const LinkComponent = ({formApi, formProps, fieldName}: IDFormComponentProps): JSX.Element => {
+export const LinkComponent = ({formApi, fieldName}: IDFormComponentProps): JSX.Element => {
+    const formProps = formApi.getFormProps();
     const fieldProps = formProps.fieldsProps[fieldName] as IDFormFieldLinkProps;
     const value = formApi.model.getFieldValue(fieldName) as string | undefined;
 

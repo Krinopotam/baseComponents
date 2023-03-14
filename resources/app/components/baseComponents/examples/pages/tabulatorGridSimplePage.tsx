@@ -45,7 +45,7 @@ const data: IGridRowData[] = [
 export const TabulatorGridSimple = (): JSX.Element => {
     return (
         <>
-            <TabulatorGrid id={'TabulatorGridSimple'} columns={columns} dataSet={data} />
+            <TabulatorGrid id={'TabulatorGridSimple'} columns={columns} dataSet={data} height={500} layout={'fitColumns'} />
         </>
     );
 };

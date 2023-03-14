@@ -19,14 +19,12 @@ interface IFieldsRenderProps {
 
     /** form api instance */
     formApi: IDFormApi;
-
-    /** form properties */
-    formProps: IDFormProps;
 }
 
-export const TabContentRender = ({tabName, formApi, formProps}: IFieldsRenderProps): JSX.Element => {
+export const TabContentRender = ({tabName, formApi}: IFieldsRenderProps): JSX.Element => {
     useExternalRenderCall(formApi, tabName);
 
+    const formProps = formApi.getFormProps();
     const groupsProp = formApi.model.getGroupsProps(tabName);
 
     return (
@@ -35,10 +33,10 @@ export const TabContentRender = ({tabName, formApi, formProps}: IFieldsRenderPro
                 if (Object.keys(groupsProp[groupName]).length === 0) return null;
 
                 if (Object.keys(groupsProp[groupName]).length > 1) {
-                    return <FieldGroupRender key={groupName} formApi={formApi} formProps={formProps} tabName={tabName} groupName={groupName} />;
+                    return <FieldGroupRender key={groupName} formApi={formApi} tabName={tabName} groupName={groupName} />;
                 } else {
                     const fieldName = Object.keys(groupsProp[groupName])[0];
-                    return <BaseComponent key={fieldName} formApi={formApi} formProps={formProps} fieldName={fieldName} />;
+                    return <BaseComponent key={fieldName} formApi={formApi} fieldName={fieldName} />;
                 }
             })}
         </>

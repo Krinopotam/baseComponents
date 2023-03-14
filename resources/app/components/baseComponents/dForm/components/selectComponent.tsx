@@ -155,7 +155,8 @@ export interface IDFormFieldSelectProps extends IDFormFieldProps {
  * @param fieldName
  * @constructor
  */
-export const SelectComponent = ({formApi, formProps, fieldName}: IDFormComponentProps): JSX.Element => {
+export const SelectComponent = ({formApi, fieldName}: IDFormComponentProps): JSX.Element => {
+    const formProps = formApi.getFormProps();
     const fieldProps = formProps.fieldsProps[fieldName] as IDFormFieldSelectProps;
     const value = formApi.model.getFieldValue(fieldName) as string | string[] | number | number[] | LabeledValue | LabeledValue[];
 

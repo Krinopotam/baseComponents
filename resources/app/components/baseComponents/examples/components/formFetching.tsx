@@ -8,8 +8,7 @@ interface IFields {
     department: string;
 }
 
-const formProps = new DFormConfig<IFields>()
-    .name('Test form')
+const formProps = new DFormConfig<IFields>('Test form')
     .formMode('update')
     .confirmChanges(true)
     .addFields(new InputComponentConfig('position').label('Должность'), new InputComponentConfig('department').label('Подразделение'))

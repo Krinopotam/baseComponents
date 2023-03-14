@@ -23,7 +23,8 @@ export interface IDFormFieldInputProps extends IDFormFieldProps {
     maxLength?: number;
 }
 
-export const InputComponent = ({formApi, formProps, fieldName}: IDFormComponentProps): JSX.Element => {
+export const InputComponent = ({formApi, fieldName}: IDFormComponentProps): JSX.Element => {
+    const formProps = formApi.getFormProps();
     const fieldProps = formProps.fieldsProps[fieldName] as IDFormFieldInputProps;
     const value = formApi.model.getFieldValue(fieldName) as string | number | undefined;
 

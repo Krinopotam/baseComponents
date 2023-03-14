@@ -18,13 +18,11 @@ const {useToken} = theme;
 interface IFormBodyRenderProps {
     /** form api instance */
     formApi: IDFormApi;
-
-    /** form properties */
-    formProps: IDFormProps;
 }
 
 /** Render form body */
-export const FormBodyRender = ({formApi, formProps}: IFormBodyRenderProps): JSX.Element | null => {
+export const FormBodyRender = ({formApi}: IFormBodyRenderProps): JSX.Element | null => {
+    const formProps = formApi.getFormProps();
     const {token} = useToken();
     const tabs = formApi.model.getTabsProps();
     if (Object.keys(tabs).length === 0) return null;
@@ -35,10 +33,10 @@ export const FormBodyRender = ({formApi, formProps}: IFormBodyRenderProps): JSX.
         return (
             <>
                 <div style={indentStyle} />
-                <TabContentRender formApi={formApi} tabName={firstTab} formProps={formProps} />
+                <TabContentRender formApi={formApi} tabName={firstTab} />
             </>
         );
     } else {
-        return <TabsRender formApi={formApi} formProps={formProps} />;
+        return <TabsRender formApi={formApi} />;
     }
 };

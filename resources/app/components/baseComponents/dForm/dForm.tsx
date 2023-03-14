@@ -32,6 +32,9 @@ import {useUpdateMessageBoxTheme} from 'baseComponents/messageBox/hooks/updateMo
 export interface IDFormProps {
     /** A mutable object to merge with these controls api */
     apiRef?: unknown;
+    
+    /** Form formId */
+    formId?: string;
 
     /** Buttons properties */
     buttons?: IFormButtons | null;
@@ -68,9 +71,6 @@ export interface IDFormProps {
 
     /** Form mode */
     formMode?: IDFormMode;
-
-    /** Form name */
-    name?: string;
 
     /** Disable automatic hiding the fields if they depend on the fields for which the values are not set */
     noAutoHideDependedFields?: boolean;
@@ -213,26 +213,26 @@ export const DForm = (props: IDFormProps): JSX.Element => {
     const [formProps, updateFormProps] = useGetActualProps(props); //props can be set both by parent component and via api
 
     //region Common component states
-    const [formId] = useState(getUuid());
+    const [formId] = useState(formProps.formId || 'dForm'- + getUuid());
     const [formApi] = useState((formProps.apiRef || {}) as IDFormApi);
     const [buttonsApi] = useState({} as IButtonsRowApi);
     const formButtons = useGetButtons(formProps, formApi); //init buttons
     //endregion
 
     const callbacks = useCallbacks(formProps, formApi);
-    const formModel = useFormModel(formProps, callbacks);
-    useInitFormApi(formApi, formModel, formProps, buttonsApi, updateFormProps);
+    const formModel = useFormModel(formId, formProps, callbacks);
+    useInitFormApi(formId, formApi, formModel, formProps, buttonsApi, updateFormProps);
 
     useInitialFetchData(formApi);
 
     useFormMounted(formApi);
 
-    return <FormRender formId={formId} formApi={formApi} formProps={formProps} buttonsApi={buttonsApi} formButtons={formButtons} />;
+    return <FormRender formApi={formApi} formButtons={formButtons} />;
 };
 
-const useFormModel = (formProps: IDFormProps, callbacks: IDFormModelCallbacks) => {
+const useFormModel = (formId: string, formProps: IDFormProps, callbacks: IDFormModelCallbacks) => {
     const modelRef = useRef<DModel>();
-    if (!modelRef.current) modelRef.current = new DModel(formProps, callbacks);
+    if (!modelRef.current) modelRef.current = new DModel(formId, formProps, callbacks);
 
     return modelRef.current;
 };

@@ -7,7 +7,9 @@ import {IRuleType} from '../validators/baseValidator';
 export class DFormConfig<T>  {
     protected _config: Record<string, unknown> = {};
 
-
+    constructor(formId: string) {
+        this._config.formId = formId;; 
+    }
 
 
     /** A mutable object to merge with these controls api */
@@ -85,12 +87,6 @@ export class DFormConfig<T>  {
     /** Form mode */
     formMode(value: IDFormProps['formMode']) {
         this._config.formMode = value;
-        return this;
-    }
-
-    /** Form name */
-    name(value: IDFormProps['name']) {
-        this._config.name = value;
         return this;
     }
 

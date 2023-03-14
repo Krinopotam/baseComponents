@@ -20,13 +20,11 @@ const {useToken} = theme;
 interface ITabsRenderProps {
     /** form api instance */
     formApi: IDFormApi;
-
-    /** form properties */
-    formProps: IDFormProps;
 }
 
 /** All tab bars renderer */
-export const TabsRender = ({formApi, formProps}: ITabsRenderProps): JSX.Element => {
+export const TabsRender = ({formApi}: ITabsRenderProps): JSX.Element => {
+    const formProps = formApi.getFormProps();
     //there is no sense to use memo (rendering is not very often)
     const tabs = formApi.model.getTabsProps();
     const items: TabsProps['items'] = [];
@@ -35,7 +33,7 @@ export const TabsRender = ({formApi, formProps}: ITabsRenderProps): JSX.Element 
             key: tabName,
             label: tabName,
             forceRender: true,
-            children: <TabContentRender tabName={tabName} formApi={formApi} formProps={formProps} />,
+            children: <TabContentRender tabName={tabName} formApi={formApi} />,
         });
     }
 

@@ -92,14 +92,11 @@ export interface IDFormComponentProps {
 
     /** form api instance */
     formApi: IDFormApi;
-
-    /** form properties */
-    formProps: IDFormProps;
 }
 
-export const BaseComponent = ({fieldName, formApi, formProps, noLabel}: IDFormComponentProps & {noLabel?: boolean}): JSX.Element => {
+export const BaseComponent = ({fieldName, formApi, noLabel}: IDFormComponentProps & {noLabel?: boolean}): JSX.Element => {
     useExternalRenderCall(formApi, fieldName);
-
+    const formProps = formApi.getFormProps();
     const fieldProps = formProps.fieldsProps[fieldName];
 
     const error = formApi.model.getFieldError(fieldName);
@@ -128,7 +125,7 @@ export const BaseComponent = ({fieldName, formApi, formProps, noLabel}: IDFormCo
                     validateStatus={(fieldTouched || formSubmitCount > 0) && error ? 'error' : ''}
                     style={style}
                 >
-                    <Component fieldName={fieldName} formApi={formApi} formProps={formProps} />
+                    <Component fieldName={fieldName} formApi={formApi} />
                 </Form.Item>
             ) : null}
         </Animate>

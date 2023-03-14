@@ -21,8 +21,8 @@ import {useResize} from './hooks/useResize';
 export type IFormType = 'primary' | 'confirm' | 'info' | 'success' | 'error' | 'warning';
 
 export type IModalProps = AntModalProps & {
-    /** the form ID (important property) */
-    modalId: string;
+    /** the form ID for form dispatcher (important property) */
+    dispatcherFormId: string;
 
     /** The form body initial height */
     bodyHeight?: number;
@@ -50,7 +50,7 @@ export type IModalProps = AntModalProps & {
 };
 
 const Modal = ({resizable = true, ...props}: IModalProps): JSX.Element => {
-    useInitFormDispatcher(props.modalId, !!props.open);
+    useInitFormDispatcher(props.dispatcherFormId, !!props.open);
 
     const [formSize, setFormSize] = useState({width: props.width || 0, bodyHeight: props.bodyHeight || 0});
     const onMouseResize = useResize(

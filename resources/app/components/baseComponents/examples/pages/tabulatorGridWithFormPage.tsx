@@ -53,7 +53,7 @@ const data: IGridRowData[] = [
     {id: '20', name: 'Margret Marmajuke4', age: '16', col: 'yellow', dob: '31/01/1999'},
 ];
 
-const editFormConfig = new DFormModalConfig<IPerson>().layout('horizontal')
+const editFormConfig = new DFormModalConfig<IPerson>('gridEditForm').layout('horizontal')
     .addFields(
         new InputComponentConfig('name').label('Name'),
         new NumberComponentConfig('age').label('Age'),

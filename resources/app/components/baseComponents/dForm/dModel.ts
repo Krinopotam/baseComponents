@@ -115,6 +115,9 @@ export type IDFormSubmitResultObject = {data?: Record<string, unknown>; error?: 
 
 export class DModel {
     //region Private properties
+    /** Form ID */
+    private _formId :string;
+    
     /** form properties (immutable clone) */
     private _formProps: IDFormProps;
 
@@ -225,7 +228,8 @@ export class DModel {
     //endregion
 
     //region Init class
-    constructor(formProps: IDFormProps, callbacks: IDFormModelCallbacks) {
+    constructor(formId: string, formProps: IDFormProps, callbacks: IDFormModelCallbacks) {
+        this._formId = formId;
         this._formProps = cloneObject(formProps);
         this._fieldsProps = this._formProps.fieldsProps;
         this._callbacks = callbacks;
@@ -794,6 +798,11 @@ export class DModel {
     //endregion
 
     //region Form methods
+    /** Get form ID */
+    public getFormId () {
+        return this._formId;
+    }
+    
     // Values
     /** Get form values */
     public getFormValues() {

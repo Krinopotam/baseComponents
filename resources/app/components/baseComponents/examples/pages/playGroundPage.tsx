@@ -62,10 +62,9 @@ interface IFields {
 
 
 const formModalApi: IDFormModalApi = {} as IDFormModalApi;
-const formProps = new DFormModalConfig<IFields>()
+const formProps = new DFormModalConfig<IFields>('TestFormModalConfig')
     .apiRef(formModalApi)
     .formType('info')
-    .name('TestFormModalConfig')
     .title('Форма редактирования')
     .formMode('update')
     .validationRules(validationRules)

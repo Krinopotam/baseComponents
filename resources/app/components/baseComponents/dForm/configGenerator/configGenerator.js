@@ -122,6 +122,7 @@ function generateFormConfigClass() {
     let properties = parseResult.properties;
     properties['fieldsProps'] = {...properties['fieldsProps'], type: 'Record<keyof T, IDFormFieldProps>'};
     properties['validationRules'] = {...properties['validationRules'], type: 'Record<keyof T, IRuleType[]>'};
+    delete properties['formId'];
 
     /**
      * @type {IClassProps}
@@ -134,6 +135,10 @@ function generateFormConfigClass() {
             {typeName: 'IDFormFieldProps', typePath: '../components/baseComponent'},
             {typeName: 'IRuleType', typePath: '../validators/baseValidator'},
         ],
+        constructor: {
+            parameters: [{var: 'formId', type: 'string'}],
+            rows: [`this._config.formId = formId;`],
+        },
         fields: [{access: 'protected', name: '_config', type: 'Record<string, unknown>', value: '{}'}],
         propMethods: properties,
         additionalMethods: [
@@ -164,6 +169,7 @@ function generateModalFormConfigClass() {
         return;
     }
     const properties = parseResult.properties;
+    delete properties['formId'];
 
     /**
      * @type {IClassProps}
@@ -172,6 +178,10 @@ function generateModalFormConfigClass() {
         className: componentClassName + '<T>',
         extends: 'DFormConfig<T>',
         imports: [formOptions, {typeName: 'DFormConfig', typePath: './dFormConfig'}, {typeName: 'IDFormModalProps', typePath: formOptions.typePath}],
+        constructor: {
+            parameters: [{var: 'formId', type: 'string'}],
+            rows: [`super (formId);`],
+        },
         propMethods: properties,
         additionalMethods: ['/** Get form config */\n    getConfig() {\n        return this._config as unknown as IDFormModalProps \n    }'],
     };

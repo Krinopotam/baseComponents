@@ -8,8 +8,8 @@ import {Modal} from 'baseComponents/modal';
 import React from 'react';
 
 interface IDFormModalRenderProps {
-    /** the modal ID (important property) */
-    modalId: string;
+    /** the form ID (important property) */
+    formId: string;
 
     /** form buttons collection */
     buttons?: IFormButtons;
@@ -38,19 +38,19 @@ interface IDFormModalRenderProps {
     /** On cancel button click callback */
     onCancel?: (e: React.MouseEvent<HTMLButtonElement>) => void;
 }
-export const DFormModalRender = ({modalId, buttons, buttonsApi, callbacks, formApi, formProps, modalFormProps}: IDFormModalRenderProps): JSX.Element => {
+export const DFormModalRender = ({formId, buttons, buttonsApi, callbacks, formApi, formProps, modalFormProps}: IDFormModalRenderProps): JSX.Element => {
     const formMode = modalFormProps.formMode || 'create'; //form model does not initialized yet
     const modalTitle = useFormTitle(formMode, modalFormProps.title);
 
     return (
         <Modal
-            modalId={modalId}
+            dispatcherFormId={formId}
             open={modalFormProps.isOpened}
             //onOk={formApi.submitForm} // Not required, as separate parameters for buttons are used
             onCancel={formApi.close}
             centered
             destroyOnClose={true}
-            footer={<ButtonsRender formId={modalId} buttons={buttons} formType={modalFormProps.formType} buttonsApi={buttonsApi} arrowsSelection={false} context={formApi} />}
+            footer={<ButtonsRender formId={formId} buttons={buttons} formType={modalFormProps.formType} buttonsApi={buttonsApi} arrowsSelection={false} context={formApi} />}
             maskClosable={false}
             keyboard={false}
             wrapClassName={'managed-dynamic-buttons-row'} //This class is needed to limit the scope of the component that controls the buttons (buttonsRow)

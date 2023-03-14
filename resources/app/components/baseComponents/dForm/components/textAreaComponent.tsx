@@ -33,7 +33,8 @@ export interface IDFormFieldTextAreaProps extends IDFormFieldInputProps {
     wrap?: 'soft | hard';
 }
 
-export const TextAreaComponent = ({formApi, formProps, fieldName}: IDFormComponentProps): JSX.Element => {
+export const TextAreaComponent = ({formApi, fieldName}: IDFormComponentProps): JSX.Element => {
+    const formProps = formApi.getFormProps();
     const fieldProps = formProps.fieldsProps[fieldName] as IDFormFieldTextAreaProps;
     const value = formApi.model.getFieldValue(fieldName) as string | number | readonly string[] | undefined;
 

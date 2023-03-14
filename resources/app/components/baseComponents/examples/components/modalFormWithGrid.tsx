@@ -71,9 +71,8 @@ const editFormProps = new DFormModalConfig<IPerson>()
     .getConfig();
 
 /** main modal form props */
-const formProps = new DFormModalConfig<IUsers>()
+const formProps = new DFormModalConfig<IUsers>('Test form')
     .apiRef(formApi)
-    .name('Test form')
     .confirmChanges(true)
     .addFields(
         new TabulatorGridComponentConfig('users')

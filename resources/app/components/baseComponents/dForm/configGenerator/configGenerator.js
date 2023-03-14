@@ -10,19 +10,19 @@ const debug = !!process.argv[2];
 
 const options = {
     formProps: {
-        modulePath: '..\\dForm.tsx',
-        savePath: '..\\configBuilder\\dFormConfig.ts',
+        modulePath: '../dForm.tsx',
+        savePath: '../configBuilder/dFormConfig.ts',
         typeName: 'IDFormProps',
         typePath: 'baseComponents/dForm/dForm',
     },
     formModalProps: {
-        modulePath: '..\\..\\dFormModal\\dFormModal.tsx',
-        savePath: '..\\configBuilder\\dFormModalConfig.ts',
+        modulePath: '../../dFormModal/dFormModal.tsx',
+        savePath: '../configBuilder/dFormModalConfig.ts',
         typeName: 'IDModalProps',
         typePath: 'baseComponents/dFormModal/dFormModal',
     },
     treeSelectProps: {
-        modulePath: '..\\..\\treeSelect\\treeSelect.tsx',
+        modulePath: '../../treeSelect/treeSelect.tsx',
         savePath: '',
         typeName: 'ITreeSelectProps',
         typePath: 'baseComponents/treeSelect/treeSelect',
@@ -49,8 +49,8 @@ const componentsList = [
 function addComponentsToOptions() {
     for (const component of componentsList) {
         const props = {};
-        props.modulePath = '..\\components\\' + component.name + '.tsx';
-        props.savePath = '..\\configBuilder\\' + component.name + 'Config.ts';
+        props.modulePath = '../components/' + component.name + '.tsx';
+        props.savePath = '../configBuilder/' + component.name + 'Config.ts';
         props.typeName = component.interface;
         props.typePath = 'baseComponents/dForm/components/' + component.name;
         options[component.name + 'Props'] = props;

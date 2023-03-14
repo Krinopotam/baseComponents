@@ -82,6 +82,8 @@ export const TabulatorGridWithFormAsync = (): JSX.Element => {
                 columns={columns}
                 editFormProps={editFormConfig}
                 confirmDelete
+                height={500}
+                layout={'fitColumns'}
                 callbacks={{
                     onDataFetch: () => {
                         return new Promise((resolve, reject) => {

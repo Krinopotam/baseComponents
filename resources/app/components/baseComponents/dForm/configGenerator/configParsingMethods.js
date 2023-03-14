@@ -8,7 +8,7 @@ const fs = require('fs');
  * @returns {{data:string}|{error:{message:string, operation:string}}}
  */
 function loadFile(options) {
-    const path = __dirname + '\\' + options.modulePath;
+    const path = __dirname + '/' + options.modulePath;
     try {
         const fileContent = fs.readFileSync(path, 'utf8');
         return {data: fileContent};
@@ -24,7 +24,7 @@ function loadFile(options) {
  * @returns {string|undefined}
  */
 module.exports.saveFile = function saveFile(filePath, content) {
-    const path = __dirname + '\\' + filePath;
+    const path = __dirname + '/' + filePath;
     try {
         fs.writeFileSync(path, content, 'utf8');
     } catch (err) {

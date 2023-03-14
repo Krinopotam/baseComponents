@@ -1,10 +1,11 @@
-import React from 'react';
-import {TabulatorGridSimple} from '../components/tabulatorGridSimple';
-import {Divider} from 'antd';
-import SyntaxHighlighter from 'react-syntax-highlighter';
-import {docco} from 'react-syntax-highlighter/dist/esm/styles/hljs';
 
-export const TabulatorGridSimplePage = (): JSX.Element => {
+    import React from 'react';
+    import {TabulatorGridSimple} from '../components/tabulatorGridSimple';
+    import { Divider } from 'antd';
+    import SyntaxHighlighter from 'react-syntax-highlighter';
+    import {docco} from 'react-syntax-highlighter/dist/esm/styles/hljs';
+
+    export const TabulatorGridSimplePage = (): JSX.Element => {
     const source = `import React from 'react';
 import TabulatorGrid, {IGridRowData} from 'baseComponents/tabulatorGrid/tabulatorGrid';
 import {IReactTabulatorProps} from 'baseComponents/tabulatorGrid/reactTabulator/reactTabulator';
@@ -44,11 +45,11 @@ const data: IGridRowData[] = [
 export const TabulatorGridSimple = (): JSX.Element => {
     return (
         <>
-            <TabulatorGrid id={'TabulatorGridSimple'} columns={columns} dataSet={data} />
+            <TabulatorGrid id={'TabulatorGridSimple'} columns={columns} dataSet={data} height={500} layout={'fitColumns'} />
         </>
     );
 };
-`;
+`
     return (
         <>
             <div>

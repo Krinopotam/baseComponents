@@ -1,3 +1,7 @@
+import {createRoot} from 'react-dom/client';
+import {flushSync} from 'react-dom';
+import React from 'react';
+
 /** Check is element visible */
 export const isElementVisible = (elem: Element | null) => {
     if (!elem) return false;
@@ -18,7 +22,7 @@ export const isElementOverlapped = (elem: Element) => {
     const isOverlap = (elem1: Element, elem2: Element) => {
         const rect1 = elem1.getBoundingClientRect();
         const rect2 = elem2.getBoundingClientRect();
-        return  !(rect1.right < rect2.left || rect1.left > rect2.right || rect1.bottom < rect2.top || rect1.top > rect2.bottom);
+        return !(rect1.right < rect2.left || rect1.left > rect2.right || rect1.bottom < rect2.top || rect1.top > rect2.bottom);
     };
 
     const recursiveCheck = (target: Element, entry: Element, parent: Element | null): boolean => {
@@ -46,4 +50,14 @@ export const isElementOverlapped = (elem: Element) => {
     };
 
     return recursiveCheck(elem, elem, elem.parentElement);
+};
+
+/** Convert react component to HTML*/
+export const reactToHtml = (component: React.ReactNode) => {
+    const div = document.createElement('div');
+    const root = createRoot(div);
+    flushSync(() => {
+        root.render(component);
+    });
+    return div.innerHTML;
 };

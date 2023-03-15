@@ -14,7 +14,7 @@ import {IDFormApi} from '../hooks/api';
 import {IDFormFieldCheckBoxProps} from 'baseComponents/dForm/components/checkboxComponent';
 import {IDFormFieldDateTimeProps} from 'baseComponents/dForm/components/dateTimeComponent';
 import {IDFormFieldDragAndDropProps} from 'baseComponents/dForm/components/dragAndDropComponent';
-import {IDFormFieldGridProps} from 'baseComponents/dForm/components/gridComponent';
+import {IDFormFieldTabulatorGridProps} from 'baseComponents/dForm/components/tabulatorGridComponent';
 import {IDFormFieldInputProps} from 'baseComponents/dForm/components/inputComponent';
 import {IDFormFieldLinkProps} from 'baseComponents/dForm/components/linkComponent';
 import {IDFormFieldNumberProps} from 'baseComponents/dForm/components/numberComponent';
@@ -23,7 +23,7 @@ import {IDFormFieldSelectProps} from 'baseComponents/dForm/components/selectComp
 import {IDFormFieldSwitchProps} from 'baseComponents/dForm/components/switchComponent';
 import {IDFormFieldTextAreaProps} from 'baseComponents/dForm/components/textAreaComponent';
 import {IDFormFieldTreeSelectProps} from 'baseComponents/dForm/components/treeSelectComponent';
-import {IDFormProps} from '../dForm';
+import {DModel} from "baseComponents/dForm/dModel";
 
 // !used in configGenerator parsing. Don't use curly brackets and multi rows comments!
 export interface IDFormFieldProps {
@@ -112,7 +112,7 @@ export type IDFormAnyFieldProps =
     | IDFormFieldCheckBoxProps
     | IDFormFieldDateTimeProps
     | IDFormFieldDragAndDropProps
-    | IDFormFieldGridProps
+    | IDFormFieldTabulatorGridProps
     | IDFormFieldInputProps
     | IDFormFieldLinkProps
     | IDFormFieldNumberProps

@@ -2,8 +2,9 @@ import {IDFormProps} from 'baseComponents/dForm/dForm';
 import {BaseComponentConfig} from './baseComponentConfig';
 import {IDFormFieldProps} from '../components/baseComponent';
 import {IRuleType} from '../validators/baseValidator';
-
-
+import {IApiAction} from "../../../../../app/applib/api/ApiAction";
+import {getUuid} from "baseComponents/libs/helpers/helpersString";
+import {IDFormApi} from 'baseComponents/dForm/hooks/api';
 export class DFormConfig<T>  {
     protected _config: Record<string, unknown> = {};
 
@@ -131,7 +132,6 @@ export class DFormConfig<T>  {
         this._config.submitConfirmMessage = value;
         return this;
     }
-
 
     /** Add fields or fields inline groups */
     addFields(...args: BaseComponentConfig<T>[]) {

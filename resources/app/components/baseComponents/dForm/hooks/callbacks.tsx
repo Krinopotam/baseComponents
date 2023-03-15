@@ -182,6 +182,7 @@ export const useCallbacks = (formProps: IDFormProps, formApi: IDFormApi) => {
             onSubmitComplete: (values: Record<string, unknown>, errors: Record<string, string | undefined>) => {
                 if (formProps.callbacks?.onSubmitComplete?.(values, errors, formApi) === false) return;
                 formApi.buttonsApi.disabled('ok', false);
+                formApi.buttonsApi.loading('ok', false);
             },
 
             /** fires, when the dataSet change */

@@ -173,7 +173,7 @@ const useApiIsMounted = (unmountRef: React.MutableRefObject<boolean>): IGridApi[
 const useApiGetDataSet = (dataSet: IGridRowData[], gridApi: IGridApi): IGridApi['getDataSet'] => {
     return useCallback(() => {
         const gridDataSet = gridApi.tableApi?.getData();
-        if (gridDataSet) return gridDataSet;
+        if (gridDataSet !== undefined && gridDataSet?.length > 0) return gridDataSet;
         return dataSet || [];
     }, [dataSet, gridApi.tableApi]);
 };

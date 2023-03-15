@@ -172,57 +172,6 @@ export class DFormConfig<T>  {
         if (typeof tabName !== 'undefined') formFieldsProps[id].tab = tabName;
     }
 
-    /** Additional values  */
-    setAdditionalValues(value: IDFormProps['additionalValues']) {
-        this._config.additionalValues = value;
-        return this;
-    }
-
-    /**
-     * Set storage action for update
-     * @param storageAction
-     * @param additionalValues
-     */
-    setActionUpdate(storageAction: IApiAction) {
-        if (!this._config.callbacks) this._config.callbacks = {};
-        // define submit action throw webservices object
-        this._config.callbacks.onSubmit = (values: Record<string, unknown>, formApi: IDFormApi): Promise<unknown> => {
-            return new Promise((resolve, reject) => {
-                const formProps = formApi.getFormProps();
-                const isNew = formProps.formMode === 'create' ||  formProps.formMode === 'clone';
-                
-                if (formProps.dataSet?.id) {
-                    values.id = formProps.dataSet?.id;
-                }
-                
-                if (isNew) {
-                    values.id = getUuid();
-                }
-                
-                // set action parameters
-                storageAction.param = {
-                    values : {...values, ...formProps.additionalValues},
-                    changes: formApi.model._dirty,
-                    isNew  : isNew,
-                };
-                const onSuccess = () => {
-                    resolve({result: 'success', data: values, code: 200, message: ''});
-                }
-                const onFail = () => {
-                    const result = {
-                        code   : (storageAction.errors && storageAction.errors.length > 0) ? storageAction.errors[0].error : 500,
-                        message: (storageAction.errors && storageAction.errors.length > 0) ? storageAction.errors[0].message : 'Неизвестная ошибка',
-                    };
-                    reject(result);
-                }
-                // make fetch
-                storageAction.fetch(undefined, true, onSuccess, onFail);
-            });
-        };
-        
-        return this;
-    }
-
     /** Get form config */
     getConfig() {
         return this._config as unknown as IDFormProps

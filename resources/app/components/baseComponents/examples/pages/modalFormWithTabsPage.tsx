@@ -6,14 +6,14 @@
     import {docco} from 'react-syntax-highlighter/dist/esm/styles/hljs';
 
     export const ModalFormWithTabsPage = (): JSX.Element => {
-    const source = `import React, { useCallback } from 'react';
+    const source = `import React, {useCallback} from 'react';
 
 import {Button} from 'baseComponents/button';
 import {DFormModal} from 'baseComponents/dFormModal/dFormModal';
 import {IDFormModalApi} from 'baseComponents/dFormModal/hooks/api';
-import {DFormModalConfig} from "baseComponents/dForm/configBuilder/dFormModalConfig";
-import {InputComponentConfig} from "baseComponents/dForm/configBuilder/inputComponentConfig";
-import {DateTimeComponentConfig} from "baseComponents/dForm/configBuilder/dateTimeComponentConfig";
+import {DFormModalConfig} from 'baseComponents/dForm/configBuilder/dFormModalConfig';
+import {InputComponentConfig} from 'baseComponents/dForm/configBuilder/inputComponentConfig';
+import {DateTimeComponentConfig} from 'baseComponents/dForm/configBuilder/dateTimeComponentConfig';
 
 interface IFields {
     nameIn: string;
@@ -28,8 +28,7 @@ const formProps = new DFormModalConfig<IFields>('Test form')
     .apiRef(formApi)
     .confirmChanges(true)
     .addTab(
-        'Входы',
-        new InputComponentConfig('nameIn').label('Имя входящего'),
+        'Входы', new InputComponentConfig('nameIn').label('Имя входящего'), 
         new DateTimeComponentConfig('dateIn').label('Дата входа')
     )
     .addTab(
@@ -37,6 +36,7 @@ const formProps = new DFormModalConfig<IFields>('Test form')
         new InputComponentConfig('nameOut').label('Имя выходящего').inlineGroup('row1'),
         new DateTimeComponentConfig('dateOut').label('Дата выхода').inlineGroup('row1')
     )
+    .bodyHeight(250)
     .getConfig();
 
 export const ModalFormWithTabs = (): JSX.Element => {

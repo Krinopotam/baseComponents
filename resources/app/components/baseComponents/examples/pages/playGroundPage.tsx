@@ -21,7 +21,7 @@ import {RuleType} from 'baseComponents/editableFields/validator';
 import {SwitchComponentConfig} from 'baseComponents/dForm/configBuilder/switchComponentConfig';
 import {TreeSelectComponentConfig} from 'baseComponents/dForm/configBuilder/treeSelectComponentConfig';
 import dayjs from 'dayjs';
-import {TabulatorGridComponentConfig} from "baseComponents/dForm/configBuilder/tabulatorGridComponentConfig";
+import {TabulatorGridComponentConfig} from 'baseComponents/dForm/configBuilder/tabulatorGridComponentConfig';
 
 dayjs.locale('ru');
 
@@ -59,7 +59,6 @@ interface IFields {
     permissions: string;
     newGrid: string;
 }
-
 
 const formModalApi: IDFormModalApi = {} as IDFormModalApi;
 const formProps = new DFormModalConfig<IFields>('TestFormModalConfig')
@@ -169,8 +168,7 @@ const formProps = new DFormModalConfig<IFields>('TestFormModalConfig')
             .confirmDelete(true)
             .height(300)
             .editFormProps(
-                new DFormModalConfig<Record<string, unknown>>()
-                    .name('grid_edit_form')
+                new DFormModalConfig<Record<string, unknown>>('grid_edit_form')
                     .addFields(new InputComponentConfig('name').label('Имя'), new InputComponentConfig('role').label('Роль'))
                     .getConfig()
             )

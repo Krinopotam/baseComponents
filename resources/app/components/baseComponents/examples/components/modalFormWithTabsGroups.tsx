@@ -36,7 +36,7 @@ const formProps = new DFormModalConfig<IFields>('Test form')
         'Транспорт', new InputComponentConfig('vehicle').label('Автомобиль'), 
         new InputComponentConfig('number').label('Номер')
     )
-    .bodyHeight(250)
+    .bodyHeight(330)
     .getConfig();
 
 export const ModalFormWithTabsGroups = (): JSX.Element => {

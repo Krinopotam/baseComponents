@@ -69,7 +69,7 @@ export const DFormModalRender = ({formId, buttons, buttonsApi, callbacks, formAp
             minWidth={modalFormProps.minWidth}
             maxWidth={modalFormProps.maxWidth}
             notScrollable={modalFormProps.notScrollable}
-            resizable={modalFormProps.resizable || true}
+            resizable={modalFormProps.resizable !== false}
             wrapClassName={'managed-dynamic-buttons-row'} //This class is needed to limit the scope of the component that controls the buttons (buttonsRow)
             title={modalTitle}
         >

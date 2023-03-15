@@ -19,7 +19,10 @@ const formApi = {} as IDFormModalApi;
 const formProps = new DFormModalConfig<IFields>('Test form')
     .apiRef(formApi)
     .confirmChanges(true)
-    .addTab('Входы', new InputComponentConfig('nameIn').label('Имя входящего'), new DateTimeComponentConfig('dateIn').label('Дата входа'))
+    .addTab(
+        'Входы', new InputComponentConfig('nameIn').label('Имя входящего'), 
+        new DateTimeComponentConfig('dateIn').label('Дата входа')
+    )
     .addTab(
         'Выходы',
         new InputComponentConfig('nameOut').label('Имя выходящего').inlineGroup('row1'),

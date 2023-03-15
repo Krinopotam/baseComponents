@@ -13,7 +13,7 @@ import {RuleType} from 'baseComponents/editableFields/validator';
 import {SwitchComponentConfig} from 'baseComponents/dForm/configBuilder/switchComponentConfig';
 import {TreeSelectComponentConfig} from 'baseComponents/dForm/configBuilder/treeSelectComponentConfig';
 import dayjs from 'dayjs';
-import {TabulatorGridComponentConfig} from "baseComponents/dForm/configBuilder/tabulatorGridComponentConfig";
+import {TabulatorGridComponentConfig} from 'baseComponents/dForm/configBuilder/tabulatorGridComponentConfig';
 
 dayjs.locale('ru');
 
@@ -52,12 +52,10 @@ interface IFields {
     newGrid: string;
 }
 
-
 const formModalApi: IDFormModalApi = {} as IDFormModalApi;
-const formProps = new DFormModalConfig<IFields>()
+const formProps = new DFormModalConfig<IFields>('TestFormModalConfig')
     .apiRef(formModalApi)
     .formType('info')
-    .name('TestFormModalConfig')
     .title('Форма редактирования')
     .formMode('update')
     .validationRules(validationRules)
@@ -162,8 +160,7 @@ const formProps = new DFormModalConfig<IFields>()
             .confirmDelete(true)
             .height(300)
             .editFormProps(
-                new DFormModalConfig<Record<string, unknown>>()
-                    .name('grid_edit_form')
+                new DFormModalConfig<Record<string, unknown>>('grid_edit_form')
                     .addFields(new InputComponentConfig('name').label('Имя'), new InputComponentConfig('role').label('Роль'))
                     .getConfig()
             )

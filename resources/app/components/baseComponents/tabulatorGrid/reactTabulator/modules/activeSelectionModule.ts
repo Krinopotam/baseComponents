@@ -41,6 +41,7 @@ interface IRow {
     positionWatchers: never[];
     table: Tabulator;
     type: 'row';
+    getComponent: ()=>RowComponent;
 }
 type IAnyParam = any;
 
@@ -93,10 +94,9 @@ export class ActiveSelectionModule extends Module {
 
     //initialize selectable column
     rowClickHandler(e: PointerEvent, row: IRow) {
-        const key = row.data.id as string | number;
         const options = this.table.options as Options & {multiSelect: boolean};
-
-        const rowNode = this.table.getRow(key);
+        const rowNode =row.getComponent();
+        console.log(row, rowNode)
         if (!rowNode) return;
 
         if (!options.multiSelect || (!e.ctrlKey && !e.shiftKey)) {

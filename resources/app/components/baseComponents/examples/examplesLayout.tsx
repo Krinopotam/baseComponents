@@ -35,7 +35,7 @@ const items: MenuProps['items'] = [
         getItem(<Link to="ModalFormSimple">Простая модальная форма</Link>, 'ModalFormSimple'),
         getItem(<Link to="ModalFormWithTabs">Модальная форма с вкладками</Link>, 'ModalFormWithTabs'),
         getItem(<Link to="ModalFormWithGroups">Модальная форма с группами</Link>, 'ModalFormWithGroups'),
-        getItem(<Link to="ModalModalWithTabsGroups">Модальная форма с вкладками и группами</Link>, 'ModalModalWithTabsGroups'),
+        getItem(<Link to="ModalFormWithTabsGroups">Модальная форма с вкладками и группами</Link>, 'ModalModalWithTabsGroups'),
         getItem(<Link to="ModalFormWithGrid">Модальная форма с гридом</Link>, 'ModalFormWithGrid'),
         getItem(<Link to="ModalFormFetching">Загрузка данных модальной формы с сервера</Link>, 'ModalFormFetching'),
         getItem(<Link to="ModalFormSubmitting">Отправка данных модальной формы на сервер</Link>, 'ModalFormSubmitting'),
@@ -44,9 +44,9 @@ const items: MenuProps['items'] = [
         getItem(<Link to="TabulatorGridSimple">Простой грид</Link>, 'TabulatorGridSimple'),
         getItem(<Link to="TabulatorGridWithForm">Грид с формой редактирования</Link>, 'TabulatorGridWithForm'),
         getItem(<Link to="TabulatorGridWithFormAsync">Грид с асинхронной загрузкой и сохранением</Link>, 'TabulatorGridWithFormAsync'),
+        getItem(<Link to="TabulatorGridTree">Иерархический грид</Link>, 'TabulatorGridTree'),
     ]),
-
-
+    //
     {type: 'divider'},
     getItem(<Link to="PlayGround">Песочница</Link>, 'PlayGround'),
 ];

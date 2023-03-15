@@ -46,8 +46,7 @@ const dataSet2_2 = [
     },
 ];
 
-const formProps = new DFormConfig<IFields>()
-    .name('Test form')
+const formProps = new DFormConfig<IFields>('Test form')
     .confirmChanges(true)
     .addFields(
         new TreeSelectComponentConfig('tip').label('Тип процесса').fetchMode('onUse').dataSet(dataSet1),

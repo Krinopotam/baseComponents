@@ -77,7 +77,8 @@ const defaultToolbar = [
     ['clean'],
 ];
 
-export const TextEditorComponent = ({formApi, formProps, fieldName}: IDFormComponentProps): JSX.Element => {
+export const TextEditorComponent = ({formApi, fieldName}: IDFormComponentProps): JSX.Element => {
+    const formProps = formApi.getFormProps();
     const fieldProps = formProps.fieldsProps[fieldName] as IDFormTextEditorProps;
     const value = formApi.model.getFieldValue(fieldName) as string | undefined;
     const formats = fieldProps.formats || defaultFormats;

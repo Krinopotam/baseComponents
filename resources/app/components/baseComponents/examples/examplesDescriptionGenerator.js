@@ -1,11 +1,10 @@
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const fs = require('fs');
 
-const examplesRoot = '.\\components';
+const examplesRoot = __dirname + '/components';
 const importExamplesRoot = '../components/';
 const importPagesRoot = './pages/';
-const pagesPath = '.\\pages';
-
+const pagesPath = __dirname + '/pages';
 
 /**
  * @param {string} string
@@ -29,7 +28,7 @@ function lowerFirstLetter(string) {
  * @param {string} componentPath
  * @param {string} source
  * @param {string} pagesPath
-* @returns {string}
+ * @returns {string}
  */
 function generatePageComponent(componentFileName, componentPath, source, pagesPath) {
     const moduleName = componentFileName.split('.')[0];
@@ -68,7 +67,7 @@ function generatePageComponent(componentFileName, componentPath, source, pagesPa
     const pageFileName = lowerFirstLetter(pageComponentName) + '.tsx';
 
     const content = importStr + bodyStr;
-    fs.writeFileSync(pagesPath + '\\' + pageFileName, content, {encoding: 'utf8', flag: 'w'});
+    fs.writeFileSync(pagesPath + '/' + pageFileName, content, {encoding: 'utf8', flag: 'w'});
 
     const routeStr = `                <Route path="${componentName}" element={<${pageComponentName} />} />;`;
     const routeImportStr = `    import {${pageComponentName}} from '${importPagesRoot + moduleName + 'Page'}';`;
@@ -76,7 +75,7 @@ function generatePageComponent(componentFileName, componentPath, source, pagesPa
 }
 
 /**
- * 
+ *
  * @param {string} routers
  * @param {string} imports
  */
@@ -100,16 +99,17 @@ ${routers}
     );
 };
 `;
-    fs.writeFileSync('./examplesRoutes.tsx', result, {encoding: 'utf8', flag: 'w'});
+    fs.writeFileSync(__dirname + '/examplesRoutes.tsx', result, {encoding: 'utf8', flag: 'w'});
 }
 
 function run() {
+    console.log(__dirname + '/' + examplesRoot);
     const fileList = fs.readdirSync(examplesRoot);
 
     let routers = '';
     let imports = '';
     for (const fileName of fileList) {
-        const fileSource = fs.readFileSync(examplesRoot + '\\' + fileName, {encoding: 'utf8', flag: 'r'});
+        const fileSource = fs.readFileSync(examplesRoot + '/' + fileName, {encoding: 'utf8', flag: 'r'});
         const [routeStr, importStr] = generatePageComponent(fileName, examplesRoot, fileSource, pagesPath);
 
         routers = routers + routeStr + '\n';

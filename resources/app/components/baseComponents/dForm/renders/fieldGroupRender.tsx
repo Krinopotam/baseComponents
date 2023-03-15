@@ -23,14 +23,12 @@ interface IFieldGroupRenderProps {
 
     /** form api instance */
     formApi: IDFormApi;
-
-    /** form properties */
-    formProps: IDFormProps;
 }
 
-export const FieldGroupRender = ({tabName, groupName, formApi, formProps}: IFieldGroupRenderProps): JSX.Element | null => {
+export const FieldGroupRender = ({tabName, groupName, formApi}: IFieldGroupRenderProps): JSX.Element | null => {
     useExternalRenderCall(formApi, tabName, groupName);
-
+    const formProps = formApi.getFormProps();
+    
     const fields = formApi.model.getGroupsProps(tabName)[groupName];
 
     const firstField = formApi.model.getFirstVisibleFieldInGroup(tabName, groupName);
@@ -48,7 +46,7 @@ export const FieldGroupRender = ({tabName, groupName, formApi, formProps}: IFiel
                         {Object.keys(fields).map((fieldName) => {
                             const noLabel = formProps.layout === 'horizontal' && !!groupLabel && isFirst;
                             isFirst = false;
-                            return <BaseComponent key={fieldName} formApi={formApi} formProps={formProps} fieldName={fieldName} noLabel={noLabel} />;
+                            return <BaseComponent key={fieldName} formApi={formApi} fieldName={fieldName} noLabel={noLabel} />;
                         })}
                     </div>
                 </Form.Item>

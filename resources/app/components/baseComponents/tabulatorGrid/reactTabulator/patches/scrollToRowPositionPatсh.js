@@ -15,19 +15,19 @@ const scrollToRowPosition = function (row, position, ifVisible) {
     var rowIndex = this.rows().indexOf(row),
         rowEl = row.getElement(),
         offset = 0;
-
+    const _this = this;
     return new Promise((resolve, reject) => {
         if (rowIndex > -1) {
             if (typeof ifVisible === 'undefined') {
-                ifVisible = this.table.options.scrollToRowIfVisible;
+                ifVisible = _this.table.options.scrollToRowIfVisible;
             }
 
             //check row visibility
             if (!ifVisible) {
                 if (elVisible(rowEl)) {
-                    offset = elOffset(rowEl).top - elOffset(this.elementVertical).top;
+                    offset = elOffset(rowEl).top - elOffset(_this.elementVertical).top;
 
-                    if (offset > 0 && offset < this.elementVertical.clientHeight - rowEl.offsetHeight) {
+                    if (offset > 0 && offset < _this.elementVertical.clientHeight - rowEl.offsetHeight) {
                         resolve();
                         return false;
                     }
@@ -35,47 +35,44 @@ const scrollToRowPosition = function (row, position, ifVisible) {
             }
 
             if (typeof position === 'undefined') {
-                position = this.table.options.scrollToRowPosition;
+                position = _this.table.options.scrollToRowPosition;
             }
 
             if (position === 'nearest') {
-                position = this.scrollToRowNearestTop(row) ? 'top' : 'bottom';
+                position = _this.scrollToRowNearestTop(row) ? 'top' : 'bottom';
             }
 
             //scroll to row
-            this.scrollToRow(row);
+            _this.scrollToRow(row);
 
             //align to correct position
             switch (position) {
                 case 'middle':
                 case 'center':
                     //!TODO: Check if the developer fixed it. The condition did not work correctly due to a rounding error
-                    //if(this.elementVertical.scrollHeight - this.elementVertical.scrollTop == this.elementVertical.clientHeight){
-                    if (Math.abs(this.elementVertical.scrollHeight - this.elementVertical.scrollTop - this.elementVertical.clientHeight) < 1) {
-                        this.elementVertical.scrollTop =
-                            this.elementVertical.scrollTop +
-                            (rowEl.offsetTop - this.elementVertical.scrollTop) -
-                            (this.elementVertical.scrollHeight - rowEl.offsetTop) / 2;
+                    _this.elementVertical.scrollTop = rowEl.offsetTop - _this.elementVertical.clientHeight / 2 + rowEl.offsetHeight / 2;
+                    /*if(this.elementVertical.scrollHeight - this.elementVertical.scrollTop == this.elementVertical.clientHeight){                       _this.elementVertical.scrollTop =
+                            _this.elementVertical.scrollTop +
+                            (rowEl.offsetTop - _this.elementVertical.scrollTop) -
+                            (_this.elementVertical.scrollHeight - rowEl.offsetTop) / 2;
                     } else {
-                        this.elementVertical.scrollTop = this.elementVertical.scrollTop - this.elementVertical.clientHeight / 2;
-                    }
-
+                        _this.elementVertical.scrollTop = _this.elementVertical.scrollTop - _this.elementVertical.clientHeight / 2;
+                    }*/
                     break;
 
                 case 'bottom':
                     //!TODO: Check if the developer fixed it. The condition did not work correctly due to a rounding error
-                    //if(this.elementVertical.scrollHeight - this.elementVertical.scrollTop == this.elementVertical.clientHeight){
-                    if (Math.abs(this.elementVertical.scrollHeight - this.elementVertical.scrollTop - this.elementVertical.clientHeight) < 1) {
-                        this.elementVertical.scrollTop =
-                            this.elementVertical.scrollTop - (this.elementVertical.scrollHeight - rowEl.offsetTop) + rowEl.offsetHeight;
+                    _this.elementVertical.scrollTop = rowEl.offsetTop - _this.elementVertical.clientHeight + rowEl.offsetHeight;
+                    /*if(this.elementVertical.scrollHeight - this.elementVertical.scrollTop == this.elementVertical.clientHeight){
+                        _this.elementVertical.scrollTop =
+                            _this.elementVertical.scrollTop - (_this.elementVertical.scrollHeight - rowEl.offsetTop) + rowEl.offsetHeight;
                     } else {
-                        this.elementVertical.scrollTop = this.elementVertical.scrollTop - this.elementVertical.clientHeight + rowEl.offsetHeight;
-                    }
-
+                        _this.elementVertical.scrollTop = _this.elementVertical.scrollTop - _this.elementVertical.clientHeight + rowEl.offsetHeight;
+                    }*/
                     break;
 
                 case 'top':
-                    this.elementVertical.scrollTop = rowEl.offsetTop;
+                    _this.elementVertical.scrollTop = rowEl.offsetTop;
                     break;
             }
 

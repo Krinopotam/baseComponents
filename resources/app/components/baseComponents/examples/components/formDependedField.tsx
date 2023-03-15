@@ -9,8 +9,7 @@ interface IFields {
     field3: string;
 }
 
-const formProps = new DFormConfig<IFields>()
-    .name('Test form')
+const formProps = new DFormConfig<IFields>('Test form')
     .confirmChanges(true)
     .addFields(
         new InputComponentConfig('field1').label('Поле 1').placeholder('Введите что-нибудь'),

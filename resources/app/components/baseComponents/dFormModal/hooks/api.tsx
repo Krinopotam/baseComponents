@@ -24,11 +24,13 @@ export interface IDFormModalApi extends Omit<IDFormApi, 'getFormProps' | 'setFor
 }
 
 export const useInitModalFormApi = (
+    formId: string,
     formApi: IDFormModalApi,
     modalFormProps: IDFormModalProps,
     buttonsApi: IButtonsRowApi,
     updateFormProps: (props: IDFormProps) => void
 ) => {
+    formApi.getFormId = useApiGetFormId(formId)
     formApi.buttonsApi = buttonsApi;
     formApi.getFormProps = useApiGetModalFormProps(modalFormProps);
     formApi.setFormProps = useApiSetModalFormProps(modalFormProps, updateFormProps);
@@ -36,6 +38,14 @@ export const useInitModalFormApi = (
     formApi.close = useApiTryToCloseForm(formApi);
     formApi.forceClose = useApiFormForceClose(formApi);
 };
+
+/** Get the current form ID */
+export const useApiGetFormId = (formId: string) => {
+    return useCallback(() => {
+        return formId;
+    }, [formId]);
+};
+
 
 const useApiGetModalFormProps = (modalFormProps: IDFormModalProps) => {
     return useCallback(() => {

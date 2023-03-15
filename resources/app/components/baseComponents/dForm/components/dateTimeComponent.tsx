@@ -98,7 +98,8 @@ export interface IDFormFieldDateTimeProps extends IDFormFieldProps {
     onOk?: (date: Dayjs) => void;
 }
 
-export const DateTimeComponent = ({formApi, formProps, fieldName}: IDFormComponentProps): JSX.Element => {
+export const DateTimeComponent = ({formApi, fieldName}: IDFormComponentProps): JSX.Element => {
+    const formProps = formApi.getFormProps();
     const {format, default: defaultFieldValue, ...fieldPros} = formProps.fieldsProps[fieldName] as IDFormFieldDateTimeProps;
 
     const defaultDateFormat = 'DD.MM.YYYY';

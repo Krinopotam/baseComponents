@@ -84,6 +84,12 @@ export class BaseComponentConfig<T>  {
         return this;
     }
 
+    /** Field callbacks */
+    callbacks(value: IDFormFieldProps['callbacks']) {
+        this._config.callbacks = value;
+        return this;
+    }
+
 
     /** Add validation rules */
     validationRules(...args: IRuleType[]) {

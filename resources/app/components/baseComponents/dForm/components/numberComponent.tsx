@@ -71,7 +71,8 @@ export interface IDFormFieldNumberProps extends IDFormFieldProps {
     prefixCls?: string;
 }
 
-export const NumberComponent = ({formApi, formProps, fieldName}: IDFormComponentProps): JSX.Element => {
+export const NumberComponent = ({formApi, fieldName}: IDFormComponentProps): JSX.Element => {
+    const formProps = formApi.getFormProps();
     const fieldProps = formProps.fieldsProps[fieldName] as IDFormFieldNumberProps;
 
     const value = formApi.model.getFieldValue(fieldName) as number | undefined;

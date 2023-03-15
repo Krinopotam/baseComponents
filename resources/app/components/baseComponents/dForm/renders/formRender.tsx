@@ -17,17 +17,8 @@ import { IDFormProps } from '../dForm';
 import { LoadingContainer } from 'baseComponents/loadingContainer/loadingContainer';
 
 interface IFormRenderProps {
-    /** form ID */
-    formId: string;
-
     /** form api instance */
     formApi: IDFormApi;
-
-    /** form properties */
-    formProps: IDFormProps;
-
-    /** Form buttons api */
-    buttonsApi: IButtonsRowApi;
 
     /** form buttons collection */
     formButtons: IFormButtons;
@@ -39,9 +30,10 @@ interface IFormRenderProps {
     isSubmitting?: boolean;
 }
 
-export const FormRender = ({formId, formApi, formProps, buttonsApi, formButtons}: IFormRenderProps): JSX.Element => {
+export const FormRender = ({formApi, formButtons}: IFormRenderProps): JSX.Element => {
     useExternalRenderCall(formApi);
 
+    const formProps = formApi.getFormProps(); 
     let labelCol = formProps.labelCol;
     if (!labelCol) labelCol = formProps.layout === 'horizontal' ? {span: 8} : {span: 0};
 
@@ -56,7 +48,7 @@ export const FormRender = ({formId, formApi, formProps, buttonsApi, formButtons}
             >
                 <Form
                     className={formProps.className}
-                    name={formProps.name}
+                    name={formApi.getFormId()}
                     labelCol={labelCol}
                     wrapperCol={wrapperCol}
                     //onFinish={formApi.model.submit}
@@ -65,13 +57,13 @@ export const FormRender = ({formId, formApi, formProps, buttonsApi, formButtons}
                 >
                     <FormInit formApi={formApi} />
 
-                    <FormBodyRender formApi={formApi} formProps={formProps} />
+                    <FormBodyRender formApi={formApi} />
 
                     <ButtonsRender
-                        formId={formId}
+                        formId={formApi.getFormId()}
                         buttons={formButtons}
                         formType={formProps.formType}
-                        buttonsApi={buttonsApi}
+                        buttonsApi={formApi.buttonsApi}
                         arrowsSelection={false}
                         context={formApi}
                     />

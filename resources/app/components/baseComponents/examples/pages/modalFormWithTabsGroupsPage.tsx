@@ -27,9 +27,8 @@ interface IFields {
 
 const formApi = {} as IDFormModalApi;
 
-const formProps = new DFormModalConfig<IFields>()
+const formProps = new DFormModalConfig<IFields>('Test form')
     .apiRef(formApi)
-    .name('Test form')
     .confirmChanges(true)
     .addTab(
         'Посетитель',
@@ -41,10 +40,12 @@ const formProps = new DFormModalConfig<IFields>()
         new InputComponentConfig('nameOut').label('Имя выходящего').inlineGroup('row2'),
         new DateTimeComponentConfig('dateOut').label('Дата выхода').width(150).inlineGroup('row2')
     )
-    .addTab('Транспорт',
-        new InputComponentConfig('vehicle').label('Автомобиль'),
+    .addTab(
+        'Транспорт', new InputComponentConfig('vehicle').label('Автомобиль'), 
         new InputComponentConfig('number').label('Номер')
-    ).getConfig();
+    )
+    .bodyHeight(330)
+    .getConfig();
 
 export const ModalFormWithTabsGroups = (): JSX.Element => {
     const onClick = useCallback(() => {

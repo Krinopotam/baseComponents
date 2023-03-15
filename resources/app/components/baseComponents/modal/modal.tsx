@@ -33,6 +33,9 @@ export type IModalProps = AntModalProps & {
     /** The form body max height */
     bodyMaxHeight?: number;
 
+    /** The form initial width */
+    width?: number;
+    
     /** The form min width */
     minWidth?: number;
 
@@ -44,9 +47,6 @@ export type IModalProps = AntModalProps & {
 
     /** Is the for can be resized (show the resize handler). Default: true */
     resizable?: boolean;
-
-    /** The form initial width */
-    width?: number;
 };
 
 const Modal = ({resizable = true, ...props}: IModalProps): JSX.Element => {
@@ -75,8 +75,8 @@ const Modal = ({resizable = true, ...props}: IModalProps): JSX.Element => {
     const paddingRight = 24;
     return (
         <AntModal
-            width={formSize.width || undefined}
             {...props}
+            width={formSize.width || undefined}
             // no override section
             bodyStyle={bodyStyleVal}
             className={classNames('custom-antd-modal', props.className)}

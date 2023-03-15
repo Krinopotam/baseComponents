@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from "react";
+import {useState, useCallback, useEffect} from 'react';
 
 export const useResize = (
     width: number,
@@ -50,7 +50,7 @@ export const useResize = (
                 const dx = e.clientX - mouseDownX;
                 const dy = e.clientY - mouseDownY;
 
-                let resultWidth = initWidth + dx * 2;
+                const resultWidth = initWidth + dx * 2;
                 if (maxWidth && resultWidth > maxWidth) resultWidth = maxWidth;
                 if (minWidth && resultWidth < minWidth) resultWidth = minWidth;
 

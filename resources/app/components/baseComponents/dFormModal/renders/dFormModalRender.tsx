@@ -50,9 +50,26 @@ export const DFormModalRender = ({formId, buttons, buttonsApi, callbacks, formAp
             onCancel={formApi.close}
             centered
             destroyOnClose={true}
-            footer={<ButtonsRender formId={formId} buttons={buttons} formType={modalFormProps.formType} buttonsApi={buttonsApi} arrowsSelection={false} context={formApi} />}
+            footer={
+                <ButtonsRender
+                    formId={formId}
+                    buttons={buttons}
+                    formType={modalFormProps.formType}
+                    buttonsApi={buttonsApi}
+                    arrowsSelection={false}
+                    context={formApi}
+                />
+            }
             maskClosable={false}
             keyboard={false}
+            bodyHeight={modalFormProps.bodyHeight}
+            minBbodyHeight={modalFormProps.minBodyHeight}
+            maxBodyHeight={modalFormProps.maxBodyHeight}
+            width={modalFormProps.width}
+            minWidth={modalFormProps.minWidth}
+            maxWidth={modalFormProps.maxWidth}
+            notScrollable={modalFormProps.notScrollable}
+            resizable={modalFormProps.resizable || true}
             wrapClassName={'managed-dynamic-buttons-row'} //This class is needed to limit the scope of the component that controls the buttons (buttonsRow)
             title={modalTitle}
         >

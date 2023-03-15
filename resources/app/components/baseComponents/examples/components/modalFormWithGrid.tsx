@@ -78,11 +78,13 @@ const formProps = new DFormModalConfig<IUsers>('Test form')
         new TabulatorGridComponentConfig('users')
             .label('Пользователи')
             .columns(columns)
+            .layout('fitColumns')
             //.default(gridDefaultData)
             .height(300)
             .editFormProps(editFormProps)
             .confirmDelete(true)
     )
+    .width(900)
     .getConfig();
 
 export const ModalFormWithGrid = (): JSX.Element => {

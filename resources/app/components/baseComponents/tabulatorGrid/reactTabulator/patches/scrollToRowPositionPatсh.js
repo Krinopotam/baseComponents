@@ -50,28 +50,25 @@ const scrollToRowPosition = function (row, position, ifVisible) {
                 case 'middle':
                 case 'center':
                     //!TODO: Check if the developer fixed it. The condition did not work correctly due to a rounding error
-                    //if(this.elementVertical.scrollHeight - this.elementVertical.scrollTop == this.elementVertical.clientHeight){
-                    if (Math.abs(_this.elementVertical.scrollHeight - _this.elementVertical.scrollTop - _this.elementVertical.clientHeight) < 1) {
-                        _this.elementVertical.scrollTop =
+                    _this.elementVertical.scrollTop = rowEl.offsetTop - _this.elementVertical.clientHeight / 2 + rowEl.offsetHeight / 2;
+                    /*if(this.elementVertical.scrollHeight - this.elementVertical.scrollTop == this.elementVertical.clientHeight){                       _this.elementVertical.scrollTop =
                             _this.elementVertical.scrollTop +
                             (rowEl.offsetTop - _this.elementVertical.scrollTop) -
                             (_this.elementVertical.scrollHeight - rowEl.offsetTop) / 2;
                     } else {
                         _this.elementVertical.scrollTop = _this.elementVertical.scrollTop - _this.elementVertical.clientHeight / 2;
-                    }
-
+                    }*/
                     break;
 
                 case 'bottom':
                     //!TODO: Check if the developer fixed it. The condition did not work correctly due to a rounding error
-                    //if(this.elementVertical.scrollHeight - this.elementVertical.scrollTop == this.elementVertical.clientHeight){
-                    if (Math.abs(_this.elementVertical.scrollHeight - _this.elementVertical.scrollTop - _this.elementVertical.clientHeight) < 1) {
+                    _this.elementVertical.scrollTop = rowEl.offsetTop - _this.elementVertical.clientHeight + rowEl.offsetHeight;
+                    /*if(this.elementVertical.scrollHeight - this.elementVertical.scrollTop == this.elementVertical.clientHeight){
                         _this.elementVertical.scrollTop =
                             _this.elementVertical.scrollTop - (_this.elementVertical.scrollHeight - rowEl.offsetTop) + rowEl.offsetHeight;
                     } else {
                         _this.elementVertical.scrollTop = _this.elementVertical.scrollTop - _this.elementVertical.clientHeight + rowEl.offsetHeight;
-                    }
-
+                    }*/
                     break;
 
                 case 'top':

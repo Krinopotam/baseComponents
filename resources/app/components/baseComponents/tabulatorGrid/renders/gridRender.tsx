@@ -15,6 +15,10 @@ export const GridRender = ({tableRef, gridApi}: {tableRef: React.MutableRefObjec
                     gridApi.tableApi = tabulatorRef.current;
                 }}
                 gridId={gridApi.getGridId()}
+                dataTree={gridProps.dataTree}
+                dataTreeChildField={gridProps.dataTreeChildField || 'children'}
+                dataTreeFilter={false}
+                
                 data={gridApi.getDataSet()}
                 columns={gridProps.columns}
                 containerClassName={gridProps.className}

@@ -24,7 +24,10 @@ export interface IGridProps {
     gridMode?: 'local' | 'remote';
 
     /** Tree view mode */
-    treeMode?: boolean;
+    dataTree?: boolean;
+    
+    /** Tree children field name */
+    dataTreeChildField?: string;
 
     /** Grid columns */
     columns: IReactTabulatorProps['columns'];

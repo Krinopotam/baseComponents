@@ -5,43 +5,44 @@ import {theme} from 'antd';
 const {useToken} = theme;
 
 interface ITabulatorStyle {
-    containerBgColor: string;
-    selectedBgColor: string;
-    selectedHoverBgColor: string;
-    colColor: string;
+    colorBgContainer: string;
+    colorPrimaryBg: string;
+    colorPrimaryBgHover: string;
+    colorFillQuaternary: string;
     borderRadius: number;
-    borderColor: string;
-    textColor: string;
-    textFontSize: number;
+    colorBorder: string;
+    colorBorderSecondary: string;
+    colorText: string;
+    fontSize: number;
 }
 
 const TabulatorCss = createGlobalStyle`
   .tabulator {
-    background-color:  ${(props: ITabulatorStyle) => props.containerBgColor};
+    background-color:  ${(props: ITabulatorStyle) => props.colorBgContainer};
     
     .tabulator-header {
       background-color: transparent;
       border-top-right-radius: ${(props: ITabulatorStyle) => props.borderRadius}px;
       border-top-left-radius: ${(props: ITabulatorStyle) => props.borderRadius}px;
-      border-bottom-color: ${(props: ITabulatorStyle) => props.borderColor};
+      border-bottom-color: ${(props: ITabulatorStyle) => props.colorBorderSecondary};
 
       .tabulator-col {
-        background-color: ${(props: ITabulatorStyle) => props.colColor};
-        border-right-color: ${(props: ITabulatorStyle) => props.borderColor};
+        background-color: ${(props: ITabulatorStyle) => props.colorFillQuaternary};
+        border-right-color: ${(props: ITabulatorStyle) => props.colorBorderSecondary};
         
         &.tabulator-sortable {
           &.tabulator-col-sorter-element:hover {
-            background-color: ${(props: ITabulatorStyle) => props.colColor};
+            background-color: ${(props: ITabulatorStyle) => props.colorFillQuaternary};
           }
         }
         
         .tabulator-col-title {
-          color: ${(props: ITabulatorStyle) => props.textColor};
-          font-size: ${(props: ITabulatorStyle) => props.textFontSize}px;
+          color: ${(props: ITabulatorStyle) => props.colorText};
+          font-size: ${(props: ITabulatorStyle) => props.fontSize}px;
         }
 
         .tabulator-col-sorter {
-          color: ${(props: ITabulatorStyle) => props.textColor};
+          color: ${(props: ITabulatorStyle) => props.colorText};
         }
 
         /* Workaround to hide/show headerFilter */
@@ -49,28 +50,47 @@ const TabulatorCss = createGlobalStyle`
           display: none;
         }
         /* ------- */
+        
+        .tabulator-header-filter input {
+          color: ${(props: ITabulatorStyle) => props.colorText};
+          font-size: ${(props: ITabulatorStyle) => props.fontSize}px;
+          border-color: ${(props: ITabulatorStyle) => props.borderColor};
+          border-radius: ${(props: ITabulatorStyle) => props.borderRadius}px;
+          background-color: ${(props: ITabulatorStyle) => props.colorBgContainer};
+          border-style: solid;
+          border-width: 1px;
+          &:focus {
+            border-color: #4096ff;
+            box-shadow: 0 0 0 2px rgba(5, 145, 255, 0.1);
+            border-inline-end-width: 1px;
+            outline: 0;
+          }
+          &:hover {
+            border-color: ${(props: ITabulatorStyle) => props.colorPrimaryBorderHover};
+          }
+        }
       }
     }
     
     .tabulator-tableholder {
       .tabulator-table {
         background-color: transparent;
-        color: ${(props: ITabulatorStyle) => props.textColor};
-        font-size: ${(props: ITabulatorStyle) => props.textFontSize}px;
+        color: ${(props: ITabulatorStyle) => props.colorText};
+        font-size: ${(props: ITabulatorStyle) => props.fontSize}px;
 
         .tabulator-row {
           background-color: transparent;
-          border-bottom-color: ${(props: ITabulatorStyle) => props.borderColor};
+          border-bottom-color: ${(props: ITabulatorStyle) => props.colorBorderSecondary};
           &.tabulator-selectable:hover {
-            background-color: ${(props: ITabulatorStyle) => props.colColor};
+            background-color: ${(props: ITabulatorStyle) => props.colorFillQuaternary};
           }
           
           &.tabulator-selected {
-            background-color: ${(props: ITabulatorStyle) => props.selectedBgColor};
+            background-color: ${(props: ITabulatorStyle) => props.colorPrimaryBg};
           }
 
           &.tabulator-selected:hover {
-            background-color: ${(props: ITabulatorStyle) => props.selectedHoverBgColor};
+            background-color: ${(props: ITabulatorStyle) => props.colorPrimaryBgHover};
           }
           
           &.tabulator-row-odd{
@@ -82,7 +102,7 @@ const TabulatorCss = createGlobalStyle`
           }
           
           .tabulator-cell {
-            border-right-color: ${(props: ITabulatorStyle) => props.borderColor};
+            border-right-color: ${(props: ITabulatorStyle) => props.colorBorderSecondary};
           }
         }
       }
@@ -92,17 +112,5 @@ const TabulatorCss = createGlobalStyle`
 
 export const Stylization = (): JSX.Element => {
     const {token} = useToken();
-
-    return (
-        <TabulatorCss
-            containerBgColor={token.colorBgContainer}
-            selectedBgColor={token.colorPrimaryBg}
-            selectedHoverBgColor={token.colorPrimaryBgHover}
-            borderRadius={token.borderRadius}
-            borderColor={token.colorBorderSecondary}
-            textColor={token.colorText}
-            textFontSize={token.fontSize}
-            colColor={token.colorFillQuaternary}
-        />
-    );
+    return <TabulatorCss {...token} />;
 };

@@ -41,7 +41,7 @@ interface IRow {
     positionWatchers: never[];
     table: Tabulator;
     type: 'row';
-    getComponent: ()=>RowComponent;
+    getComponent: () => RowComponent;
 }
 type IAnyParam = any;
 
@@ -90,12 +90,32 @@ export class ActiveSelectionModule extends Module {
     initialize() {
         const _this = this as unknown as IModule;
         _this.subscribe('row-click', this.rowClickHandler.bind(this));
+
+        this.bindEvents();
+        _this.subscribe("table-destroy", this.unbindEvents.bind(this));
     }
 
-    //initialize selectable column
+    private bindEvents () {
+        this.table.element.addEventListener('keydown', this.lockUserTextSelect.bind(this));
+        this.table.element.addEventListener('keyup', this.unlockUserTextSelect.bind(this));
+    }
+
+    private unbindEvents () {
+        this.table.element.removeEventListener('keydown', this.lockUserTextSelect.bind(this));
+        this.table.element.removeEventListener('keyup', this.unlockUserTextSelect.bind(this));
+    }
+
+    private lockUserTextSelect(e:KeyboardEvent) {
+        if (e.key === 'Shift') this.table.element.style.userSelect = 'none';
+    }
+
+    private unlockUserTextSelect(e:KeyboardEvent) {
+        if (e.key === 'Shift') this.table.element.style.userSelect = 'initial';
+    }
+
     rowClickHandler(e: PointerEvent, row: IRow) {
         const options = this.table.options as Options & {multiSelect: boolean};
-        const rowNode =row.getComponent();
+        const rowNode = row.getComponent();
 
         if (!rowNode) return;
 
@@ -206,18 +226,29 @@ export class ActiveSelectionModule extends Module {
             rowStart.select();
             return;
         }
-        const rowNodes = this.table.getRows('active');
-        let select = false;
-        for (const node of rowNodes) {
-            if (!select) {
-                if (node === rowStart || node === rowEnd) select = true;
-            } else {
+
+        const selectNodes = (nodes: RowComponent[], select: boolean | undefined, recursive?: boolean) => {
+            for (const node of nodes) {
+                if (typeof select === 'undefined') {
+                    if (node === rowStart || node === rowEnd) select = true;
+                } else if (select) {
+                    if (node === rowStart || node === rowEnd) select = false;
+                }
+
+                if (select === false) return false;
+
                 if (select) node.select();
-                if (node === rowStart || node === rowEnd) break;
+                if (recursive) {
+                    select = selectNodes(node.getTreeChildren(), select, recursive);
+                    if (select === false) return false;
+                }
             }
 
-            if (select) node.select();
-        }
+            return select;
+        };
+
+        const rowNodes = this.table.getRows('active');
+        selectNodes(rowNodes, undefined, this.table.options.dataTree);
     }
 }
 

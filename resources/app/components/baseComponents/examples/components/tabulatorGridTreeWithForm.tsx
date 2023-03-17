@@ -116,6 +116,7 @@ export const TabulatorGridTreeWithForm = (): JSX.Element => {
                 layout={'fitColumns'}
                 editFormProps={editFormConfig}
                 confirmDelete
+                multiSelect
             />
         </>
     );

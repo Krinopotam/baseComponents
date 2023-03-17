@@ -35,7 +35,7 @@ export const GridRender = ({tableRef, gridApi}: {tableRef: React.MutableRefObjec
                 multiSelect={gridProps.multiSelect}
                 resizableColumnFit={gridProps.resizableColumnFit}
                 rowHeight={gridProps.rowHeight}
-                resizableRows={gridProps.resizableRows !== false}
+                resizableRows={gridProps.resizableRows}
                 movableColumns={gridProps.movableColumns !== false}
                 movableRows={gridProps.movableRows}
                 groupBy={gridProps.groupBy}

@@ -4,8 +4,8 @@
  
 let oldFindRow;
 export const setFindRowPatch = (tableApi) => {
-    oldFindRow = tableApi.rowManager['findRow'];
-    tableApi.rowManager['findRow'] = findRowPatch.bind(tableApi.rowManager);
+    oldFindRow = tableApi.rowManager.findRow;
+    tableApi.rowManager.findRow = findRowPatch.bind(tableApi.rowManager);
 }
 
 export const findRowPatch = function (subject) {
@@ -35,38 +35,3 @@ const getRowType = (row)=>{
     if (row.type==='row') return 'row'
     return undefined;
 }
-
-export const findRowPatch1 = function (subject) {
-    console.log('patched', this.rows);
-    
-    if(typeof subject == "object"){
-        if(subject instanceof Row){
-            //subject is row element
-            return subject;
-        }else if(subject instanceof RowComponent){
-            //subject is public row component
-            return subject._getSelf() || false;
-        }else if(typeof HTMLElement !== "undefined" && subject instanceof HTMLElement){
-            //subject is a HTML element of the row
-            let match = this.rows.find((row) => {
-                return row.getElement() === subject;
-            });
-            
-            return match || false;
-        }else if(subject === null){
-            return false;
-        }
-    }else if(typeof subject == "undefined"){
-        return false;
-    }else {
-        //subject should be treated as the index of the row
-        let match = this.rows.find((row) => {
-            return row.data[this.table.options.index] == subject;
-        });
-        
-        return match || false;
-    }
-    
-    //catch all for any other type of input
-    return false;
-};

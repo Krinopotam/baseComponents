@@ -84,7 +84,11 @@ const scrollToRowPosition = function (row, position, ifVisible) {
     });
 };
 
-export const scrollToRowPatch = function (row, position, ifVisible) {
+const scrollToRowPatch = function (row, position, ifVisible) {
     //return this.renderer.scrollToRowPosition(row, position, ifVisible);
     return scrollToRowPosition.call(this.renderer, row, position, ifVisible);
 };
+
+export const setScrollToRowPatch =(tableApi)=>{
+    tableApi.rowManager.scrollToRow = scrollToRowPatch.bind(tableApi.rowManager);
+}

@@ -18,6 +18,7 @@ export const GridRender = ({tableRef, gridApi}: {tableRef: React.MutableRefObjec
                 dataTree={gridProps.dataTree}
                 dataTreeChildField={gridProps.dataTreeChildField || 'children'}
                 dataTreeFilter={true}
+                dataTreeChildIndent={gridProps.dataTreeChildIndent || 22}
                 data={gridApi.getDataSet()}
                 columns={gridProps.columns}
                 containerClassName={gridProps.className}

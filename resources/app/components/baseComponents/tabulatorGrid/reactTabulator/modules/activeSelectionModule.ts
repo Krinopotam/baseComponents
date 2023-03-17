@@ -96,7 +96,7 @@ export class ActiveSelectionModule extends Module {
     rowClickHandler(e: PointerEvent, row: IRow) {
         const options = this.table.options as Options & {multiSelect: boolean};
         const rowNode =row.getComponent();
-        console.log(row, rowNode)
+
         if (!rowNode) return;
 
         if (!options.multiSelect || (!e.ctrlKey && !e.shiftKey)) {

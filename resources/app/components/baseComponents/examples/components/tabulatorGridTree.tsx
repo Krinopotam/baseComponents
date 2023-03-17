@@ -28,7 +28,7 @@ const data: IGridRowData[] = [
         {id: '2_3', name: 'Mary May1 Child 3', age: '23', col: 'yellow', dob: '31/01/2000', children: [
             {id: '2_3_1', name: 'Mary May1 Grandson 1', age: '1', col: 'blue', dob: '14/05/2022'},
             {id: '2_3_2', name: 'Mary May1 Grandson 2', age: '2', col: 'green', dob: '22/05/2021'},
-            {id: '3_3_3', name: 'Mary May1 Grandson 3', age: '3', col: 'orange', dob: '01/08/2020'},
+            {id: '2_3_3', name: 'Mary May1 Grandson 3', age: '3', col: 'orange', dob: '01/08/2020'},
         ]},
         {id: '2_4', name: 'Mary May1 Child 4', age: '11', col: 'red', dob: '30/12/2012'},     
     ]},
@@ -56,9 +56,9 @@ export const TabulatorGridTree = (): JSX.Element => {
     return (
         <>
             {/*Description Start*/}
-            <h1>Пример простого грида Tabulator</h1>
+            <h1>Пример иерархического грида Tabulator</h1>
             {/*Description End*/}
-            <TabulatorGrid id={'TabulatorGridSimple'} columns={columns} dataSet={data} dataTree={true} height={500} layout={'fitColumns'} />
+            <TabulatorGrid id={'TabulatorGridTree'} columns={columns} dataSet={data} dataTree={true} height={500} layout={'fitColumns'} />
         </>
     );
 };

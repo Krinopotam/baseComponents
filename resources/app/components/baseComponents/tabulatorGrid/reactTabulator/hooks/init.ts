@@ -3,8 +3,8 @@ import {EventCallBackMethods, Options, TabulatorFull as Tabulator} from 'tabulat
 import {IReactTabulatorProps, ITabulator} from 'baseComponents/tabulatorGrid/reactTabulator/reactTabulator';
 import {render} from 'react-dom';
 import {ActiveSelectionModule} from '../modules/activeSelectionModule';
-import {scrollToRow} from 'baseComponents/tabulatorGrid/reactTabulator/patches/scrollToRowPositionPatсh';
 import {collapseButton, expandButton} from 'baseComponents/tabulatorGrid/reactTabulator/parts/icons';
+import {setPatches} from 'baseComponents/tabulatorGrid/reactTabulator/patches/setPatches';
 
 export const useInit = ({
     props,
@@ -89,8 +89,10 @@ const initTabulatorClass = ($container: HTMLDivElement, options: Options): ITabu
 
     const tableApi = new Tabulator($container, options) as ITabulator;
 
-    //!TODO: Monkey patch. Check if the developer fixed it
-    tableApi.rowManager['scrollToRow'] = scrollToRow.bind(tableApi.rowManager);
+    //!TODO: Monkey patches. Check if the developer fixed it
+    setPatches(tableApi)
+    //tableApi.rowManager['scrollToRow'] = scrollToRowPatch.bind(tableApi.rowManager);
+    //tableApi.rowManager['findRow'] = findRowPatch.bind(tableApi.rowManager);
 
     Tabulator.extendModule('keybindings', 'actions', {
         navUp: function (e: KeyboardEvent) {

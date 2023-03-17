@@ -4,7 +4,7 @@ import {IReactTabulatorProps, ITabulator} from 'baseComponents/tabulatorGrid/rea
 import {render} from 'react-dom';
 import {ActiveSelectionModule} from '../modules/activeSelectionModule';
 import {scrollToRow} from 'baseComponents/tabulatorGrid/reactTabulator/patches/scrollToRowPositionPatсh';
-import {collapseSvg, expandSvg} from 'baseComponents/tabulatorGrid/reactTabulator/parts/icons';
+import {collapseButton, expandButton} from 'baseComponents/tabulatorGrid/reactTabulator/parts/icons';
 
 export const useInit = ({
     props,
@@ -79,8 +79,8 @@ const propsToOptions = async (props: IReactTabulatorProps) => {
         //output.layout = props.layout || 'fitColumns';
     }
 
-    output.dataTreeCollapseElement = props.dataTreeCollapseElement || collapseSvg;
-    output.dataTreeExpandElement = props.dataTreeExpandElement || expandSvg;
+    output.dataTreeCollapseElement = props.dataTreeCollapseElement || collapseButton;
+    output.dataTreeExpandElement = props.dataTreeExpandElement || expandButton;
     return output;
 };
 

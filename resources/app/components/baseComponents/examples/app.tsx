@@ -22,6 +22,7 @@ dayjs.locale('ru');
                     borderRadius: 4,
                 },*/
                 components: {Modal: {paddingContentHorizontal: 0}},
+                //algorithm: theme.darkAlgorithm,
                 algorithm: theme.defaultAlgorithm,
             }}
         >

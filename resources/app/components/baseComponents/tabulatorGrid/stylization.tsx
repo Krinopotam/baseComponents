@@ -54,19 +54,21 @@ const TabulatorCss = createGlobalStyle`
         .tabulator-header-filter input {
           color: ${(props: ITabulatorStyle) => props.colorText};
           font-size: ${(props: ITabulatorStyle) => props.fontSize}px;
-          border-color: ${(props: ITabulatorStyle) => props.borderColor};
+          border-color: ${(props: ITabulatorStyle) => props.colorBorder};
           border-radius: ${(props: ITabulatorStyle) => props.borderRadius}px;
           background-color: ${(props: ITabulatorStyle) => props.colorBgContainer};
+          padding-left: 11px!important;
+          padding-right: 11px!important;
           border-style: solid;
           border-width: 1px;
           &:focus {
-            border-color: #4096ff;
-            box-shadow: 0 0 0 2px rgba(5, 145, 255, 0.1);
+            border-color: ${(props: ITabulatorStyle) => props.colorPrimaryHover};
+            box-shadow:  ${(props: ITabulatorStyle) => props.colorPrimaryBg};
             border-inline-end-width: 1px;
             outline: 0;
           }
           &:hover {
-            border-color: ${(props: ITabulatorStyle) => props.colorPrimaryBorderHover};
+            border-color: ${(props: ITabulatorStyle) => props.colorPrimaryHover};
           }
         }
       }
@@ -106,6 +108,41 @@ const TabulatorCss = createGlobalStyle`
           }
         }
       }
+    }
+    
+    /** Collapse/expand button style */
+    .tree-row-button {
+        width: 17px;
+        height: 17px;
+        padding: 0;
+        margin-right: 5px;
+        font-size: ${(props: ITabulatorStyle) => props.fontSize}px;
+        text-decoration: none;
+        outline: none;
+        cursor: pointer;
+        transition: all .3s;
+        box-sizing: border-box;
+        color: ${(props: ITabulatorStyle) => props.colorText};
+        background-color: ${(props: ITabulatorStyle) => props.colorBgContainer};
+        border-color: ${(props: ITabulatorStyle) => props.colorBorder};
+        border-radius: ${(props: ITabulatorStyle) => props.borderRadius}px;
+        border-style: solid;
+        border-width: 1px;
+        transform: scale(.9411764705882353);
+        user-select: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        &:hover {
+          color: ${(props: ITabulatorStyle) => props.colorPrimaryHover};
+          border-color: ${(props: ITabulatorStyle) => props.colorPrimaryHover};
+        }
+    }
+    
+    .collapse-button button {
+    }
+    
+    .expand-button button {
     }
   }
 `;

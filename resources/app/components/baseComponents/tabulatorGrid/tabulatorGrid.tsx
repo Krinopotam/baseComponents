@@ -9,6 +9,7 @@ import {IDFormModalApi} from 'baseComponents/dFormModal/hooks/api';
 import {Tabulator} from 'tabulator-tables';
 import {useInitialFetchData} from 'baseComponents/tabulatorGrid/hooks/initialFetchRows';
 import {ContainerRender} from 'baseComponents/tabulatorGrid/renders/containerRender';
+import {Stylization} from 'baseComponents/tabulatorGrid/stylization';
 
 export interface IGridRowData extends Record<string, unknown> {
     /** Row id */
@@ -170,7 +171,10 @@ const TabulatorGrid = (props: IGridProps): JSX.Element => {
     const gridApi = useInitGridApi({props, tableRef, editFormApi, buttonsApi});
     useInitialFetchData(gridApi);
 
-    return <ContainerRender tableRef={tableRef} gridApi={gridApi} />;
+    return (<>
+        <Stylization />
+        <ContainerRender tableRef={tableRef} gridApi={gridApi} />
+    </>);
 };
 
 export default TabulatorGrid;

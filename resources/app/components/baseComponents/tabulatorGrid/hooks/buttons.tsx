@@ -214,6 +214,8 @@ const useGetFilterToggleButton = (gridApi: IGridApi): IFormButton | undefined =>
                 const filterElements = document.querySelectorAll<HTMLElement>('#' + gridApi.getGridId() + ' .tabulator-header-filter');
                 if (!tableHolder || !headerElements || !filterElements) return;
 
+                //console.log(gridApi.tableApi)
+                //temp0.modules['filter'].showHeaderFilterElements() 
                 toggle.current = !toggle.current;
                 if (!toggle.current) gridApi.tableApi?.clearHeaderFilter();
 

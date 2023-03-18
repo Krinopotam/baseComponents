@@ -30,6 +30,9 @@ export interface IGridProps {
     /** The tree children field name */
     dataTreeChildField?: string;
 
+    /** The parent key field name */
+    dataTreeParentField? : string;
+
     /** The tree children indentation */
     dataTreeChildIndent?: number;
 

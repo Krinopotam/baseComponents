@@ -23,8 +23,26 @@ export class TabulatorGridComponentConfig<T>  extends BaseComponentConfig<T> {
     }
 
     /** Tree view mode */
-    treeMode(value: IDFormFieldTabulatorGridProps['treeMode']) {
-        this._config.treeMode = value;
+    dataTree(value: IDFormFieldTabulatorGridProps['dataTree']) {
+        this._config.dataTree = value;
+        return this;
+    }
+
+    /** The tree children field name */
+    dataTreeChildField(value: IDFormFieldTabulatorGridProps['dataTreeChildField']) {
+        this._config.dataTreeChildField = value;
+        return this;
+    }
+
+    /** The parent key field name */
+    dataTreeParentField(value: IDFormFieldTabulatorGridProps['dataTreeParentField']) {
+        this._config.dataTreeParentField = value;
+        return this;
+    }
+
+    /** The tree children indentation */
+    dataTreeChildIndent(value: IDFormFieldTabulatorGridProps['dataTreeChildIndent']) {
+        this._config.dataTreeChildIndent = value;
         return this;
     }
 

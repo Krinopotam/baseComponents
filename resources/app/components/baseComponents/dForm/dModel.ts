@@ -293,8 +293,11 @@ export class DModel {
             const field = fieldsProps[fieldName];
             let fieldValue: unknown = undefined;
 
-            if ((mode === 'view' || mode === 'update' || mode === 'clone') && clonedDataSet) fieldValue = clonedDataSet[fieldName];
-            else if (mode === 'create') fieldValue = field.default;
+            fieldValue = clonedDataSet[fieldName];
+            if (mode === 'create' && field.default) fieldValue = field.default;
+
+            //if ((mode === 'view' || mode === 'update' || mode === 'clone') && clonedDataSet) fieldValue = clonedDataSet[fieldName];
+            //else if (mode === 'create') fieldValue = field.default;
 
             labels[fieldName] = field.label;
             values[fieldName] = fieldValue;

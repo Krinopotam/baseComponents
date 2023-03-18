@@ -70,9 +70,8 @@ export interface IDFormModalCallbacks extends IDFormCallbacks {
     onOpen?: (
         formApi: IDFormModalApi,
         dataSet: IDFormDataSet | undefined,
-        formParentData: IDFormDataSet | undefined
     ) => boolean | void;
-    onOpened?: (formApi: IDFormModalApi, dataSet: IDFormDataSet | undefined, formParentData: IDFormDataSet | undefined) => void;
+    onOpened?: (formApi: IDFormModalApi, dataSet: IDFormDataSet | undefined) => void;
     onClosing?: (formApi: IDFormModalApi) => boolean | void;
     onClosed?: (formApi: IDFormModalApi) => void;
 }

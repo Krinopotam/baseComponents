@@ -4,6 +4,7 @@ import {IReactTabulatorProps} from 'baseComponents/tabulatorGrid/reactTabulator/
 import {DFormModalConfig} from 'baseComponents/dForm/configBuilder/dFormModalConfig';
 import {InputComponentConfig} from 'baseComponents/dForm/configBuilder/inputComponentConfig';
 import {NumberComponentConfig} from 'baseComponents/dForm/configBuilder/numberComponentConfig';
+import {TreeSelectComponentConfig} from 'baseComponents/dForm/configBuilder/treeSelectComponentConfig';
 
 const columns: IReactTabulatorProps['columns'] = [
     {title: 'Name', field: 'name'},
@@ -83,8 +84,11 @@ const data: IGridRowData[] = [
     {id: '20', name: 'Margret Marmajuke4', age: '16', col: 'yellow', dob: '31/01/1999'},
 ];
 
+const treeSelectDataSet = [...data];
+
 type IPerson = {
     id: string;
+    parent: {id: string | number; name: string};
     name: string;
     age: number;
     col: string;
@@ -93,6 +97,7 @@ type IPerson = {
 
 const editFormConfig = new DFormModalConfig<IPerson>('gridEditForm')
     .addFields(
+        new TreeSelectComponentConfig('parent').label('Родитель').dataSet(treeSelectDataSet).fieldNames({title:'name'}),
         new InputComponentConfig('name').label('Name'),
         new NumberComponentConfig('age').label('Age'),
         new InputComponentConfig('col').label('Favourite Color'),

@@ -13,6 +13,9 @@ export type ITabulator = IActiveSelectionTabulator;
 export type ITabulatorRow = RowComponent & IActiveSelectionModuleRow;
 
 export interface IReactTabulatorProps extends Omit<ITabulator["options"], 'footerElement'> {
+    /** On the tableRef ready callback */
+    onTableRef?: (ref: React.MutableRefObject<ITabulator | null>) => void;
+
     /** Grid ID*/
     gridId?: string;
 
@@ -34,14 +37,12 @@ export interface IReactTabulatorProps extends Omit<ITabulator["options"], 'foote
     /** Grid container max width*/
     maxWidth?: string | number;
 
+    //--- The tabulator types correction (The Tabulator has property but has no type for it) ---
     /** If set to true, then when you resize a column its neighbouring column has the opposite resize applied to keep to total width of columns the same */
     resizableColumnFit?: boolean;
-
-    /** On the tableRef ready callback */
-    onTableRef?: (ref: React.MutableRefObject<ITabulator | null>) => void;
 }
 
-const ReactTabulator = ({gridId, events, onTableRef, containerClassName, width, minWidth, maxWidth, ...props}: IReactTabulatorProps): JSX.Element => {
+const ReactTabulator = ({onTableRef, gridId, events, containerClassName, width, minWidth, maxWidth, ...props}: IReactTabulatorProps): JSX.Element => {
     const containerRef = React.useRef<HTMLDivElement>(null);
     const tableRef = React.useRef<ITabulator>(null);
 

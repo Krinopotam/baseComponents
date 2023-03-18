@@ -23,7 +23,16 @@ export interface IDFormFieldTabulatorGridProps extends IDFormFieldProps {
     gridMode?: 'local' | 'remote';
 
     /** Tree view mode */
-    treeMode?: boolean;
+    dataTree?: boolean;
+
+    /** The tree children field name */
+    dataTreeChildField?: string;
+
+    /** The parent key field name */
+    dataTreeParentField? : string;
+
+    /** The tree children indentation */
+    dataTreeChildIndent?: number;
 
     /** Grid columns */
     columns: IReactTabulatorProps['columns'];
@@ -40,7 +49,7 @@ export interface IDFormFieldTabulatorGridProps extends IDFormFieldProps {
     noHover?: boolean;
 
     /** Grid callbacks */
-    callbacks?: IGridCallbacks;
+    callbacks?: IDFormFieldProps['callbacks'] & IGridCallbacks;
 
     /** Confirm message before rows delete */
     rowDeleteMessage?: React.ReactNode;
@@ -159,7 +168,10 @@ export const TabulatorGridComponent = ({formApi, fieldName}: IDFormComponentProp
         <TabulatorGrid
             id={fieldProps.id}
             gridMode={fieldProps.gridMode}
-            treeMode={fieldProps.treeMode}
+            dataTree={fieldProps.dataTree}
+            dataTreeChildField={fieldProps.dataTreeChildField}
+            dataTreeParentField={fieldProps.dataTreeParentField}
+            dataTreeChildIndent={fieldProps.dataTreeChildIndent}
             columns={fieldProps.columns}
             dataSet={value}
             className={fieldProps.className}

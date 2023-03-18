@@ -17,8 +17,9 @@ export const GridRender = ({tableRef, gridApi}: {tableRef: React.MutableRefObjec
                 gridId={gridApi.getGridId()}
                 dataTree={gridProps.dataTree}
                 dataTreeChildField={gridProps.dataTreeChildField || 'children'}
-                dataTreeFilter={true}
+                dataTreeParentField={gridProps.dataTreeParentField || 'parent'}
                 dataTreeChildIndent={gridProps.dataTreeChildIndent || 22}
+                dataTreeFilter={true}
                 data={gridApi.getDataSet()}
                 columns={gridProps.columns}
                 containerClassName={gridProps.className}
@@ -77,6 +78,7 @@ export const GridRender = ({tableRef, gridApi}: {tableRef: React.MutableRefObjec
         gridProps.columns,
         gridProps.dataTree,
         gridProps.dataTreeChildField,
+        gridProps.dataTreeChildIndent,
         gridProps.frozenRows,
         gridProps.frozenRowsField,
         gridProps.gridMode,

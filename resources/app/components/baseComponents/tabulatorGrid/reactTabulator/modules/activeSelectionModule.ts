@@ -11,16 +11,35 @@ export interface IActiveSelectionModuleTableEvents {
 
 export interface IActiveSelectionModuleTableOptions {
     multiSelect?: boolean;
+
+    /** The parent key field name */
+    dataTreeParentField?: string | number; //TODO: think about to move it to the more relevant module
 }
 
 export interface IActiveSelectionModuleTable {
+    /** Get active row by row node */
     setActiveRow: (row: RowComponent | undefined | null, clearSelection?: boolean, scrollPosition?: ScrollToRowPosition) => void;
+
+    /** Get active row by key */
     setActiveRowByKey: (key: string | number | undefined | null, clearSelection?: boolean, scrollPosition?: ScrollToRowPosition) => void;
+
+    /** Get active row key */
     getActiveRowKey: () => string | number | undefined;
+
+    /** Get active row node */
     getActiveRow: () => RowComponent | undefined;
+
+    /** Get active row data */
     getActiveRowData: () => Record<string | 'id', unknown> | undefined;
+
+    /** Get first node row */
     getFirstRow: () => RowComponent | undefined;
+
+    /** Get last node row */
     getLastRow: () => RowComponent | undefined;
+
+    /** Set the table holder (table body) focus */
+    setTableBodyFocus: () => void;
 }
 
 export interface IActiveSelectionModuleRow {
@@ -98,6 +117,8 @@ export class ActiveSelectionModule extends Module {
         _this.registerTableFunction('getActiveRowKey', this.getActiveRowKey.bind(this));
         _this.registerTableFunction('getActiveRow', this.getActiveRow.bind(this));
         _this.registerTableFunction('getActiveRowData', this.getActiveRowData.bind(this));
+        _this.registerTableFunction('setTableBodyFocus', this.setTableBodyFocus.bind(this));
+
         _this.registerComponentFunction('row', 'isActive', this.isRowActive.bind(this));
         _this.registerComponentFunction('row', 'setActive', this.setRowActive.bind(this));
     }
@@ -460,6 +481,14 @@ export class ActiveSelectionModule extends Module {
         this.table.element.style.userSelect = 'initial';
     }
     //endregion
+
+    public setTableBodyFocus() {
+        const body = this.table.element.querySelector('.tabulator-tableholder') as HTMLDivElement;
+        if (!body) return;
+        setTimeout(() => {
+            body.focus();
+        }, 300);
+    }
 }
 
 ActiveSelectionModule.moduleName = 'activeSelection';

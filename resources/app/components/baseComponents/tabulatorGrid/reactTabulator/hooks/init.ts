@@ -1,5 +1,5 @@
 import React from 'react';
-import {EventCallBackMethods, Options, TabulatorFull as Tabulator} from 'tabulator-tables';
+import {EventCallBackMethods, TabulatorFull as Tabulator} from 'tabulator-tables';
 import {IReactTabulatorProps, ITabulator} from 'baseComponents/tabulatorGrid/reactTabulator/reactTabulator';
 import {render} from 'react-dom';
 import {ActiveSelectionModule} from '../modules/activeSelectionModule';
@@ -71,7 +71,7 @@ function syncRender(component: JSX.Element, el: HTMLElement): Promise<HTMLElemen
 }
 
 const propsToOptions = async (props: IReactTabulatorProps) => {
-    const output = {...props} as Options;
+    const output = {...props} as ITabulator["options"];
     if (typeof props['footerElement'] === 'object') {
         // convert from JSX to HTML string (tabulator's footerElement accepts string)
         const el = await syncRender(props['footerElement'], document.createElement('div'));
@@ -81,43 +81,22 @@ const propsToOptions = async (props: IReactTabulatorProps) => {
 
     output.dataTreeCollapseElement = props.dataTreeCollapseElement || collapseButton;
     output.dataTreeExpandElement = props.dataTreeExpandElement || expandButton;
+    output.keybindings = {
+        navUp: false,
+        navDown: false,
+        scrollPageUp: false,
+        scrollPageDown: false,
+        scrollToStart: false,
+        scrollToEnd: false,
+    };
     return output;
 };
 
-const initTabulatorClass = ($container: HTMLDivElement, options: Options): ITabulator => {
+const initTabulatorClass = ($container: HTMLDivElement, options: ITabulator["options"]): ITabulator => {
     Tabulator.registerModule(ActiveSelectionModule);
 
     const tableApi = new Tabulator($container, options) as ITabulator;
-
-    //!TODO: Monkey patches. Check if the developer fixed it
-    setPatches(tableApi)
-    //tableApi.rowManager['scrollToRow'] = scrollToRowPatch.bind(tableApi.rowManager);
-    //tableApi.rowManager['findRow'] = findRowPatch.bind(tableApi.rowManager);
-
-    Tabulator.extendModule('keybindings', 'actions', {
-        navUp: function (e: KeyboardEvent) {
-            e.preventDefault();
-            const curRow = tableApi?.getActiveRow();
-            if (!curRow) {
-                tableApi?.setActiveRow(tableApi?.getFirstRow(), true, 'top');
-                return;
-            }
-            const nextRow = curRow.getPrevRow();
-            if (nextRow) tableApi?.setActiveRow(nextRow, true, 'top');
-            else tableApi?.setActiveRow(tableApi?.getFirstRow(), true, 'top');
-        },
-        navDown: (e: KeyboardEvent) => {
-            e.preventDefault();
-            const curRow = tableApi?.getActiveRow();
-            if (!curRow) {
-                tableApi?.setActiveRow(tableApi?.getFirstRow(), true, 'bottom');
-                return;
-            }
-            const nextRow = curRow.getNextRow();
-            if (nextRow) tableApi?.setActiveRow(nextRow, true, 'bottom');
-            else tableApi?.setActiveRow(tableApi?.getLastRow(), true, 'bottom');
-        },
-    });
+    setPatches(tableApi) //!TODO: Monkey patches. Check if the developer fixed it
 
     return tableApi;
 };

@@ -1,19 +1,18 @@
-import {TabulatorFull as Tabulator, Options, EventCallBackMethods, RowComponent} from 'tabulator-tables';
+import {EventCallBackMethods, RowComponent} from 'tabulator-tables';
 import React from 'react';
 import {useInit} from 'baseComponents/tabulatorGrid/reactTabulator/hooks/init';
 import {
     IActiveSelectionModuleRow,
-    IActiveSelectionModuleTable,
     IActiveSelectionModuleTableEvents,
-    IActiveSelectionModuleTableOptions,
+    IActiveSelectionTabulator,
 } from 'baseComponents/tabulatorGrid/reactTabulator/modules/activeSelectionModule';
 import {getUuid} from 'helpers/helpersString';
 
-export type ITabulator = Tabulator & IActiveSelectionModuleTable;
+export type ITabulator = IActiveSelectionTabulator;
 
 export type ITabulatorRow = RowComponent & IActiveSelectionModuleRow;
 
-export interface IReactTabulatorProps extends IActiveSelectionModuleTableOptions, Omit<Options, 'footerElement'> {
+export interface IReactTabulatorProps extends Omit<ITabulator["options"], 'footerElement'> {
     /** Grid ID*/
     gridId?: string;
 

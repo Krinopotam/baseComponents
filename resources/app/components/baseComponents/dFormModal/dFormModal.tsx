@@ -15,9 +15,9 @@ import {IButtonsRowApi} from 'baseComponents/buttonsRow';
 import {getUuid} from 'helpers/helpersString';
 import {splitObject } from 'helpers/helpersObjects';
 import {useCallbacks} from 'baseComponents/dFormModal/hooks/callbacks';
-import {useGetActualProps} from 'baseComponents/dForm/hooks/actualProps';
 import {useInitButtons} from 'baseComponents/dFormModal/hooks/buttons';
 import {useUpdateMessageBoxTheme} from 'baseComponents/messageBox/hooks/updateModalTheme';
+import {useGetActualProps} from "baseComponents/libs/commonHooks/getActualProps";
 
 //import './dFormModal.css';
 

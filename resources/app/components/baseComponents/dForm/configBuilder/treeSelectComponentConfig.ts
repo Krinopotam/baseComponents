@@ -11,6 +11,18 @@ export class TreeSelectComponentConfig<T>  extends BaseComponentConfig<T> {
     }
 
 
+    /** A mutable object to merge with these controls api */
+    apiRef(value: ITreeSelectProps['apiRef']) {
+        this._config.apiRef = value;
+        return this;
+    }
+
+    /** Tree TreeSelect id */
+    treeSelectId(value: ITreeSelectProps['treeSelectId']) {
+        this._config.treeSelectId = value;
+        return this;
+    }
+
     /** Is TreeSelect read only  */
     readOnly(value: ITreeSelectProps['readOnly']) {
         this._config.readOnly = value;
@@ -26,24 +38,6 @@ export class TreeSelectComponentConfig<T>  extends BaseComponentConfig<T> {
     /** Value */
     defaultValueCallback(value: ITreeSelectProps['defaultValueCallback']) {
         this._config.defaultValueCallback = value;
-        return this;
-    }
-
-    /** Allow multiple select values */
-    multiple(value: ITreeSelectProps['multiple']) {
-        this._config.multiple = value;
-        return this;
-    }
-
-    /** Show check boxes in multiple mode */
-    treeCheckable(value: ITreeSelectProps['treeCheckable']) {
-        this._config.treeCheckable = value;
-        return this;
-    }
-
-    /** Fires when the component is ready for use (when it fully downloaded all the data, if necessary) */
-    onReady(value: ITreeSelectProps['onReady']) {
-        this._config.onReady = value;
         return this;
     }
 
@@ -68,18 +62,6 @@ export class TreeSelectComponentConfig<T>  extends BaseComponentConfig<T> {
     /** Local data set */
     dataSet(value: ITreeSelectProps['dataSet']) {
         this._config.dataSet = value;
-        return this;
-    }
-
-    /** Parameters for remote data fetching*/
-    dataSource(value: ITreeSelectProps['dataSource']) {
-        this._config.dataSource = value;
-        return this;
-    }
-
-    /**Additional data properties for appending to dataSource request data*/
-    dataSourceAdditionalData(value: ITreeSelectProps['dataSourceAdditionalData']) {
-        this._config.dataSourceAdditionalData = value;
         return this;
     }
 
@@ -125,15 +107,9 @@ export class TreeSelectComponentConfig<T>  extends BaseComponentConfig<T> {
         return this;
     }
 
-    /** Main field in data source to fetch data for editable controls */
-    editableFormDataSourceFieldId(value: ITreeSelectProps['editableFormDataSourceFieldId']) {
-        this._config.editableFormDataSourceFieldId = value;
-        return this;
-    }
-
-    /** The webServices class instance if we want caching to be at the level of the transmitted instance.Otherwise, a new instance will be created and caching will be at the level of the component */
-    webServices(value: ITreeSelectProps['webServices']) {
-        this._config.webServices = value;
+    /** The TreeSelect callbacks */
+    callbacks(value: ITreeSelectProps['callbacks']) {
+        this._config.callbacks = value;
         return this;
     }
 
@@ -149,7 +125,7 @@ export class TreeSelectComponentConfig<T>  extends BaseComponentConfig<T> {
         return this;
     }
 
-    
+    /** @deprecated The callback should not be used. Use callbacks.onChange instead  */
     onCustomChange(value: IDFormFieldTreeSelectProps['onCustomChange']) {
         this._config.onCustomChange = value;
         return this;

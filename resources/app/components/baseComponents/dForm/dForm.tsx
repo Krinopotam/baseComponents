@@ -20,9 +20,9 @@ import {IRuleType} from './validators/baseValidator';
 import {TPromise} from 'baseComponents/serviceTypes';
 import {getUuid} from 'helpers/helpersString';
 import {useCallbacks} from 'baseComponents/dForm/hooks/callbacks';
-import {useGetActualProps} from 'baseComponents/dForm/hooks/actualProps';
 import {useGetButtons} from './hooks/buttons';
 import {useUpdateMessageBoxTheme} from 'baseComponents/messageBox/hooks/updateModalTheme';
+import {useGetActualProps} from "baseComponents/libs/commonHooks/getActualProps";
 
 //import './dynamicForm.css';
 

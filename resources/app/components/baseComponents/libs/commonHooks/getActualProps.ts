@@ -7,27 +7,27 @@ import {useRef, useState} from "react";
  */
 
 export const useGetActualProps = <T,>(props: T): [T, (props: T) => void] => {
-    const curPropsRef = useRef(props); // props, changed by parent component
-    const curExtPropsRef = useRef(props); // props, changed by api function
+    const curPropsRef = useRef<T>(props); // props, changed by parent component
+    const curExtPropsRef = useRef<T>(props); // props, changed by api function
 
-    const updateModal = useGetUpdateMethod();
-    const updateModalFormProps = (props: T) => {
+    const rerender = useGetRerender();
+    const updateProps = (props: T) => {
         curExtPropsRef.current = props;
-        updateModal();
+        rerender();
     };
 
     if (curPropsRef.current !== props) {
         //props changed by parent component
         curPropsRef.current = props;
         curExtPropsRef.current = props;
-        return [curPropsRef.current, updateModalFormProps]; //returns props, changed by parent component
+        return [curPropsRef.current, updateProps]; //returns props, changed by parent component
     }
 
-    return [curExtPropsRef.current, updateModalFormProps]; //returns props, changed by api
+    return [curExtPropsRef.current, updateProps]; //returns props, changed by api
 };
 
 /** Get rerender modal form method */
-const useGetUpdateMethod = () => {
+const useGetRerender = () => {
     const [, setUpdateModal] = useState({});
     return () => setUpdateModal({});
 };

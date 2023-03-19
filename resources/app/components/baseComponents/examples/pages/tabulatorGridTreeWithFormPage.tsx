@@ -9,6 +9,10 @@
     const source = `import React from 'react';
 import TabulatorGrid, {IGridRowData} from 'baseComponents/tabulatorGrid/tabulatorGrid';
 import {IReactTabulatorProps} from 'baseComponents/tabulatorGrid/reactTabulator/reactTabulator';
+import {DFormModalConfig} from 'baseComponents/dForm/configBuilder/dFormModalConfig';
+import {InputComponentConfig} from 'baseComponents/dForm/configBuilder/inputComponentConfig';
+import {NumberComponentConfig} from 'baseComponents/dForm/configBuilder/numberComponentConfig';
+import {TreeSelectComponentConfig} from 'baseComponents/dForm/configBuilder/treeSelectComponentConfig';
 
 const columns: IReactTabulatorProps['columns'] = [
     {title: 'Name', field: 'name'},
@@ -62,7 +66,7 @@ const data: IGridRowData[] = [
                 children: [
                     {id: '2_3_1', name: 'Mary May1 Grandson 1', age: '1', col: 'blue', dob: '14/05/2022'},
                     {id: '2_3_2', name: 'Mary May1 Grandson 2', age: '2', col: 'green', dob: '22/05/2021'},
-                    {id: '3_3_3', name: 'Mary May1 Grandson 3', age: '3', col: 'orange', dob: '01/08/2020'},
+                    {id: '2_3_3', name: 'Mary May1 Grandson 3', age: '3', col: 'orange', dob: '01/08/2020'},
                 ],
             },
             {id: '2_4', name: 'Mary May1 Child 4', age: '11', col: 'red', dob: '30/12/2012'},
@@ -88,8 +92,11 @@ const data: IGridRowData[] = [
     {id: '20', name: 'Margret Marmajuke4', age: '16', col: 'yellow', dob: '31/01/1999'},
 ];
 
+const treeSelectDataSet = [...data];
+
 type IPerson = {
     id: string;
+    parent: {id: string | number; name: string};
     name: string;
     age: number;
     col: string;
@@ -98,6 +105,7 @@ type IPerson = {
 
 const editFormConfig = new DFormModalConfig<IPerson>('gridEditForm')
     .addFields(
+        new TreeSelectComponentConfig('parent').label('Родитель').dataSet(treeSelectDataSet).fieldNames({title:'name'}),
         new InputComponentConfig('name').label('Name'),
         new NumberComponentConfig('age').label('Age'),
         new InputComponentConfig('col').label('Favourite Color'),
@@ -110,7 +118,7 @@ export const TabulatorGridTreeWithForm = (): JSX.Element => {
     return (
         <>
             <TabulatorGrid
-                id={'TabulatorGridSimple'}
+                id={'TabulatorGridTreeWithForm'}
                 columns={columns}
                 dataSet={data}
                 dataTree={true}
@@ -118,6 +126,7 @@ export const TabulatorGridTreeWithForm = (): JSX.Element => {
                 layout={'fitColumns'}
                 editFormProps={editFormConfig}
                 confirmDelete
+                multiSelect
             />
         </>
     );

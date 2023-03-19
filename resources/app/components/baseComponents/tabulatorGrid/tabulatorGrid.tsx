@@ -26,9 +26,15 @@ export interface IGridProps {
 
     /** Tree view mode */
     dataTree?: boolean;
-    
-    /** Tree children field name */
+
+    /** The tree children field name */
     dataTreeChildField?: string;
+
+    /** The parent key field name */
+    dataTreeParentField? : string;
+
+    /** The tree children indentation */
+    dataTreeChildIndent?: number;
 
     /** Grid columns */
     columns: IReactTabulatorProps['columns'];
@@ -171,10 +177,12 @@ const TabulatorGrid = (props: IGridProps): JSX.Element => {
     const gridApi = useInitGridApi({props, tableRef, editFormApi, buttonsApi});
     useInitialFetchData(gridApi);
 
-    return (<>
-        <Stylization />
-        <ContainerRender tableRef={tableRef} gridApi={gridApi} />
-    </>);
+    return (
+        <>
+            <Stylization />
+            <ContainerRender tableRef={tableRef} gridApi={gridApi} />
+        </>
+    );
 };
 
 export default TabulatorGrid;

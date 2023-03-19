@@ -21,6 +21,7 @@
     import {PlayGroundPage} from './pages/playGroundPage';
     import {TabulatorGridSimplePage} from './pages/tabulatorGridSimplePage';
     import {TabulatorGridTreePage} from './pages/tabulatorGridTreePage';
+    import {TabulatorGridTreeWithFormPage} from './pages/tabulatorGridTreeWithFormPage';
     import {TabulatorGridWithFormPage} from './pages/tabulatorGridWithFormPage';
     import {TabulatorGridWithFormAsyncPage} from './pages/tabulatorGridWithFormAsyncPage';
 
@@ -48,6 +49,7 @@ export const ExamplesRoutes = () => {
                 <Route path="PlayGround" element={<PlayGroundPage />} />;
                 <Route path="TabulatorGridSimple" element={<TabulatorGridSimplePage />} />;
                 <Route path="TabulatorGridTree" element={<TabulatorGridTreePage />} />;
+                <Route path="TabulatorGridTreeWithForm" element={<TabulatorGridTreeWithFormPage />} />;
                 <Route path="TabulatorGridWithForm" element={<TabulatorGridWithFormPage />} />;
                 <Route path="TabulatorGridWithFormAsync" element={<TabulatorGridWithFormAsyncPage />} />;
 

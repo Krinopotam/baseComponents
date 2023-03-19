@@ -20,9 +20,9 @@ import {IRuleType} from './validators/baseValidator';
 import {TPromise} from 'baseComponents/serviceTypes';
 import {getUuid} from 'helpers/helpersString';
 import {useCallbacks} from 'baseComponents/dForm/hooks/callbacks';
-import {useGetActualProps} from 'baseComponents/dForm/hooks/actualProps';
 import {useGetButtons} from './hooks/buttons';
 import {useUpdateMessageBoxTheme} from 'baseComponents/messageBox/hooks/updateModalTheme';
+import {useGetActualProps} from "baseComponents/libs/commonHooks/getActualProps";
 
 //import './dynamicForm.css';
 
@@ -213,7 +213,7 @@ export const DForm = (props: IDFormProps): JSX.Element => {
     const [formProps, updateFormProps] = useGetActualProps(props); //props can be set both by parent component and via api
 
     //region Common component states
-    const [formId] = useState(formProps.formId || 'dForm'- + getUuid());
+    const [formId] = useState(formProps.formId || 'dForm-' + getUuid());
     const [formApi] = useState((formProps.apiRef || {}) as IDFormApi);
     const [buttonsApi] = useState({} as IButtonsRowApi);
     const formButtons = useGetButtons(formProps, formApi); //init buttons

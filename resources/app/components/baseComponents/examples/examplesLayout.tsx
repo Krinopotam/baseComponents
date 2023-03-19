@@ -45,6 +45,7 @@ const items: MenuProps['items'] = [
         getItem(<Link to="TabulatorGridWithForm">Грид с формой редактирования</Link>, 'TabulatorGridWithForm'),
         getItem(<Link to="TabulatorGridWithFormAsync">Грид с асинхронной загрузкой и сохранением</Link>, 'TabulatorGridWithFormAsync'),
         getItem(<Link to="TabulatorGridTree">Иерархический грид</Link>, 'TabulatorGridTree'),
+        getItem(<Link to="TabulatorGridTreeWithForm">Иерархический грид с формой редактирования</Link>, 'TabulatorGridTreeWithForm'),
     ]),
     //
     {type: 'divider'},

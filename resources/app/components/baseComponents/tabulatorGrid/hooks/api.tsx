@@ -53,7 +53,7 @@ export interface IGridApi {
     /** Set active row */
     setActiveRowKey: (key: IRowKey | null, clearSelection?: boolean, scrollPosition?: ScrollToRowPosition) => void;
 
-    /* Get active row id */
+    /* Get active row key */
     getActiveRowKey: () => IRowKey | undefined;
 
     /** Get active row node */
@@ -62,11 +62,11 @@ export interface IGridApi {
     /** Get active row */
     getActiveRow: () => IGridRowData | undefined;
 
-    /* Get next row id*/
-    getNextRowKey: (id: IRowKey, step?: number) => IRowKey | undefined;
+    /* Get next row key */
+    getNextRowKey: (key: IRowKey, step?: number) => IRowKey | undefined;
 
-    /* Get previous row id*/
-    getPrevRowKey: (id: IRowKey, step?: number) => IRowKey | undefined;
+    /* Get previous row key */
+    getPrevRowKey: (key: IRowKey, step?: number) => IRowKey | undefined;
 
     /** Get selected rows keys */
     getSelectedRowKeys: () => IRowKey[];
@@ -162,7 +162,7 @@ export const useInitGridApi = ({
 };
 
 const useApiGetGridId = (gridApi: IGridApi): IGridApi['getGridId'] => {
-    const [gridId] = useState(gridApi.gridProps.id || 'grid-' +  getUuid());
+    const [gridId] = useState(gridApi.gridProps.id || 'grid-' + getUuid());
     return useCallback(() => gridId, [gridId]);
 };
 
@@ -218,9 +218,7 @@ const useApiGetActiveRowKey = (gridApi: IGridApi): IGridApi['getActiveRowKey'] =
 };
 
 const useApiGetActiveNode = (gridApi: IGridApi): IGridApi['getActiveNode'] => {
-    return useCallback(() => {
-        return gridApi.tableApi?.getActiveRow();
-    }, [gridApi]);
+    return useCallback(() => gridApi.tableApi?.getActiveRow(), [gridApi]);
 };
 
 const useApiGetActiveRow = (gridApi: IGridApi): IGridApi['getActiveRow'] => {
@@ -231,10 +229,10 @@ const useApiGetActiveRow = (gridApi: IGridApi): IGridApi['getActiveRow'] => {
 
 const useApiGetNextRowKey = (gridApi: IGridApi): IGridApi['getNextRowKey'] => {
     return useCallback(
-        (id: IRowKey, step?: number) => {
-            if (!id) return undefined;
+        (key: IRowKey, step?: number) => {
+            if (!key) return undefined;
             if (!step) step = 1;
-            let curNode: RowComponent | false = gridApi.tableApi?.getRow(id) || false;
+            let curNode: RowComponent | false = gridApi.tableApi?.getRow(key) || false;
             if (!curNode) return undefined;
             for (let i = 0; i < step; i++) {
                 const nextNode = curNode.getNextRow();
@@ -250,10 +248,10 @@ const useApiGetNextRowKey = (gridApi: IGridApi): IGridApi['getNextRowKey'] => {
 
 const useApiGetPrevRowKey = (gridApi: IGridApi): IGridApi['getPrevRowKey'] => {
     return useCallback(
-        (id: IRowKey, step?: number) => {
-            if (!id) return undefined;
+        (key: IRowKey, step?: number) => {
+            if (!key) return undefined;
             if (!step) step = 1;
-            let curNode: RowComponent | false = gridApi.tableApi?.getRow(id) || false;
+            let curNode: RowComponent | false = gridApi.tableApi?.getRow(key) || false;
             if (!curNode) return undefined;
             for (let i = 0; i < step; i++) {
                 const prevNode = curNode.getPrevRow();
@@ -333,14 +331,24 @@ const useApiGetRowByKey = (gridApi: IGridApi): IGridApi['getRowByKey'] => {
 const useApiInsertRows = (gridApi: IGridApi): IGridApi['insertRows'] => {
     return useCallback(
         (rows: IGridRowData[] | IGridRowData, place?: 'above' | 'below', key?: IRowKey, updateActiveRow?: boolean) => {
+            if (!gridApi.tableApi) return;
+
+            const dataTree = gridApi.gridProps.dataTree;
+
             const above = place === 'above';
 
             const clonedRows: IGridRowData[] = isArray(rows) ? [...(rows as IGridRowData[])] : [rows as IGridRowData];
-            gridApi.tableApi?.addData(clonedRows, above, key).then(() => {
-                gridApi.gridProps.callbacks?.onDataSetChange?.(gridApi.tableApi?.getData() || [], gridApi);
-            });
+
+            for (const row of clonedRows) {
+                if (!dataTree) gridApi.tableApi?.addData([row], above, key).then();
+                else addTreeRows(gridApi, [row], place, key);
+            }
+
+            gridApi.gridProps.callbacks?.onDataSetChange?.(gridApi.tableApi?.getData() || [], gridApi);
 
             if (updateActiveRow && clonedRows[0]) gridApi.setActiveRowKey(clonedRows[0].id, true, 'center');
+
+            gridApi.tableApi.setTableBodyFocus();
         },
         [gridApi]
     );
@@ -349,39 +357,151 @@ const useApiInsertRows = (gridApi: IGridApi): IGridApi['insertRows'] => {
 const useApiUpdateRows = (gridApi: IGridApi): IGridApi['updateRows'] => {
     return useCallback(
         (rows: IGridRowData[] | IGridRowData, updateActiveRow?: boolean) => {
+            if (!gridApi.tableApi) return;
+            const dataTree = gridApi.gridProps.dataTree;
+
             const clonedRows: IGridRowData[] = isArray(rows) ? [...(rows as IGridRowData[])] : [rows as IGridRowData];
-            gridApi.tableApi?.updateData(clonedRows).then(() => {
-                gridApi.gridProps.callbacks?.onDataSetChange?.(gridApi.tableApi?.getData() || [], gridApi);
-            });
+
+            for (const row of clonedRows) {
+                if (!dataTree) gridApi.tableApi.updateData([row]).then();
+                else updateTreeRows(gridApi, row);
+            }
+
+            gridApi.gridProps.callbacks?.onDataSetChange?.(gridApi.tableApi?.getData() || [], gridApi);
 
             if (updateActiveRow && clonedRows[0]) gridApi.setActiveRowKey(clonedRows[0].id, true, 'center');
+            gridApi.tableApi.setTableBodyFocus();
         },
         [gridApi]
     );
 };
 
+const findParentNode = (gridApi: IGridApi, row: IGridRowData) => {
+    if (!gridApi.tableApi) return undefined;
+    const parentFieldKey = gridApi.tableApi.options.dataTreeParentField;
+    const indexField = gridApi.tableApi.options.index;
+    if (!indexField || !parentFieldKey || !row[parentFieldKey]) return undefined;
+    let parentKey: string | number | undefined;
+    if (typeof row[parentFieldKey] === 'string' || typeof row[parentFieldKey] === 'number') parentKey = row[parentFieldKey] as string | number;
+    else if (typeof row[parentFieldKey] === 'object') parentKey = (row[parentFieldKey] as IGridRowData)[indexField] as string | number | undefined;
+
+    if (!parentKey) return undefined;
+
+    return gridApi.tableApi.getRow(parentKey) || undefined;
+};
+
+const addTreeRows = (gridApi: IGridApi, rows: IGridRowData[] | IGridRowData, place?: 'above' | 'below', key?: IRowKey) => {
+    if (!gridApi.tableApi) return;
+    if (!gridApi.gridProps.dataTree) {
+        console.warn('TreeData mode is disabled. Tree row updating not available');
+        return;
+    }
+
+    const above = place === 'above';
+    const clonedRows: IGridRowData[] = isArray(rows) ? [...(rows as IGridRowData[])] : [rows as IGridRowData];
+
+    for (const rowData of clonedRows) {
+        const parentNode = findParentNode(gridApi, rowData);
+        if (!parentNode) gridApi.tableApi?.addData([rowData], above, key);
+        else {
+            parentNode.addTreeChild(rowData);
+            cascadeNodeExpand(parentNode);
+            parentNode.reformat();
+        }
+    }
+};
+
+const updateTreeRows = (gridApi: IGridApi, rows: IGridRowData[] | IGridRowData) => {
+    if (!gridApi.tableApi) return;
+    if (!gridApi.gridProps.dataTree) {
+        console.warn('TreeData mode is disabled. Tree row updating not available');
+        return;
+    }
+
+    const indexField = gridApi.tableApi.options.index;
+    const childField = gridApi.tableApi.options.dataTreeChildField;
+    if (!indexField || !childField) return;
+
+    const clonedRows: IGridRowData[] = isArray(rows) ? [...(rows as IGridRowData[])] : [rows as IGridRowData];
+
+    for (const rowData of clonedRows) {
+        const rowKey = rowData[indexField] as string | number;
+        const node = gridApi.tableApi.getRow(rowKey);
+
+        // current node has not found
+        if (!node) {
+            gridApi.tableApi.addData([rowData]).then();
+            continue;
+        }
+
+        const parentNode = node.getTreeParent();
+        const newParentNode = findParentNode(gridApi, rowData);
+
+        if (
+            // the same parent
+            (!parentNode && !newParentNode) ||
+            (parentNode && newParentNode && parentNode.getData()[indexField] === newParentNode.getData()[indexField])
+        ) {
+            gridApi.tableApi.updateData([rowData]).then();
+            continue;
+        }
+
+        //remove old node
+        rowData[childField] = node.getData()[childField]; //keep row children rows
+
+        gridApi.tableApi.deselectRow(node);
+        gridApi.tableApi.deleteRow(rowKey);
+        if (parentNode) parentNode.reformat();
+
+        // the parent has changed to root
+        if (!newParentNode) {
+            gridApi.tableApi.addData([rowData]).then();
+            continue;
+        }
+
+        // the parent changed to node
+        newParentNode.addTreeChild(rowData);
+        cascadeNodeExpand(newParentNode);
+        newParentNode.reformat();
+    }
+};
+
+const cascadeNodeExpand = (node: RowComponent | false) => {
+    if (!node) return;
+    const nodeParent = node.getTreeParent();
+    cascadeNodeExpand(nodeParent);
+    if (!node.isTreeExpanded()) node.treeExpand();
+};
+
 const useApiDeleteRowsByKeys = (gridApi: IGridApi): IGridApi['deleteRowsByKeys'] => {
     return useCallback(
         (keys: IRowKeys) => {
+            if (!gridApi.tableApi) return;
+            const indexField = gridApi.tableApi.options.index;
+
             const clonedKeys: string[] = isArray(keys) ? [...(keys as string[])] : [keys as string];
 
-            let prevRow: RowComponent | false = false;
+            let newActiveNode: RowComponent | false = false;
+            let newActiveNodeCandidate: RowComponent | false = false;
             for (const key of clonedKeys) {
-                const row = gridApi.tableApi?.getRow(key);
-                if (!row) continue;
-                if (!prevRow) prevRow = row.getPrevRow();
+                const node = gridApi.tableApi?.getRow(key);
+                if (!node) continue;
+                if (newActiveNode && node === newActiveNode) newActiveNode = false;
+                newActiveNodeCandidate = node.getNextRow() || node.getPrevRow();
+                if (newActiveNodeCandidate) newActiveNode = newActiveNodeCandidate;
+
+                const parentNode = gridApi.tableApi.options.dataTree ? node.getTreeParent() : false;
+                gridApi.tableApi.deselectRow(node);
+                gridApi.tableApi.deleteRow(key);
+                if (parentNode) parentNode.reformat();
             }
 
-            let activeRow: RowComponent | false | undefined;
-            if (clonedKeys.length === 1) {
-                const row = gridApi.tableApi?.getRow(clonedKeys[0]);
-                activeRow = row?.getNextRow();
-                if (!activeRow) activeRow = row?.getPrevRow();
-                gridApi.tableApi?.setActiveRow(activeRow || null, true, 'bottom');
-            } else gridApi.tableApi?.setActiveRow(null, true);
+            if (newActiveNode && indexField) newActiveNode = gridApi.tableApi.getRow(newActiveNode.getData()[indexField]); //we update the link to the node, because after deleting the node map is rebuilt and the objects are not equal to each other (glitches occur)
+            gridApi.tableApi.setActiveRow(newActiveNode || null, true, 'bottom');
 
-            gridApi.tableApi?.deleteRow(clonedKeys);
             gridApi.gridProps.callbacks?.onDataSetChange?.(gridApi.tableApi?.getData() || [], gridApi);
+
+            gridApi.tableApi.setTableBodyFocus();
         },
         [gridApi]
     );
@@ -391,7 +511,7 @@ const useApiDeleteRows = (gridApi: IGridApi): IGridApi['deleteRows'] => {
     return useCallback(
         (rows: IGridRowData | IGridRowData[]) => {
             const clonedRows: IGridRowData[] = isArray(rows) ? [...(rows as IGridRowData[])] : [rows as IGridRowData];
-            const keys = [];
+            const keys: IRowKey[] = [];
             for (const row of clonedRows) keys.push(row.id);
             gridApi.deleteRowsByKeys(keys);
         },

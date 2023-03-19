@@ -1,48 +1,36 @@
 import React from 'react';
 import {createGlobalStyle} from 'styled-components';
-import {theme} from 'antd';
+import {GlobalToken, theme} from 'antd';
 
 const {useToken} = theme;
 
-interface ITabulatorStyle {
-    colorBgContainer: string;
-    colorPrimaryBg: string;
-    colorPrimaryBgHover: string;
-    colorFillQuaternary: string;
-    borderRadius: number;
-    colorBorder: string;
-    colorBorderSecondary: string;
-    colorText: string;
-    fontSize: number;
-}
-
 const TabulatorCss = createGlobalStyle`
   .tabulator {
-    background-color:  ${(props: ITabulatorStyle) => props.colorBgContainer};
+    background-color:  ${(props:  GlobalToken) => props.colorBgContainer};
     
     .tabulator-header {
       background-color: transparent;
-      border-top-right-radius: ${(props: ITabulatorStyle) => props.borderRadius}px;
-      border-top-left-radius: ${(props: ITabulatorStyle) => props.borderRadius}px;
-      border-bottom-color: ${(props: ITabulatorStyle) => props.colorBorderSecondary};
+      border-top-right-radius: ${(props: GlobalToken) => props.borderRadius}px;
+      border-top-left-radius: ${(props: GlobalToken) => props.borderRadius}px;
+      border-bottom-color: ${(props: GlobalToken) => props.colorBorderSecondary};
 
       .tabulator-col {
-        background-color: ${(props: ITabulatorStyle) => props.colorFillQuaternary};
-        border-right-color: ${(props: ITabulatorStyle) => props.colorBorderSecondary};
+        background-color: ${(props: GlobalToken) => props.colorFillQuaternary};
+        border-right-color: ${(props: GlobalToken) => props.colorBorderSecondary};
         
         &.tabulator-sortable {
           &.tabulator-col-sorter-element:hover {
-            background-color: ${(props: ITabulatorStyle) => props.colorFillQuaternary};
+            background-color: ${(props: GlobalToken) => props.colorFillQuaternary};
           }
         }
         
         .tabulator-col-title {
-          color: ${(props: ITabulatorStyle) => props.colorText};
-          font-size: ${(props: ITabulatorStyle) => props.fontSize}px;
+          color: ${(props: GlobalToken) => props.colorText};
+          font-size: ${(props: GlobalToken) => props.fontSize}px;
         }
 
         .tabulator-col-sorter {
-          color: ${(props: ITabulatorStyle) => props.colorText};
+          color: ${(props: GlobalToken) => props.colorText};
         }
 
         /* Workaround to hide/show headerFilter */
@@ -52,23 +40,23 @@ const TabulatorCss = createGlobalStyle`
         /* ------- */
         
         .tabulator-header-filter input {
-          color: ${(props: ITabulatorStyle) => props.colorText};
-          font-size: ${(props: ITabulatorStyle) => props.fontSize}px;
-          border-color: ${(props: ITabulatorStyle) => props.colorBorder};
-          border-radius: ${(props: ITabulatorStyle) => props.borderRadius}px;
-          background-color: ${(props: ITabulatorStyle) => props.colorBgContainer};
+          color: ${(props: GlobalToken) => props.colorText};
+          font-size: ${(props: GlobalToken) => props.fontSize}px;
+          border-color: ${(props: GlobalToken) => props.colorBorder};
+          border-radius: ${(props: GlobalToken) => props.borderRadius}px;
+          background-color: ${(props: GlobalToken) => props.colorBgContainer};
           padding-left: 11px!important;
           padding-right: 11px!important;
           border-style: solid;
           border-width: 1px;
           &:focus {
-            border-color: ${(props: ITabulatorStyle) => props.colorPrimaryHover};
-            box-shadow:  ${(props: ITabulatorStyle) => props.colorPrimaryBg};
+            border-color: ${(props: GlobalToken) => props.colorPrimaryHover};
+            box-shadow:  ${(props: GlobalToken) => props.colorPrimaryBg};
             border-inline-end-width: 1px;
             outline: 0;
           }
           &:hover {
-            border-color: ${(props: ITabulatorStyle) => props.colorPrimaryHover};
+            border-color: ${(props: GlobalToken) => props.colorPrimaryHover};
           }
         }
       }
@@ -77,22 +65,22 @@ const TabulatorCss = createGlobalStyle`
     .tabulator-tableholder {
       .tabulator-table {
         background-color: transparent;
-        color: ${(props: ITabulatorStyle) => props.colorText};
-        font-size: ${(props: ITabulatorStyle) => props.fontSize}px;
+        color: ${(props: GlobalToken) => props.colorText};
+        font-size: ${(props: GlobalToken) => props.fontSize}px;
 
         .tabulator-row {
           background-color: transparent;
-          border-bottom-color: ${(props: ITabulatorStyle) => props.colorBorderSecondary};
+          border-bottom-color: ${(props: GlobalToken) => props.colorBorderSecondary};
           &.tabulator-selectable:hover {
-            background-color: ${(props: ITabulatorStyle) => props.colorFillQuaternary};
+            background-color: ${(props: GlobalToken) => props.colorFillQuaternary};
           }
           
           &.tabulator-selected {
-            background-color: ${(props: ITabulatorStyle) => props.colorPrimaryBg};
+            background-color: ${(props: GlobalToken) => props.colorPrimaryBg};
           }
 
           &.tabulator-selected:hover {
-            background-color: ${(props: ITabulatorStyle) => props.colorPrimaryBgHover};
+            background-color: ${(props: GlobalToken) => props.colorPrimaryBgHover};
           }
           
           &.tabulator-row-odd{
@@ -104,7 +92,7 @@ const TabulatorCss = createGlobalStyle`
           }
           
           .tabulator-cell {
-            border-right-color: ${(props: ITabulatorStyle) => props.colorBorderSecondary};
+            border-right-color: ${(props: GlobalToken) => props.colorBorderSecondary};
           }
         }
       }
@@ -116,16 +104,16 @@ const TabulatorCss = createGlobalStyle`
         height: 17px;
         padding: 0;
         margin-right: 5px;
-        font-size: ${(props: ITabulatorStyle) => props.fontSize}px;
+        font-size: ${(props: GlobalToken) => props.fontSize}px;
         text-decoration: none;
         outline: none;
         cursor: pointer;
         transition: all .3s;
         box-sizing: border-box;
-        color: ${(props: ITabulatorStyle) => props.colorText};
-        background-color: ${(props: ITabulatorStyle) => props.colorBgContainer};
-        border-color: ${(props: ITabulatorStyle) => props.colorBorder};
-        border-radius: ${(props: ITabulatorStyle) => props.borderRadius}px;
+        color: ${(props: GlobalToken) => props.colorText};
+        background-color: ${(props: GlobalToken) => props.colorBgContainer};
+        border-color: ${(props: GlobalToken) => props.colorBorder};
+        border-radius: ${(props: GlobalToken) => props.borderRadius}px;
         border-style: solid;
         border-width: 1px;
         transform: scale(.9411764705882353);
@@ -134,8 +122,8 @@ const TabulatorCss = createGlobalStyle`
         align-items: center;
         justify-content: center;
         &:hover {
-          color: ${(props: ITabulatorStyle) => props.colorPrimaryHover};
-          border-color: ${(props: ITabulatorStyle) => props.colorPrimaryHover};
+          color: ${(props: GlobalToken) => props.colorPrimaryHover};
+          border-color: ${(props: GlobalToken) => props.colorPrimaryHover};
         }
     }
     

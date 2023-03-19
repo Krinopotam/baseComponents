@@ -81,6 +81,7 @@ const Modal = ({resizable = true, ...props}: IModalProps): JSX.Element => {
             bodyStyle={bodyStyleVal}
             className={classNames('custom-antd-modal', props.className)}
             modalRender={ModalRender}
+            //transitionName="zoom"
             title={<HeaderRender title={props.title} style={{paddingLeft: paddingLeft, paddingRight: paddingRight, paddingTop: 5, paddingBottom: 5}} />}
             footer={
                 <FooterRender

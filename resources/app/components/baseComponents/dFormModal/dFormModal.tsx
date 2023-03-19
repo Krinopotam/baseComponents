@@ -15,9 +15,9 @@ import {IButtonsRowApi} from 'baseComponents/buttonsRow';
 import {getUuid} from 'helpers/helpersString';
 import {splitObject } from 'helpers/helpersObjects';
 import {useCallbacks} from 'baseComponents/dFormModal/hooks/callbacks';
-import {useGetActualProps} from 'baseComponents/dForm/hooks/actualProps';
 import {useInitButtons} from 'baseComponents/dFormModal/hooks/buttons';
 import {useUpdateMessageBoxTheme} from 'baseComponents/messageBox/hooks/updateModalTheme';
+import {useGetActualProps} from "baseComponents/libs/commonHooks/getActualProps";
 
 //import './dFormModal.css';
 
@@ -70,9 +70,8 @@ export interface IDFormModalCallbacks extends IDFormCallbacks {
     onOpen?: (
         formApi: IDFormModalApi,
         dataSet: IDFormDataSet | undefined,
-        formParentData: IDFormDataSet | undefined
     ) => boolean | void;
-    onOpened?: (formApi: IDFormModalApi, dataSet: IDFormDataSet | undefined, formParentData: IDFormDataSet | undefined) => void;
+    onOpened?: (formApi: IDFormModalApi, dataSet: IDFormDataSet | undefined) => void;
     onClosing?: (formApi: IDFormModalApi) => boolean | void;
     onClosed?: (formApi: IDFormModalApi) => void;
 }

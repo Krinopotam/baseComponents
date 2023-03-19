@@ -28,7 +28,7 @@ const data: IGridRowData[] = [
             {id: '1_3_2', name: 'Oli Bob1 Grandson 2', age: '2', col: 'green', dob: '22/05/2021'},
             {id: '1_3_3', name: 'Oli Bob1 Grandson 3', age: '3', col: 'orange', dob: '01/08/2020'},
         ]},
-        {id: '1_4', name: 'Oli Bob1' Child 4', age: '11', col: 'red', dob: '30/12/2012'},
+        {id: '1_4', name: 'Oli Bob1 Child 4', age: '11', col: 'red', dob: '30/12/2012'},
     ]},
     {id: '2', name: 'Mary May1', age: '1', col: 'blue', dob: '14/05/1982', children:[
         {id: '2_1', name: 'Mary May1 Child 1', age: '4', col: 'green', dob: '22/05/20119'},
@@ -36,9 +36,9 @@ const data: IGridRowData[] = [
         {id: '2_3', name: 'Mary May1 Child 3', age: '23', col: 'yellow', dob: '31/01/2000', children: [
             {id: '2_3_1', name: 'Mary May1 Grandson 1', age: '1', col: 'blue', dob: '14/05/2022'},
             {id: '2_3_2', name: 'Mary May1 Grandson 2', age: '2', col: 'green', dob: '22/05/2021'},
-            {id: '3_3_3', name: 'Mary May1 Grandson 3', age: '3', col: 'orange', dob: '01/08/2020'},
+            {id: '2_3_3', name: 'Mary May1 Grandson 3', age: '3', col: 'orange', dob: '01/08/2020'},
         ]},
-        {id: '2_4', name: 'Mary May1' Child 4', age: '11', col: 'red', dob: '30/12/2012'},     
+        {id: '2_4', name: 'Mary May1 Child 4', age: '11', col: 'red', dob: '30/12/2012'},     
     ]},
     {id: '3', name: 'Christine Lobowski1', age: '42', col: 'green', dob: '22/05/1982'},
     {id: '4', name: 'Brendon Philips1', age: '125', col: 'orange', dob: '01/08/1980'},
@@ -63,7 +63,7 @@ const data: IGridRowData[] = [
 export const TabulatorGridTree = (): JSX.Element => {
     return (
         <>
-            <TabulatorGrid id={'TabulatorGridSimple'} columns={columns} dataSet={data} dataTree={true} height={500} layout={'fitColumns'} />
+            <TabulatorGrid id={'TabulatorGridTree'} columns={columns} dataSet={data} dataTree={true} height={500} layout={'fitColumns'} />
         </>
     );
 };

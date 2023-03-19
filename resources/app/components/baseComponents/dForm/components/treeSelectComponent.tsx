@@ -1,6 +1,6 @@
 /**
  * @TreeSelectComponent
- * @version 0.0.30.33
+ * @version 0.0.30.34
  * @link omegatester@gmail.com
  * @author Maksim Zaytsev
  * @license MIT
@@ -8,13 +8,10 @@
 
 import {IDFormComponentProps, IDFormFieldProps} from './baseComponent';
 import {ITreeSelectNode, ITreeSelectProps, ITreeSelectValue, TreeSelect} from 'baseComponents/treeSelect';
-import React, {useCallback, useEffect, useMemo} from 'react';
-import {cloneObject, mergeObjects} from 'helpers/helpersObjects';
-
-import {IDFormApi} from "baseComponents/dForm/hooks/api";
+import React, {useCallback, useEffect} from 'react';
 
 //region Types
-type IDFormFieldTreeSelectProps_ = Omit<ITreeSelectProps, 'onChange'> & IDFormFieldProps;
+type IDFormFieldTreeSelectProps_ = ITreeSelectProps & IDFormFieldProps;
 
 // !used in configGenerator parsing. Don't use curly brackets and multi rows comments!
 export interface IDFormFieldTreeSelectProps extends IDFormFieldTreeSelectProps_ {
@@ -24,6 +21,7 @@ export interface IDFormFieldTreeSelectProps extends IDFormFieldTreeSelectProps_ 
     /** Is user can clear value. Default: true */
     allowClear?: boolean;
 
+    /** @deprecated The callback should not be used. Use callbacks.onChange instead  */
     onCustomChange?: (value: unknown) => void;
 }
 
@@ -39,9 +37,8 @@ export const TreeSelectComponent = ({formApi, fieldName}: IDFormComponentProps):
             formApi.model.setFieldValue(fieldName, value || null);
             formApi.model.setFieldDirty(fieldName, true);
 
-            if (fieldProps.onCustomChange !== undefined && typeof fieldProps.onCustomChange === 'function') {
-                fieldProps.onCustomChange(value);
-            }
+            fieldProps.callbacks?.onChange?.(value);
+            fieldProps.onCustomChange?.(value);
         },
         [fieldName, fieldProps, formApi.model]
     );
@@ -52,9 +49,8 @@ export const TreeSelectComponent = ({formApi, fieldName}: IDFormComponentProps):
     const onClear = useCallback(() => {
         formApi.model.setFieldDirty(fieldName, true);
         formApi.model.setFieldTouched(fieldName, true);
-    }, [fieldName, formApi.model]);
-
-    const dataSource = usePrepareDataSource(formApi, fieldProps);
+        fieldProps.callbacks?.onClear?.();
+    }, [fieldName, fieldProps.callbacks, formApi.model]);
 
     useEffect(() => {
         formApi.model.setFieldReady(fieldName, true);
@@ -64,12 +60,10 @@ export const TreeSelectComponent = ({formApi, fieldName}: IDFormComponentProps):
         <TreeSelect
             autoFocus={fieldProps.autoFocus}
             defaultValueCallback={fieldProps.defaultValueCallback}
-            dataSourceAdditionalData={fieldProps.dataSourceAdditionalData}
             style={{width: '100%'}}
             disabled={formApi.model.isFieldDisabled(fieldName)}
             readOnly={formApi.model.isFieldReadOnly(fieldName)}
             value={value}
-            dataSource={dataSource}
             placeholder={fieldProps.placeholder || 'Выберите из списка'}
             allowClear={typeof fieldProps.allowClear === 'undefined' ? true : fieldProps.allowClear}
             fetchMode={fieldProps.fetchMode}
@@ -82,35 +76,15 @@ export const TreeSelectComponent = ({formApi, fieldName}: IDFormComponentProps):
             filterTreeNode={fieldProps.filterTreeNode}
             fieldNames={fieldProps.fieldNames}
             selectedLabelProp={fieldProps.selectedLabelProp}
-            webServices={fieldProps.webServices || formProps.webService}
             debounce={fieldProps.debounce}
             noCacheFetchedData={fieldProps.noCacheFetchedData}
-            editableFormDataSourceFieldId={fieldProps.editableFormDataSourceFieldId}
             editableFormProps={fieldProps.editableFormProps}
-            onClear={onClear}
-            onChange={onChange}
+            callbacks={{
+                onChange: onChange,
+                onClear: onClear,
+                ...fieldProps.callbacks
+            }}
             onBlur={onBlur}
         />
     );
-};
-
-/**
- * Add the values of the fields that the field depends on to the dataset
- * @param formApi
- * @param fieldProps
- * @returns
- */
-const usePrepareDataSource = (formApi: IDFormApi, fieldProps: IDFormFieldTreeSelectProps) => {
-    return useMemo(() => {
-        if (!fieldProps.dataSource) return undefined;
-        if (!fieldProps.dependsOn) return fieldProps.dataSource;
-
-        const values: Record<string, unknown> = {};
-        // Get a list of fields values which this field depends on
-        for (const name of fieldProps.dependsOn) values[name] = formApi.model.getFieldValue(name);
-
-        const dataSourceExtra = {parameters: {data: values || {}}};
-
-        return mergeObjects(cloneObject(fieldProps.dataSource), dataSourceExtra || {}) as IDFormFieldTreeSelectProps['dataSource'];
-    }, [fieldProps.dependsOn, fieldProps.dataSource, formApi.model]);
 };

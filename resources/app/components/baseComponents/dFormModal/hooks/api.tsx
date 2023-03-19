@@ -14,7 +14,7 @@ export interface IDFormModalApi extends Omit<IDFormApi, 'getFormProps' | 'setFor
     setFormProps: (formProps: Partial<Omit<IDFormModalProps, 'fieldsProps'>>) => void;
 
     /** Open controls */
-    open: (formMode: IDFormProps['formMode'], dataSet?: IDFormProps['dataSet'], formParentData?: IDFormProps['parentDataSet']) => void;
+    open: (formMode: IDFormProps['formMode'], dataSet?: IDFormProps['dataSet']) => void;
 
     /** Close controls with confirmation*/
     close: () => void;
@@ -64,7 +64,7 @@ const useApiSetModalFormProps = (modalFormProps: IDFormModalProps, setModalFormP
 
 const useApiFormOpen = (formApi: IDFormModalApi) => {
     return useCallback(
-        (formMode: IDFormProps['formMode'], dataSet?: IDFormProps['dataSet'], parentDataSet?: IDFormProps['parentDataSet']) => {
+        (formMode: IDFormProps['formMode'], dataSet?: IDFormProps['dataSet']) => {
             if (!formMode) {
                 if (process.env.NODE_ENV !== 'production') console.warn('The form mode is not set');
                 return;
@@ -72,18 +72,16 @@ const useApiFormOpen = (formApi: IDFormModalApi) => {
 
             const newDataSet = dataSet || formApi.getFormProps().dataSet;
             const clonedDataSet = newDataSet ? cloneObject(newDataSet) : undefined;
-            const clonedParentData = parentDataSet ? parentDataSet : undefined;
             const modalFormProps = formApi.getFormProps();
-            if (modalFormProps?.callbacks?.onOpen?.(formApi, clonedDataSet, clonedParentData) === false) return;
+            if (modalFormProps?.callbacks?.onOpen?.(formApi, clonedDataSet) === false) return;
 
             formApi.setFormProps({
                 isOpened: true,
                 formMode: formMode,
                 dataSet: clonedDataSet,
-                parentDataSet: clonedParentData,
             });
 
-            modalFormProps?.callbacks?.onOpened?.(formApi, clonedDataSet, clonedParentData);
+            modalFormProps?.callbacks?.onOpened?.(formApi, clonedDataSet);
         },
         [formApi]
     );

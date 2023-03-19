@@ -10,15 +10,15 @@ import {IGridDeletePromise, IGridRowData} from 'baseComponents/tabulatorGrid/tab
 export const useInitButtons = (gridApi: IGridApi): IFormButtons => {
     const [, refreshButtons] = useState({});
     const buttons = gridApi.gridProps.buttons;
-    const activeRowKey = gridApi.getActiveRowKey();
+    const activeRow = gridApi.getActiveRow();
     const selectedRows = gridApi.getSelectedRows();
 
     gridApi.buttonsApi.refreshButtons = useRefreshButtons(refreshButtons);
 
-    const vewButton = useGetViewButton(gridApi, activeRowKey, selectedRows);
+    const vewButton = useGetViewButton(gridApi, activeRow, selectedRows);
     const createButton = useGetCreateButton(gridApi);
-    const cloneButton = useGetCloneButton(gridApi, activeRowKey, selectedRows);
-    const updateButton = useGetUpdateButton(gridApi, activeRowKey, selectedRows);
+    const cloneButton = useGetCloneButton(gridApi, activeRow, selectedRows);
+    const updateButton = useGetUpdateButton(gridApi, activeRow, selectedRows);
     const deleteButton = useGetDeleteButton(gridApi, selectedRows);
     const filterToggleButton = useGetFilterToggleButton(gridApi);
 
@@ -43,7 +43,7 @@ const useRefreshButtons = (refreshButtons: React.Dispatch<React.SetStateAction<R
 };
 
 /** Get view button props */
-const useGetViewButton = (gridApi: IGridApi, activeRowKey: string | number | undefined, selectedRow: IGridRowData[]): IFormButton | undefined => {
+const useGetViewButton = (gridApi: IGridApi, activeRow: IGridRowData | undefined, selectedRows: IGridRowData[]): IFormButton | undefined => {
     return useMemo(() => {
         const gridProps = gridApi.gridProps;
         const editFormApi = gridApi.editFormApi;
@@ -54,14 +54,14 @@ const useGetViewButton = (gridApi: IGridApi, activeRowKey: string | number | und
             icon: <EyeOutlined />,
             position: 'right',
             size: 'small',
-            disabled: !activeRowKey || selectedRow.length !== 1,
+            disabled: !activeRow || selectedRows.length !== 1,
             onClick: () => {
-                const activeRow = gridApi.getActiveRow();
-                if (!activeRow) return;
-                editFormApi.open('view', {...activeRow}, {...activeRow}); //TODO get parent row
+                if (!gridApi.getActiveRow()) return;
+                const dataSet = getRowDataSet(gridApi, true);
+                editFormApi.open('view', dataSet);
             },
         };
-    }, [activeRowKey, gridApi, selectedRow.length]);
+    }, [activeRow, gridApi, selectedRows.length]);
 };
 
 /** Get create button props */
@@ -77,16 +77,15 @@ const useGetCreateButton = (gridApi: IGridApi): IFormButton | undefined => {
             position: 'right',
             size: 'small',
             onClick: () => {
-                const activeRow = gridApi.getActiveRow();
-                const formParent = activeRow ? {...activeRow} : undefined;
-                editFormApi.open('create', undefined, formParent);
+                const dataSet = getRowDataSet(gridApi, false, true);
+                editFormApi.open('create', dataSet);
             },
         };
     }, [gridApi]);
 };
 
 /** Get clone button props */
-const useGetCloneButton = (gridApi: IGridApi, activeRowKey: string | number | undefined, selectedRow: IGridRowData[]): IFormButton | undefined => {
+const useGetCloneButton = (gridApi: IGridApi, activeRow: IGridRowData | undefined, selectedRows: IGridRowData[]): IFormButton | undefined => {
     return useMemo(() => {
         const gridProps = gridApi.gridProps;
         const editFormApi = gridApi.editFormApi;
@@ -97,18 +96,18 @@ const useGetCloneButton = (gridApi: IGridApi, activeRowKey: string | number | un
             icon: <CopyOutlined />,
             position: 'right',
             size: 'small',
-            disabled: !activeRowKey || selectedRow.length !== 1,
+            disabled: !activeRow || selectedRows.length !== 1,
             onClick: () => {
-                const activeRow = gridApi.getActiveRow();
-                if (!activeRow) return;
-                editFormApi.open('clone', {...activeRow}, {...activeRow}); //TODO get parent row
+                if (!gridApi.getActiveRow()) return;
+                const dataSet = getRowDataSet(gridApi, true);
+                editFormApi.open('clone', dataSet);
             },
         };
-    }, [activeRowKey, gridApi, selectedRow.length]);
+    }, [activeRow, gridApi, selectedRows.length]);
 };
 
 /** Get update button props */
-const useGetUpdateButton = (gridApi: IGridApi, activeRowKey: string | number | undefined, selectedRow: IGridRowData[]): IFormButton | undefined => {
+const useGetUpdateButton = (gridApi: IGridApi, activeRow: IGridRowData | undefined, selectedRows: IGridRowData[]): IFormButton | undefined => {
     return useMemo(() => {
         const gridProps = gridApi.gridProps;
         const editFormApi = gridApi.editFormApi;
@@ -119,14 +118,14 @@ const useGetUpdateButton = (gridApi: IGridApi, activeRowKey: string | number | u
             icon: <EditOutlined />,
             position: 'right',
             size: 'small',
-            disabled: !activeRowKey || selectedRow.length !== 1,
+            disabled: !activeRow || selectedRows.length !== 1,
             onClick: () => {
-                const activeRow = gridApi.getActiveRow();
-                if (!activeRow) return;
-                editFormApi.open('update', {...activeRow}, {...activeRow}); //TODO get parent row
+                if (!gridApi.getActiveRow()) return;
+                const dataSet = getRowDataSet(gridApi, true);
+                editFormApi.open('update', dataSet);
             },
         };
-    }, [activeRowKey, gridApi, selectedRow.length]);
+    }, [activeRow, gridApi, selectedRows.length]);
 };
 
 /** Get delete button props */
@@ -215,7 +214,7 @@ const useGetFilterToggleButton = (gridApi: IGridApi): IFormButton | undefined =>
                 if (!tableHolder || !headerElements || !filterElements) return;
 
                 //console.log(gridApi.tableApi)
-                //temp0.modules['filter'].showHeaderFilterElements() 
+                //temp0.modules['filter'].showHeaderFilterElements()
                 toggle.current = !toggle.current;
                 if (!toggle.current) gridApi.tableApi?.clearHeaderFilter();
 
@@ -242,4 +241,26 @@ const useGetFilterToggleButton = (gridApi: IGridApi): IFormButton | undefined =>
             },
         };
     }, [gridApi]);
+};
+
+const getRowDataSet = (gridApi: IGridApi, parent: boolean, empty?: boolean) => {
+    const activeNode = gridApi.getActiveNode();
+    if (!gridApi.tableApi || !activeNode) return;
+    const gridProps = gridApi.gridProps;
+
+    const dataSet = empty ? {} : {...activeNode.getData()};
+
+    if (gridProps.dataTree) {
+        const parentFieldKey = gridApi.tableApi.options.dataTreeParentField;
+        const childrenKey = gridApi.tableApi.options.dataTreeChildField;
+
+        if (childrenKey) delete dataSet[childrenKey];
+
+        if (parentFieldKey && typeof dataSet[parentFieldKey] === 'undefined') {
+            const parentNode = parent ? activeNode.getTreeParent() : activeNode;
+            if (parentNode) dataSet[parentFieldKey] = parentNode.getData();
+        }
+    }
+
+    return dataSet;
 };

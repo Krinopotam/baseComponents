@@ -8,29 +8,25 @@ export interface ITreeSelectInternalValue {
     label: React.ReactNode;
 }
 
-const emptyNodes: ITreeSelectNode[] = [];
-const emptyInternalValues: ITreeSelectInternalValue[] = [];
 export const useValueConvertor = (
     fieldNames: ITreeSelectProps['fieldNames'],
     labelRender: ITreeSelectProps['labelRender'],
     titleRender: ITreeSelectProps['titleRender'],
     multiple: ITreeSelectProps['multiple']
 ): [typeof internalValue, typeof selectedNodesRef, typeof setSelectedNodes] => {
-    const selectedNodesRef = useRef<ITreeSelectNode[]>(emptyNodes);
-    const [internalValue, _setInternalValue] = useState<ITreeSelectInternalValue | ITreeSelectInternalValue[] | null | undefined>(
-        !multiple ? null : emptyInternalValues
-    );
+    const selectedNodesRef = useRef<ITreeSelectNode[]>([]);
+    const [internalValue, _setInternalValue] = useState<ITreeSelectInternalValue | ITreeSelectInternalValue[] | null | undefined>(!multiple ? null : []);
 
-    const [, _setSelectedNode] = useState<ITreeSelectNode[]>(emptyNodes);
+    const [, _setSelectedNode] = useState<ITreeSelectNode[]>([]);
 
     const nodeToInternalValue = useNodeToInternalValue(fieldNames, labelRender, titleRender);
 
     const setSelectedNodes = useCallback(
         (nodes: ITreeSelectValue) => {
             if (!nodes) {
-                selectedNodesRef.current = emptyNodes;
-                _setSelectedNode(emptyNodes);
-                _setInternalValue(!multiple ? null : emptyInternalValues);
+                selectedNodesRef.current = [];
+                _setSelectedNode([]);
+                _setInternalValue(!multiple ? null : []);
                 return;
             }
 
@@ -40,12 +36,12 @@ export const useValueConvertor = (
                 selectedNodesRef.current = [_nodes];
                 _setSelectedNode([_nodes]);
                 if (!multiple) _setInternalValue(value || null);
-                else _setInternalValue(value ? [value] : emptyInternalValues);
+                else _setInternalValue(value ? [value] : []);
                 return;
             }
 
-            const resultInternalValues = emptyInternalValues;
-            const resultSelectedNodes = emptyNodes;
+            const resultInternalValues = [];
+            const resultSelectedNodes = [];
             const _nodes = [...(nodes as ITreeSelectNode[])];
             for (const node of _nodes) {
                 const _node = {...node};
@@ -57,7 +53,7 @@ export const useValueConvertor = (
 
             if (!multiple) {
                 _setInternalValue(resultInternalValues.length > 0 ? resultInternalValues[0] : null);
-                selectedNodesRef.current = resultSelectedNodes.length > 0 ? [resultSelectedNodes[0]] : emptyNodes;
+                selectedNodesRef.current = resultSelectedNodes.length > 0 ? [resultSelectedNodes[0]] : [];
                 _setSelectedNode(selectedNodesRef.current);
             } else {
                 _setInternalValue(resultInternalValues);

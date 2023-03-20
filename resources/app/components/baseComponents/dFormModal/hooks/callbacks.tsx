@@ -1,9 +1,9 @@
-import React, { useMemo } from 'react';
+import React, {useMemo} from 'react';
 
 import {IDFormCallbacks, IDFormDataSet} from 'baseComponents/dForm/dForm';
-import { IDFormModalApi } from 'baseComponents/dFormModal/hooks/api';
-import { IDFormModalProps } from 'baseComponents/dFormModal/dFormModal';
-import { MessageBox } from 'baseComponents/messageBox';
+import {IDFormModalApi} from 'baseComponents/dFormModal/hooks/api';
+import {IDFormModalProps} from 'baseComponents/dFormModal/dFormModal';
+import {MessageBox} from 'baseComponents/messageBox';
 
 /**
  * Preparing callbacks for redirection to the form
@@ -163,9 +163,9 @@ export const useCallbacks = (formModalApi: IDFormModalApi, modalFormProps: IDFor
 
             /** fires on submitting the form */
             onSubmit: (values: Record<string, unknown>) => {
-                formModalApi.buttonsApi.disabled('ok', true);
-                formModalApi.buttonsApi.disabled('cancel', true);
-                if (!modalFormProps.confirmChanges) formModalApi.buttonsApi.loading('ok', true);
+                formModalApi.buttonsApi.disabled?.('ok', true);
+                formModalApi.buttonsApi.disabled?.('cancel', true);
+                if (!modalFormProps.confirmChanges) formModalApi.buttonsApi.loading?.('ok', true);
                 return modalFormProps.callbacks?.onSubmit?.(values, formModalApi);
             },
 
@@ -183,15 +183,14 @@ export const useCallbacks = (formModalApi: IDFormModalApi, modalFormProps: IDFor
             /** fires after the completion of sending the form, regardless of the result */
             onSubmitComplete: (values: Record<string, unknown>, errors: Record<string, string | undefined>) => {
                 if (modalFormProps.callbacks?.onSubmitComplete?.(values, errors, formModalApi) === false) return false;
-                formModalApi.buttonsApi.disabled('ok', false);
-                formModalApi.buttonsApi.disabled('cancel', false);
-                formModalApi.buttonsApi.loading('ok', false);
+                formModalApi.buttonsApi.disabled?.('ok', false);
+                formModalApi.buttonsApi.disabled?.('cancel', false);
+                formModalApi.buttonsApi.loading?.('ok', false);
             },
             /** fires, when the dataSet change */
-            onDataSetChange: (dataSet: IDFormDataSet| undefined) => {
+            onDataSetChange: (dataSet: IDFormDataSet | undefined) => {
                 return modalFormProps.callbacks?.onDataSetChange?.(dataSet, formModalApi);
             },
-
         } as IDFormCallbacks;
     }, [formModalApi, modalFormProps.callbacks, modalFormProps.confirmChanges]);
 };

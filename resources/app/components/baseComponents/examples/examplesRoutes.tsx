@@ -24,6 +24,8 @@
     import {TabulatorGridTreeWithFormPage} from './pages/tabulatorGridTreeWithFormPage';
     import {TabulatorGridWithFormPage} from './pages/tabulatorGridWithFormPage';
     import {TabulatorGridWithFormAsyncPage} from './pages/tabulatorGridWithFormAsyncPage';
+    import {TreeSelectBasicPage} from './pages/treeSelectBasicPage';
+    import {TreeSelectDependedPage} from './pages/treeSelectDependedPage';
 
 
 export const ExamplesRoutes = () => {
@@ -52,6 +54,8 @@ export const ExamplesRoutes = () => {
                 <Route path="TabulatorGridTreeWithForm" element={<TabulatorGridTreeWithFormPage />} />;
                 <Route path="TabulatorGridWithForm" element={<TabulatorGridWithFormPage />} />;
                 <Route path="TabulatorGridWithFormAsync" element={<TabulatorGridWithFormAsyncPage />} />;
+                <Route path="TreeSelectBasic" element={<TreeSelectBasicPage />} />;
+                <Route path="TreeSelectDepended" element={<TreeSelectDependedPage />} />;
 
                 <Route path="*" element={<Home />} />
             </Route>

@@ -161,11 +161,10 @@ const useApiGetValues = (selectedNodesRef: React.MutableRefObject<ITreeSelectNod
     return useCallback(() => selectedNodesRef.current, [selectedNodesRef]);
 };
 
-const emptyValues: ITreeSelectNode[] = [];
 const useApiSetValue = (setValue: (value: ITreeSelectValue | null) => void) => {
     return useCallback(
         (value: ITreeSelectValue | null) => {
-            setValue(value || emptyValues);
+            setValue(value || []);
         },
         [setValue]
     );

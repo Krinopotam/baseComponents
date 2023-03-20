@@ -32,7 +32,7 @@ export interface ITreeSelectApi {
     getDataSet: () => ITreeSelectNode[] | undefined;
 
     /** Update data set*/
-    setDataSet: (dataSet: ITreeSelectNode[] | undefined) => void;
+    setDataSet: (dataSet: ITreeSelectNode[] | undefined | null) => void;
 
     /** Get the TreeSelect ready to user input status (data is fetched) */
     getIsReady: () => boolean;
@@ -176,7 +176,7 @@ const useApiGetDataSet = (dataSet: ITreeSelectNode[] | undefined) => {
 
 const useApiSetDataSet = (setDataSet: (newDataSet: ITreeSelectNode[] | undefined) => void) => {
     return useCallback(
-        (dataSet: ITreeSelectNode[] | undefined) => {
+        (dataSet: ITreeSelectNode[] | undefined | null) => {
             setDataSet(dataSet);
         },
         [setDataSet]

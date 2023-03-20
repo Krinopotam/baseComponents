@@ -1,9 +1,9 @@
-import React, { useMemo } from 'react';
+import React, {useMemo} from 'react';
 
-import { IDFormApi } from 'baseComponents/dForm/hooks/api';
+import {IDFormApi} from 'baseComponents/dForm/hooks/api';
 import {IDFormModelCallbacks} from 'baseComponents/dForm/dModel';
 import {IDFormDataSet, IDFormProps} from 'baseComponents/dForm/dForm';
-import { MessageBox } from 'baseComponents/messageBox';
+import {MessageBox} from 'baseComponents/messageBox';
 
 /**
  * Preparing callbacks for redirection to the model
@@ -91,8 +91,8 @@ export const useCallbacks = (formProps: IDFormProps, formApi: IDFormApi) => {
             onFormReadyStateChanged: (state: boolean) => {
                 if (formProps.callbacks?.onFormReadyStateChanged?.(state, formApi) === false) return;
                 console.log('formReady: ' + state); //TODO: Remove after tests
-                if (state) formApi.buttonsApi.disabled('ok', false);
-                else formApi.buttonsApi.disabled('ok', true);
+                if (state) formApi.buttonsApi.disabled?.('ok', false);
+                else formApi.buttonsApi.disabled?.('ok', true);
             },
 
             /** fires when a field validated */
@@ -113,7 +113,7 @@ export const useCallbacks = (formProps: IDFormProps, formApi: IDFormApi) => {
             /** fires when the form has no errors */
             onFormHasNoErrors: (values: Record<string, unknown>) => {
                 if (formProps.callbacks?.onFormHasNoErrors?.(values, formApi) === false) return;
-                formApi.buttonsApi.disabled('ok', false);
+                formApi.buttonsApi.disabled?.('ok', false);
             },
 
             /** fires when the form trying to fetch data */
@@ -124,7 +124,7 @@ export const useCallbacks = (formProps: IDFormProps, formApi: IDFormApi) => {
             /** fires when the form fetch success */
             onDataFetchSuccess: (result: {data: Record<string, unknown>}) => {
                 if (formProps.callbacks?.onDataFetchSuccess?.(result, formApi) === false) return;
-                //formApi.buttonsApi.disabled('ok', false);
+                //formApi.buttonsApi.disabled?.('ok', false);
             },
 
             /** fires when the form fetch failed */
@@ -162,8 +162,8 @@ export const useCallbacks = (formProps: IDFormProps, formApi: IDFormApi) => {
 
             /** fires on submitting the form */
             onSubmit: (values: Record<string, unknown>) => {
-                formApi.buttonsApi.disabled('ok', true);
-                if (!formProps.confirmChanges) formApi.buttonsApi.loading('ok', true);
+                formApi.buttonsApi.disabled?.('ok', true);
+                if (!formProps.confirmChanges) formApi.buttonsApi.loading?.('ok', true);
                 return formProps.callbacks?.onSubmit?.(values, formApi);
             },
 
@@ -181,12 +181,12 @@ export const useCallbacks = (formProps: IDFormProps, formApi: IDFormApi) => {
             /** fires after the completion of sending the form, regardless of the result */
             onSubmitComplete: (values: Record<string, unknown>, errors: Record<string, string | undefined>) => {
                 if (formProps.callbacks?.onSubmitComplete?.(values, errors, formApi) === false) return;
-                formApi.buttonsApi.disabled('ok', false);
-                formApi.buttonsApi.loading('ok', false);
+                formApi.buttonsApi.disabled?.('ok', false);
+                formApi.buttonsApi.loading?.('ok', false);
             },
 
             /** fires, when the dataSet change */
-            onDataSetChange: (dataSet: IDFormDataSet| undefined) => {
+            onDataSetChange: (dataSet: IDFormDataSet | undefined) => {
                 return formProps.callbacks?.onDataSetChange?.(dataSet, formApi);
             },
         };

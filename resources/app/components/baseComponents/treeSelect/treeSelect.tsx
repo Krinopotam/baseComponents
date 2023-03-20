@@ -158,7 +158,7 @@ export const TreeSelect = (props: ITreeSelectProps): JSX.Element => {
 
     /** Fetch on load */
     useEffect(() => {
-        if (treeProps.fetchMode === 'onLoad' && !treeProps.minSearchLength) {
+        if ((!treeProps.fetchMode || treeProps.fetchMode === 'onLoad') && !treeProps.minSearchLength) {
             api.fetchData('');
             return;
         }

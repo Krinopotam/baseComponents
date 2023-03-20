@@ -23,8 +23,9 @@ export const useDataFetcher = (api: ITreeSelectApi) => {
                 api.setIsAllFetched(true);
                 return;
             }
-
+            
             api.setIsFetching(true);
+            if (!searchString) api.setDataSet(null);
 
             dataSource.then(
                 (result) => {

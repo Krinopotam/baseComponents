@@ -11,6 +11,7 @@ import React from 'react';
 import {TreeSelectComponentConfig} from 'baseComponents/dForm/configBuilder/treeSelectComponentConfig';
 import {DFormConfig} from 'baseComponents/dForm/configBuilder/dFormConfig';
 import {IDFormFieldTreeSelectProps} from 'baseComponents/dForm/components/treeSelectComponent';
+import {IDFormApi} from 'baseComponents/dForm/hooks/api';
 
 interface IFields {
     department: {id: string; title: string};
@@ -121,8 +122,10 @@ const divisions3 = [
         ],
     },
 ];
+const formApi = {} as IDFormModalApi;
 
 const formProps = new DFormConfig<IFields>('Test form')
+    .apiRef(formApi)
     .confirmChanges(true)
     .addFields(
         new TreeSelectComponentConfig('department')
@@ -142,33 +145,33 @@ const formProps = new DFormConfig<IFields>('Test form')
             .label('Управления')
             .dependsOn(['department'])
             .fetchMode('onUse')
+            .noCacheFetchedData(true)
             .callbacks({
-                onDataFetch: (formApi) => {
-                    console.log(formApi);
+                onDataFetch: () => {
                     return new Promise((resolve, reject) => {
                         setTimeout(() => {
-                            if (Math.random() < 0.0) reject({message: 'Ошибка загрузки данных', code: 400});
-                            else resolve({data: departments});
+                            const departmentValue = formApi.model.getFieldValue('department') as Record<'id', unknown>; //we can get the current department value and use it for server request
+                            
+                            /** the server reques imitation */
+                            let newDataSet: IDFormFieldTreeSelectProps['dataSet'];
+                            if (!departmentValue) newDataSet = [];
+                            else if (departmentValue.id === '01') newDataSet = divisions1;
+                            else if (departmentValue.id === '02') newDataSet = divisions2;
+                            else if (departmentValue.id === '03') newDataSet = divisions3;
+                            else newDataSet = [];
+                            
+                            resolve({data: newDataSet});
                         }, 2000);
                     });
                 },
             })
     )
-    /*.callbacks({
+    .callbacks({
         onFieldValueChanged: (fieldName, _value, _prevValue, formApi) => {
-            if (fieldName !== 'department') return;
-            const departmentValue = formApi.model.getFieldValue('department') as Record<'id', unknown>;
-            let newDataSet: IDFormFieldTreeSelectProps['dataSet'];
-            if (!departmentValue) newDataSet = [];
-            else if (departmentValue.id === '01') newDataSet = divisions1;
-            else if (departmentValue.id === '02') newDataSet = divisions2;
-            else if (departmentValue.id === '03') newDataSet = divisions3;
-            else newDataSet = [];
-
-            formApi.model.updateFieldProps('division', {dataSet: newDataSet});
-            formApi.model.setFieldValue('division', null);
+            //clear selected division if department changed
+            if (fieldName === 'department') formApi.model.setFieldValue('division', null);
         },
-    })*/
+    })
     .buttons(null)
     .getConfig();
 

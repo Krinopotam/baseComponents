@@ -1,11 +1,9 @@
 import {DForm} from 'baseComponents/dForm/dForm';
 import React from 'react';
-import {TreeSelectComponentConfig} from 'baseComponents/dForm/configBuilder/treeSelectComponentConfig';
 import {DFormConfig} from 'baseComponents/dForm/configBuilder/dFormConfig';
-
-interface IFields {
-    department: {id: string; title: string};
-}
+import {DFormModalConfig} from 'baseComponents/dForm/configBuilder/dFormModalConfig';
+import {InputComponentConfig} from 'baseComponents/dForm/configBuilder/inputComponentConfig';
+import {TreeSelectComponentConfig} from 'baseComponents/dForm/configBuilder/treeSelectComponentConfig';
 
 const dataSet = [
     {
@@ -108,17 +106,30 @@ const dataSet = [
         ],
     },
 ];
+
+interface IEditFormFields {
+    title: string;
+}
+const editForm = new DFormModalConfig<IEditFormFields>('EditForm')
+    .confirmChanges(true)
+    .addFields(new InputComponentConfig('title').label('Подразделение'))
+    .getConfig();
+
+interface IFields {
+    department: {id: string; title: string};
+}
+
 const formProps = new DFormConfig<IFields>('Test form')
     .confirmChanges(true)
-    .addFields(new TreeSelectComponentConfig('departments').label('Подразделения').dataSet(dataSet))
+    .addFields(new TreeSelectComponentConfig('departments').label('Подразделения').editableFormProps(editForm).dataSet(dataSet))
     .buttons(null)
     .getConfig();
 
-export const TreeSelectBasic = (): JSX.Element => {
+export const TreeSelectWithForm = (): JSX.Element => {
     return (
         <>
             {/*Description Start*/}
-            <h1>Пример TreeSelect на форме</h1>
+            <h1>Пример TreeSelect с формой редактирования</h1>
             {/*Description End*/}
             <div style={{maxWidth: 500}}>
                 <DForm {...formProps} />

@@ -1,11 +1,17 @@
-import {DForm} from 'baseComponents/dForm/dForm';
-import React from 'react';
-import {TreeSelectComponentConfig} from 'baseComponents/dForm/configBuilder/treeSelectComponentConfig';
-import {DFormConfig} from 'baseComponents/dForm/configBuilder/dFormConfig';
 
-interface IFields {
-    department: {id: string; title: string};
-}
+    import React from 'react';
+    import {TreeSelectWithForm} from '../components/treeSelectWithForm';
+    import { Divider } from 'antd';
+    import SyntaxHighlighter from 'react-syntax-highlighter';
+    import {docco} from 'react-syntax-highlighter/dist/esm/styles/hljs';
+
+    export const TreeSelectWithFormPage = (): JSX.Element => {
+    const source = `import {DForm} from 'baseComponents/dForm/dForm';
+import React from 'react';
+import {DFormConfig} from 'baseComponents/dForm/configBuilder/dFormConfig';
+import {DFormModalConfig} from 'baseComponents/dForm/configBuilder/dFormModalConfig';
+import {InputComponentConfig} from 'baseComponents/dForm/configBuilder/inputComponentConfig';
+import {TreeSelectComponentConfig} from 'baseComponents/dForm/configBuilder/treeSelectComponentConfig';
 
 const dataSet = [
     {
@@ -108,20 +114,47 @@ const dataSet = [
         ],
     },
 ];
+
+interface IEditFormFields {
+    department: string;
+}
+const editForm = new DFormModalConfig<IEditFormFields>('Test form')
+    .apiRef(formApi)
+    .confirmChanges(true)
+    .addFields(
+        new InputComponentConfig('department').label('Подразделение'),
+    .getConfig();
+
+interface IFields {
+    department: {id: string; title: string};
+}
 const formProps = new DFormConfig<IFields>('Test form')
     .confirmChanges(true)
     .addFields(new TreeSelectComponentConfig('departments').label('Подразделения').dataSet(dataSet))
+    .editableFormProps(editForm)
     .buttons(null)
     .getConfig();
 
-export const TreeSelectBasic = (): JSX.Element => {
+export const TreeSelectWithForm = (): JSX.Element => {
     return (
         <>
-            {/*Description Start*/}
-            <h1>Пример TreeSelect на форме</h1>
-            {/*Description End*/}
             <div style={{maxWidth: 500}}>
                 <DForm {...formProps} />
+            </div>
+        </>
+    );
+};
+`
+    return (
+        <>
+            <div>
+                <TreeSelectWithForm />
+            </div>
+            <Divider />
+            <div>
+                <SyntaxHighlighter language="javascript" style={docco}>
+                    {source}
+                </SyntaxHighlighter>
             </div>
         </>
     );

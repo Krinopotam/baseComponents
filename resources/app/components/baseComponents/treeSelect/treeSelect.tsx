@@ -1,6 +1,6 @@
 import {Col, Row, Space, Tooltip, TreeSelectProps} from 'antd';
 import {DFormModal, IDFormModalProps} from 'baseComponents/dFormModal/dFormModal';
-import {EditOutlined, PlusOutlined} from '@ant-design/icons';
+import {EditOutlined, PlusOutlined, DeleteOutlined} from '@ant-design/icons';
 import React, {useEffect, useMemo, useState} from 'react';
 import {splitObject} from 'helpers/helpersObjects';
 import Button from 'baseComponents/button/button';
@@ -179,9 +179,9 @@ export const TreeSelect = (props: ITreeSelectProps): JSX.Element => {
     }, [defaultValueCallback, internalValue, treeProps.callbacks, setValue, treeProps.dataSet]);
 
     */
-    const [openCreateHandler, openUpdateHandler, editFormProps] = useEditableInit(api);
+    const [editFormProps, openCreateHandler, openUpdateHandler, deleteHandler] = useEditableInit(api);
 
-    if (!editFormProps) return <TreeSelectRender api={api} antProps={antProps} />;
+    if (!editFormProps || treeProps.readOnly || treeProps.disabled) return <TreeSelectRender api={api} antProps={antProps} />;
 
     return (
         <Row wrap={false}>
@@ -195,9 +195,12 @@ export const TreeSelect = (props: ITreeSelectProps): JSX.Element => {
                     <Tooltip title="Редактировать">
                         <Button icon={<EditOutlined />} onClick={openUpdateHandler} disabled={!api.getValues() || api.getValues().length !== 1} />
                     </Tooltip>
+                    <Tooltip title="Удалить">
+                        <Button icon={<DeleteOutlined />} onClick={deleteHandler} disabled={!api.getValues() || api.getValues().length < 1} />
+                    </Tooltip>
                 </Space>
             </Col>
-            {editFormProps?.isOpened && <DFormModal {...editFormProps} />}
+            <DFormModal {...editFormProps} />
         </Row>
     );
 };

@@ -52,6 +52,7 @@ const items: MenuProps['items'] = [
         getItem(<Link to="TreeSelectDepended">Зависимые TreeSelect</Link>, 'TreeSelectDepended'),
         getItem(<Link to="TreeSelectAsync">TreeSelect с асинхронной загрузкой dataSet</Link>, 'TreeSelectAsync'),
         getItem(<Link to="TreeSelectAsyncSearch">TreeSelect с асинхронным поиском</Link>, 'TreeSelectAsyncSearch'),
+        getItem(<Link to="TreeSelectDependedAsync">Зависимые асинхронные TreeSelect</Link>, 'TreeSelectDependedAsync'),
     ]),
     //
     {type: 'divider'},

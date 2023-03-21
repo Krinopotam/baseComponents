@@ -28,6 +28,7 @@
     import {TreeSelectAsyncSearchPage} from './pages/treeSelectAsyncSearchPage';
     import {TreeSelectBasicPage} from './pages/treeSelectBasicPage';
     import {TreeSelectDependedPage} from './pages/treeSelectDependedPage';
+    import {TreeSelectDependedAsyncPage} from './pages/treeSelectDependedAsyncPage';
 
 
 export const ExamplesRoutes = () => {
@@ -60,6 +61,7 @@ export const ExamplesRoutes = () => {
                 <Route path="TreeSelectAsyncSearch" element={<TreeSelectAsyncSearchPage />} />;
                 <Route path="TreeSelectBasic" element={<TreeSelectBasicPage />} />;
                 <Route path="TreeSelectDepended" element={<TreeSelectDependedPage />} />;
+                <Route path="TreeSelectDependedAsync" element={<TreeSelectDependedAsyncPage />} />;
 
                 <Route path="*" element={<Home />} />
             </Route>

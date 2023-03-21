@@ -12,18 +12,6 @@ import {TreeSelectComponentConfig} from 'baseComponents/dForm/configBuilder/tree
 import {DFormConfig} from 'baseComponents/dForm/configBuilder/dFormConfig';
 import {cloneObject} from 'baseComponents/libs/helpers/helpersObjects';
 
-interface IFields {
-    department: {id: string; title: string};
-}
-
-interface IDataRow {
-    id: string;
-    title: string;
-    children?: IDataRow[];
-}
-
-type IDataSet = IDataRow[];
-
 const formProps = new DFormConfig<IFields>('Test form')
     .confirmChanges(true)
     .addFields(
@@ -31,6 +19,7 @@ const formProps = new DFormConfig<IFields>('Test form')
             .label('Подразделения')
             .fetchMode('onUse')
             .noCacheFetchedData(true)
+            .minSearchLength(1)
             .callbacks({
                 onDataFetch: (search: string) => {
                     return asyncFetch(search);

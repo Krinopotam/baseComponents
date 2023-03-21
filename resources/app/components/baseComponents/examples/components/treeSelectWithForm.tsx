@@ -14,9 +14,9 @@ const dataSet = [
                 id: '01-01',
                 title: 'Управление аналитики продаж',
                 children: [
-                    {id: '01-01-01', title: 'Отдел прода север'},
-                    {id: '01-01-02', title: 'Отдел прода юг'},
-                    {id: '01-01-03', title: 'Отдел прода запад'},
+                    {id: '01-01-01', title: 'Отдел продаж север'},
+                    {id: '01-01-02', title: 'Отдел продаж юг'},
+                    {id: '01-01-03', title: 'Отдел продаж запад'},
                 ],
             },
             {
@@ -112,16 +112,17 @@ interface IEditFormFields {
 }
 const editForm = new DFormModalConfig<IEditFormFields>('EditForm')
     .confirmChanges(true)
+    .bodyHeight(100)
     .addFields(new InputComponentConfig('title').label('Подразделение'))
     .getConfig();
 
 interface IFields {
-    department: {id: string; title: string};
+    departments: {id: string; title: string};
 }
 
 const formProps = new DFormConfig<IFields>('Test form')
     .confirmChanges(true)
-    .addFields(new TreeSelectComponentConfig('departments').label('Подразделения').editableFormProps(editForm).dataSet(dataSet))
+    .addFields(new TreeSelectComponentConfig('departments').label('Подразделения').editFormProps(editForm).confirmDelete(true).dataSet(dataSet))
     .buttons(null)
     .getConfig();
 

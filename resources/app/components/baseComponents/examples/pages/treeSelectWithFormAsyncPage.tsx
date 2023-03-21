@@ -1,11 +1,11 @@
 
     import React from 'react';
-    import {TreeSelectWithForm} from '../components/treeSelectWithForm';
+    import {TreeSelectWithFormAsync} from '../components/treeSelectWithFormAsync';
     import { Divider } from 'antd';
     import SyntaxHighlighter from 'react-syntax-highlighter';
     import {docco} from 'react-syntax-highlighter/dist/esm/styles/hljs';
 
-    export const TreeSelectWithFormPage = (): JSX.Element => {
+    export const TreeSelectWithFormAsyncPage = (): JSX.Element => {
     const source = `import {DForm} from 'baseComponents/dForm/dForm';
 import React from 'react';
 import {DFormConfig} from 'baseComponents/dForm/configBuilder/dFormConfig';
@@ -133,7 +133,7 @@ const formProps = new DFormConfig<IFields>('Test form')
     .buttons(null)
     .getConfig();
 
-export const TreeSelectWithForm = (): JSX.Element => {
+export const TreeSelectWithFormAsync = (): JSX.Element => {
     return (
         <>
             <div style={{maxWidth: 500}}>
@@ -146,7 +146,7 @@ export const TreeSelectWithForm = (): JSX.Element => {
     return (
         <>
             <div>
-                <TreeSelectWithForm />
+                <TreeSelectWithFormAsync />
             </div>
             <Divider />
             <div>

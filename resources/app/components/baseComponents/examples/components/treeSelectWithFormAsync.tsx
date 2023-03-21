@@ -1,12 +1,4 @@
-
-    import React from 'react';
-    import {TreeSelectWithForm} from '../components/treeSelectWithForm';
-    import { Divider } from 'antd';
-    import SyntaxHighlighter from 'react-syntax-highlighter';
-    import {docco} from 'react-syntax-highlighter/dist/esm/styles/hljs';
-
-    export const TreeSelectWithFormPage = (): JSX.Element => {
-    const source = `import {DForm} from 'baseComponents/dForm/dForm';
+import {DForm} from 'baseComponents/dForm/dForm';
 import React from 'react';
 import {DFormConfig} from 'baseComponents/dForm/configBuilder/dFormConfig';
 import {DFormModalConfig} from 'baseComponents/dForm/configBuilder/dFormModalConfig';
@@ -120,6 +112,7 @@ interface IEditFormFields {
 }
 const editForm = new DFormModalConfig<IEditFormFields>('EditForm')
     .confirmChanges(true)
+    .bodyHeight(100)
     .addFields(new InputComponentConfig('title').label('Подразделение'))
     .getConfig();
 
@@ -133,26 +126,14 @@ const formProps = new DFormConfig<IFields>('Test form')
     .buttons(null)
     .getConfig();
 
-export const TreeSelectWithForm = (): JSX.Element => {
+export const TreeSelectWithFormAsync = (): JSX.Element => {
     return (
         <>
+            {/*Description Start*/}
+            <h1>Пример TreeSelect с формой редактирования</h1>
+            {/*Description End*/}
             <div style={{maxWidth: 500}}>
                 <DForm {...formProps} />
-            </div>
-        </>
-    );
-};
-`
-    return (
-        <>
-            <div>
-                <TreeSelectWithForm />
-            </div>
-            <Divider />
-            <div>
-                <SyntaxHighlighter language="javascript" style={docco}>
-                    {source}
-                </SyntaxHighlighter>
             </div>
         </>
     );

@@ -132,7 +132,7 @@ const formProps = new DFormModalConfig<IFields>('TestFormModalConfig')
                 },
                 {title: 'Node2', id: '0-1'},
             ])
-            .editableFormProps(new DFormModalConfig<Record<string, unknown>>().addFields(new InputComponentConfig('title').label('title')).getConfig())
+            .editFormProps(new DFormModalConfig<Record<string, unknown>>('treeViewEditForm').addFields(new InputComponentConfig('title').label('title')).getConfig())
 
         // .titleRender((treeNode: IApiJUser) => {
         //     return (

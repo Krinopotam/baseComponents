@@ -99,6 +99,12 @@ export interface ITreeSelectProps extends IAntTreeSelectProps {
 
     /** Edit item controls props. If not set then component not editable */
     editableFormProps?: IDFormModalProps;
+    
+    /** Confirm message before node delete */
+    nodeDeleteMessage?: React.ReactNode;
+
+    /** Should confirm before delete */
+    confirmDelete?: boolean;
 
     /** The TreeSelect callbacks */
     callbacks?: ITreeSelectCallbacks;
@@ -125,9 +131,13 @@ export interface ITreeSelectCallbacks {
 
     /** fires after the completion of fetching the data, regardless of the result */
     onDataFetchComplete?: (api: ITreeSelectApi) => boolean | void;
+    
+    /** Callback executed when selected node delete */
+    onDelete?: (selectedNodes: ITreeSelectNode[], api: ITreeSelectApi) => ITreeSelectDeletePromise | void | undefined;
 }
 
 export type ITreeSelectSourcePromise = TPromise<{data: ITreeSelectNode[]}, {message: string; code: number}>;
+export type ITreeSelectDeletePromise = TPromise<{data: Record<string, unknown>}, {message: string; code: number}>;
 
 export type ITreeSelectPlainValue = string | number;
 

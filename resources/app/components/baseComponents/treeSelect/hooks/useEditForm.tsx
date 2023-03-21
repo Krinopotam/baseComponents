@@ -5,6 +5,9 @@ import {IDFormModalApi} from 'baseComponents/dFormModal/hooks/api';
 import {IDFormModalProps} from 'baseComponents/dFormModal/dFormModal';
 import {ITreeSelectApi} from 'baseComponents/treeSelect/hooks/api';
 import {addNodeToDataSet, updateNodeInDataSet, removeNodesFromDataSet} from 'baseComponents/treeSelect/helpers/dataSetMethods';
+import {MessageBox} from 'baseComponents/messageBox';
+import {isPromise, mergeObjects} from 'helpers/helpersObjects';
+import {MessageBoxApi} from 'components/baseComponents/messageBox/messageBoxApi';
 
 export const useEditableInit = (api: ITreeSelectApi): [typeof formProps, typeof openCreateHandler, typeof openUpdateHandler, typeof deleteHandler] => {
     const treeProps = api.getProps();
@@ -80,4 +83,53 @@ export const useEditableInit = (api: ITreeSelectApi): [typeof formProps, typeof 
     }, [treeFormProps, formApi, formId, api, treeProps]);
 
     return [formProps, openCreateHandler, openUpdateHandler, deleteHandler];
+};
+
+const deleteHandler = (api: ITreeSelectApi) => {
+    const treeProps = api.getProps();
+
+    const keyField = treeProps.fieldNames?.value || 'id';
+    const childrenField = treeProps.fieldNames?.children || 'children';
+    const selectedNodes = api.getValues();
+    if (selectedNodes.length < 1) return;
+    const dataSetClone = [...api.getDataSet()];
+    removeNodesFromDataSet(dataSetClone, selectedNodes, keyField, childrenField);
+    api.setValues(null);
+    api.setDataSet(dataSetClone);
+
+    let messageBox: MessageBoxApi;
+    const removeRows = () => {
+        const deletePromise = treeProps.callbacks?.onDelete?.(selectedNodes, api);
+
+        if (isPromise(deletePromise)) {
+            if (!gridProps.confirmDelete) gridApi.setIsLoading(true);
+            const promiseResult = deletePromise as IGridDeletePromise;
+            promiseResult
+                .then(() => {
+                    if (!gridApi.getIsMounted()) return;
+                    gridApi.deleteRows(selectedRows);
+                    if (!gridProps.confirmDelete) gridApi.setIsLoading(false);
+                    else if (messageBox) messageBox.destroy();
+                })
+                .catch((error) => {
+                    if (!gridApi.getIsMounted()) return;
+                    if (!gridProps.confirmDelete) gridApi.setIsLoading(false);
+                    else if (messageBox) messageBox.destroy();
+                    MessageBox.alert({content: error.message, type: 'error'});
+                });
+            return;
+        }
+
+        gridApi.deleteRows(selectedRows);
+        if (messageBox) messageBox.destroy();
+    };
+
+    if (api.confirmDelete) {
+        messageBox = MessageBox.confirmWaiter({
+            content: api.rowDeleteMessage || 'Удалить выбранные строки?',
+            onOk: removeRows,
+        });
+    } else {
+        removeRows();
+    }
 };

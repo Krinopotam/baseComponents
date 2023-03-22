@@ -25,8 +25,9 @@ export const useEditableInit = (api: ITreeSelectApi): [typeof formProps, typeof 
 
         if (!props.callbacks) props.callbacks = {};
 
+        const userOnSubmitSuccess =  props.callbacks?.onSubmitSuccess
         props.callbacks.onSubmitSuccess = (values, resultVal, formApi) => {
-            if (!resultVal || treeFormProps.callbacks?.onSubmitSuccess?.(values, resultVal, formApi) === false) return;
+            if (!resultVal || userOnSubmitSuccess?.(values, resultVal, formApi) === false) return;
 
             const resultNode = {...(formApi.model.getFormDataSet() || {}), ...resultVal};
 

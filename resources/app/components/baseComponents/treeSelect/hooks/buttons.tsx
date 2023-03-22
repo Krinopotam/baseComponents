@@ -58,20 +58,30 @@ const deleteHandler = (api: ITreeSelectApi) => {
         const deletePromise = treeProps.callbacks?.onDelete?.(selectedNodes, api);
 
         if (isPromise(deletePromise)) {
-            if (!treeProps.confirmDelete) api.buttonsApi.buttons({delete: {loading: true}});
+            if (!treeProps.confirmDelete) {
+                api.buttonsApi.loading('delete', true);
+                api.buttonsApi.disabled('add', true);
+                api.buttonsApi.disabled('edit', true);
+            }
             const promiseResult = deletePromise as ITreeSelectDeletePromise;
             promiseResult
                 .then(() => {
                     if (!api.isMounted()) return;
                     api.deleteNodes(selectedNodes);
                     api.setValues(null);
-                    if (!treeProps.confirmDelete) api.buttonsApi.buttons({delete: {loading: false}});
-                    else if (messageBox) messageBox.destroy();
+                    if (!treeProps.confirmDelete) {
+                        api.buttonsApi.loading('delete', false);
+                        api.buttonsApi.disabled('delete', true);
+                        api.buttonsApi.disabled('add', false);
+                    } else messageBox?.destroy();
                 })
                 .catch((error) => {
                     if (!api.isMounted()) return;
-                    if (!treeProps.confirmDelete) api.buttonsApi.buttons({delete: {loading: false}});
-                    else if (messageBox) messageBox.destroy();
+                    if (!treeProps.confirmDelete) {
+                        api.buttonsApi.loading('delete', false);
+                        api.buttonsApi.disabled('add', false);
+                        api.buttonsApi.disabled('edit', false);
+                    } else messageBox?.destroy();
                     MessageBox.alert({content: error.message, type: 'error'});
                 });
             return;

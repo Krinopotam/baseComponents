@@ -102,8 +102,26 @@ export class TreeSelectComponentConfig<T>  extends BaseComponentConfig<T> {
     }
 
     /** Edit item controls props. If not set then component not editable */
-    editableFormProps(value: ITreeSelectProps['editableFormProps']) {
-        this._config.editableFormProps = value;
+    editFormProps(value: ITreeSelectProps['editFormProps']) {
+        this._config.editFormProps = value;
+        return this;
+    }
+
+    /** Confirm message before node delete */
+    nodeDeleteMessage(value: ITreeSelectProps['nodeDeleteMessage']) {
+        this._config.nodeDeleteMessage = value;
+        return this;
+    }
+
+    /** Should confirm before delete */
+    confirmDelete(value: ITreeSelectProps['confirmDelete']) {
+        this._config.confirmDelete = value;
+        return this;
+    }
+
+    /** Edit buttons*/
+    editButtons(value: ITreeSelectProps['editButtons']) {
+        this._config.editButtons = value;
         return this;
     }
 
@@ -116,12 +134,6 @@ export class TreeSelectComponentConfig<T>  extends BaseComponentConfig<T> {
     /** Default value */
     default(value: IDFormFieldTreeSelectProps['default']) {
         this._config.default = value;
-        return this;
-    }
-
-    /** Is user can clear value. Default: true */
-    allowClear(value: IDFormFieldTreeSelectProps['allowClear']) {
-        this._config.allowClear = value;
         return this;
     }
 

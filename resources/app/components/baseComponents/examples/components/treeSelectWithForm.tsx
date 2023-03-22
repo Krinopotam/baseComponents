@@ -1,11 +1,9 @@
 import {DForm} from 'baseComponents/dForm/dForm';
 import React from 'react';
-import {TreeSelectComponentConfig} from 'baseComponents/dForm/configBuilder/treeSelectComponentConfig';
 import {DFormConfig} from 'baseComponents/dForm/configBuilder/dFormConfig';
-
-interface IFields {
-    department: {id: string; title: string};
-}
+import {DFormModalConfig} from 'baseComponents/dForm/configBuilder/dFormModalConfig';
+import {InputComponentConfig} from 'baseComponents/dForm/configBuilder/inputComponentConfig';
+import {TreeSelectComponentConfig} from 'baseComponents/dForm/configBuilder/treeSelectComponentConfig';
 
 const dataSet = [
     {
@@ -16,9 +14,9 @@ const dataSet = [
                 id: '01-01',
                 title: 'Управление аналитики продаж',
                 children: [
-                    {id: '01-01-01', title: 'Отдел прода север'},
-                    {id: '01-01-02', title: 'Отдел прода юг'},
-                    {id: '01-01-03', title: 'Отдел прода запад'},
+                    {id: '01-01-01', title: 'Отдел продаж север'},
+                    {id: '01-01-02', title: 'Отдел продаж юг'},
+                    {id: '01-01-03', title: 'Отдел продаж запад'},
                 ],
             },
             {
@@ -108,17 +106,31 @@ const dataSet = [
         ],
     },
 ];
+
+interface IEditFormFields {
+    title: string;
+}
+const editForm = new DFormModalConfig<IEditFormFields>('EditForm')
+    .confirmChanges(true)
+    .bodyHeight(100)
+    .addFields(new InputComponentConfig('title').label('Подразделение'))
+    .getConfig();
+
+interface IFields {
+    departments: {id: string; title: string};
+}
+
 const formProps = new DFormConfig<IFields>('Test form')
     .confirmChanges(true)
-    .addFields(new TreeSelectComponentConfig('departments').label('Подразделения').dataSet(dataSet))
+    .addFields(new TreeSelectComponentConfig('departments').label('Подразделения').editFormProps(editForm).confirmDelete(true).dataSet(dataSet))
     .buttons(null)
     .getConfig();
 
-export const TreeSelectBasic = (): JSX.Element => {
+export const TreeSelectWithForm = (): JSX.Element => {
     return (
         <>
             {/*Description Start*/}
-            <h1>Пример TreeSelect на форме</h1>
+            <h1>Пример TreeSelect с формой редактирования</h1>
             {/*Description End*/}
             <div style={{maxWidth: 500}}>
                 <DForm {...formProps} />

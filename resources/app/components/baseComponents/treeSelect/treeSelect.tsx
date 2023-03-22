@@ -1,15 +1,15 @@
-import {Col, Row, Space, Tooltip, TreeSelectProps} from 'antd';
+import {Col, Row, TreeSelectProps} from 'antd';
 import {DFormModal, IDFormModalProps} from 'baseComponents/dFormModal/dFormModal';
-import {EditOutlined, PlusOutlined} from '@ant-design/icons';
 import React, {useEffect, useMemo, useState} from 'react';
 import {splitObject} from 'helpers/helpersObjects';
-import Button from 'baseComponents/button/button';
 import {getUuid} from 'helpers/helpersString';
 import {TreeSelectRender} from 'baseComponents/treeSelect/renders/treeSelectRender';
 import {useEditableInit} from 'baseComponents/treeSelect/hooks/useEditForm';
 import {ITreeSelectApi, useInitApi} from 'baseComponents/treeSelect/hooks/api';
 import {useGetActualProps} from 'baseComponents/libs/commonHooks/getActualProps';
 import {TPromise} from 'baseComponents/serviceTypes';
+import {ButtonsRow, IButtonsRowApi, IFormButtons} from 'baseComponents/buttonsRow';
+import {useInitButtons} from 'baseComponents/treeSelect/hooks/buttons';
 
 //region Types
 export interface ITreeSelectNode extends Record<string, unknown> {
@@ -32,7 +32,7 @@ export interface ITreeSelectNode extends Record<string, unknown> {
     checkable?: boolean;
     /** is node checkbox must be disabled*/
     disableCheckbox?: boolean;
-    /** Is node is leaf (must't have children)*/
+    /** Is node is leaf (mustn't have children)*/
     isLeaf?: boolean;
     /** Service rendered title, used if component has title render */
     __title?: string | React.ReactNode;
@@ -98,7 +98,16 @@ export interface ITreeSelectProps extends IAntTreeSelectProps {
     fieldNames?: ITeeSelectFieldNames;
 
     /** Edit item controls props. If not set then component not editable */
-    editableFormProps?: IDFormModalProps;
+    editFormProps?: IDFormModalProps;
+
+    /** Confirm message before node delete */
+    nodeDeleteMessage?: React.ReactNode;
+
+    /** Should confirm before delete */
+    confirmDelete?: boolean;
+
+    /** Edit buttons*/
+    editButtons?:IFormButtons
 
     /** The TreeSelect callbacks */
     callbacks?: ITreeSelectCallbacks;
@@ -125,9 +134,13 @@ export interface ITreeSelectCallbacks {
 
     /** fires after the completion of fetching the data, regardless of the result */
     onDataFetchComplete?: (api: ITreeSelectApi) => boolean | void;
+
+    /** Callback executed when selected node delete */
+    onDelete?: (selectedNodes: ITreeSelectNode[], api: ITreeSelectApi) => ITreeSelectDeletePromise | void | undefined;
 }
 
 export type ITreeSelectSourcePromise = TPromise<{data: ITreeSelectNode[]}, {message: string; code: number}>;
+export type ITreeSelectDeletePromise = TPromise<{data: Record<string, unknown>}, {message: string; code: number}>;
 
 export type ITreeSelectPlainValue = string | number;
 
@@ -138,7 +151,10 @@ export const TreeSelect = (props: ITreeSelectProps): JSX.Element => {
     const antProps = useGetAntTreeSelectProps(treeProps);
     const [componentId] = useState(treeProps.treeSelectId || 'treeSelect-' + getUuid());
     const [api] = useState((treeProps.apiRef || {}) as ITreeSelectApi);
-    useInitApi({api, componentId, treeProps, updateProps});
+    const [buttonsApi] = useState({} as IButtonsRowApi);
+    useInitApi({api, componentId, treeProps, updateProps, buttonsApi});
+    const [editFormProps, formApi] = useEditableInit(api);
+    const buttons = useInitButtons(api, formApi); //init buttons
 
     useEffect(() => {
         api.setIsAllFetched(false);
@@ -179,25 +195,17 @@ export const TreeSelect = (props: ITreeSelectProps): JSX.Element => {
     }, [defaultValueCallback, internalValue, treeProps.callbacks, setValue, treeProps.dataSet]);
 
     */
-    const [openCreateHandler, openUpdateHandler, editFormProps] = useEditableInit(api);
 
-    if (!editFormProps) return <TreeSelectRender api={api} antProps={antProps} />;
+    if (!editFormProps || treeProps.readOnly || treeProps.disabled) return <TreeSelectRender api={api} antProps={antProps} />;
 
     return (
         <Row wrap={false}>
             {/*<Col flex="auto">{treeSelect}</Col> */}
             <TreeSelectRender api={api} antProps={antProps} />
             <Col>
-                <Space wrap={false} size={0}>
-                    <Tooltip title="Добавить">
-                        <Button icon={<PlusOutlined />} onClick={openCreateHandler} />
-                    </Tooltip>
-                    <Tooltip title="Редактировать">
-                        <Button icon={<EditOutlined />} onClick={openUpdateHandler} disabled={!api.getValues() || api.getValues().length !== 1} />
-                    </Tooltip>
-                </Space>
+                <ButtonsRow formId={componentId} buttons={buttons} apiRef={buttonsApi} context={api} arrowsSelection={false} />
             </Col>
-            {editFormProps?.isOpened && <DFormModal {...editFormProps} />}
+            <DFormModal {...editFormProps} />
         </Row>
     );
 };
@@ -220,8 +228,11 @@ const useGetAntTreeSelectProps = (props: ITreeSelectProps) => {
             'debounce',
             'selectedLabelProp',
             'fieldNames',
-            'editableFormProps',
+            'editFormProps',
             'callbacks',
+            'confirmDelete',
+            'editButtons',
+            'nodeDeleteMessage'
         ]);
 
         return result[1] as IAntTreeSelectProps;

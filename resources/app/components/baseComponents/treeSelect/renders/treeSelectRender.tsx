@@ -60,12 +60,6 @@ export const TreeSelectRender = ({
             onChange={(value) => {
                 const selectedNodes = api.plainValueToNodes(value);
                 api.setValues(selectedNodes || null);
-                if (!selectedNodes) {
-                    treeProps.callbacks?.onChange?.(null);
-                    return;
-                }
-                if (treeProps.multiple) treeProps.callbacks?.onChange?.(selectedNodes || []);
-                else treeProps.callbacks?.onChange?.(selectedNodes.length > 0 ? selectedNodes[0] : null);
             }}
             onDropdownVisibleChange={(open: boolean) => {
                 if (open && (treeProps.fetchMode === 'onUse' || treeProps.fetchMode === 'onUseForce')) api.fetchData('');

@@ -6,14 +6,13 @@
  * @license MIT
  */
 
-import { IButtonsRowApi, IFormButtons } from 'baseComponents/buttonsRow';
+import { IFormButtons } from 'baseComponents/buttonsRow';
 import React, { useEffect, useSyncExternalStore } from 'react';
 
 import { ButtonsRender } from 'baseComponents/modal/renders/buttonsRender';
 import { Form } from 'antd';
 import { FormBodyRender } from './formBodyRender';
 import { IDFormApi } from 'baseComponents/dForm/hooks/api';
-import { IDFormProps } from '../dForm';
 import { LoadingContainer } from 'baseComponents/loadingContainer/loadingContainer';
 
 interface IFormRenderProps {

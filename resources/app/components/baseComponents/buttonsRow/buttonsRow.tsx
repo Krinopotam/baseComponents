@@ -1,5 +1,5 @@
 import {Button, IButtonProps} from 'baseComponents/button';
-import {Col, Row, Space} from 'antd';
+import {Col, Row, Space, Tooltip} from 'antd';
 import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 
 import {ButtonType} from 'antd/es/button';
@@ -32,6 +32,9 @@ export interface IFormButton {
     icon?: string | React.ReactNode;
     size?: 'large' | 'middle' | 'small';
     hotKeys?: IHotKey[];
+
+    /** Button tooltip */
+    tooltip?: string;
 
     //TODO: to implement href and multi -level buttons
     href?: string;
@@ -119,8 +122,7 @@ export const ButtonsGroup = ({
     return (
         <Space wrap>
             {Object.keys(buttons).map((name) => {
-                if (!buttons) return null;
-                const button = buttons[name];
+                const button = buttons?.[name];
                 if (!button) return null;
                 return <ButtonComponent key={name} name={name} button={button} position={position} context={context} />;
             })}
@@ -146,25 +148,52 @@ const ButtonComponent = ({
     if (!button || button.hidden) return null;
     if (position && button.position !== position) return null;
 
-    if (button.type === 'element') return <>button.title</>;
+    if (button.type === 'element') {
+        if (button.tooltip) {
+            return <Tooltip title={button.tooltip}>button.title</Tooltip>;
+        } else return <>button.title</>;
+    }
 
-    return (
-        <Button
-            key={name}
-            type={(button.active ? 'primary' : button.type) as ButtonType}
-            disabled={button.disabled}
-            ghost={button.ghost}
-            loading={button.loading}
-            //style={position === 'left' ? {marginRight: '8px'} : {marginLeft: '8px'}}
-            danger={button.danger}
-            onClick={onClick}
-            size={button.size}
-            icon={button.icon}
-            {...button.props}
-        >
-            {button.title}
-        </Button>
-    );
+    if (button.tooltip) {
+        //Popover and tooltip has a bug: they are not displayed for custom components, so we have to repeat the same code
+        return (
+            <Tooltip title={button.tooltip}>
+                <Button
+                    key={name}
+                    type={(button.active ? 'primary' : button.type) as ButtonType}
+                    disabled={button.disabled}
+                    ghost={button.ghost}
+                    loading={button.loading}
+                    //style={position === 'left' ? {marginRight: '8px'} : {marginLeft: '8px'}}
+                    danger={button.danger}
+                    onClick={onClick}
+                    size={button.size}
+                    icon={button.icon}
+                    {...button.props}
+                >
+                    {button.title}
+                </Button>
+            </Tooltip>
+        );
+    } else {
+        return (
+            <Button
+                key={name}
+                type={(button.active ? 'primary' : button.type) as ButtonType}
+                disabled={button.disabled}
+                ghost={button.ghost}
+                loading={button.loading}
+                //style={position === 'left' ? {marginRight: '8px'} : {marginLeft: '8px'}}
+                danger={button.danger}
+                onClick={onClick}
+                size={button.size}
+                icon={button.icon}
+                {...button.props}
+            >
+                {button.title}
+            </Button>
+        );
+    }
 };
 
 const useApi = (props: IButtonRowProps, curButtons: IFormButtons, setCurButtons: (buttons: IFormButtons) => void): IButtonsRowApi => {
@@ -237,7 +266,7 @@ const useApi = (props: IButtonRowProps, curButtons: IFormButtons, setCurButtons:
         api.triggerClick = (name: string) => {
             const button = curButtons[name];
             if (!button) return;
-            if (button.onClick && !button.disabled && !button.loading && !button.hidden) button.onClick(name, button,props.context);
+            if (button.onClick && !button.disabled && !button.loading && !button.hidden) button.onClick(name, button, props.context);
         };
 
         api.activeTriggerClick = () => {

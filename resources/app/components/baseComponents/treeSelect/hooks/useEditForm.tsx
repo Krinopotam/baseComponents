@@ -5,24 +5,11 @@ import {IDFormModalApi} from 'baseComponents/dFormModal/hooks/api';
 import {IDFormModalProps} from 'baseComponents/dFormModal/dFormModal';
 import {ITreeSelectApi} from 'baseComponents/treeSelect/hooks/api';
 
-export const useEditableInit = (api: ITreeSelectApi):[typeof openCreateHandler, typeof openUpdateHandler, typeof formProps] => {
+export const useEditableInit = (api: ITreeSelectApi): [typeof formProps, typeof formApi] => {
     const treeProps = api.getProps();
-    const treeFormProps = treeProps.editableFormProps;
+    const treeFormProps = treeProps.editFormProps;
     const [formApi] = useState<IDFormModalApi>((treeFormProps?.apiRef || {}) as IDFormModalApi);
-    const [isEditFormOpened, setEditFormOpened] = useState(false);
     const [formId] = useState(treeFormProps?.formId || 'SelectItemEdit-' + getUuid());
-
-    const openCreateHandler = () => {
-        setEditFormOpened(true);
-        formApi.open('create');
-    };
-
-    const openUpdateHandler = () => {
-        const values = api.getValues();
-        if (values.length < 1) return;
-        setEditFormOpened(true);
-        formApi.open('update', values[0]);
-    };
 
     const formProps: IDFormModalProps | undefined = useMemo(() => {
         if (!treeFormProps) return undefined;
@@ -36,35 +23,31 @@ export const useEditableInit = (api: ITreeSelectApi):[typeof openCreateHandler, 
 
         const props = {...defaultProps, ...treeFormProps, ...{apiRef: formApi, formId: formId}};
 
-        props.isOpened = isEditFormOpened;
-
         if (!props.callbacks) props.callbacks = {};
 
-        props.callbacks.onClosed = (formApi) => {
-            setEditFormOpened(false);
-            treeFormProps.callbacks?.onClosed?.(formApi);
-        };
-
-        props.callbacks.onOpen = (formApi, dataSet) => {
-            setEditFormOpened(true);
-            return treeFormProps.callbacks?.onOpen?.(formApi, dataSet);
-        };
-
+        const userOnSubmitSuccess =  props.callbacks?.onSubmitSuccess
         props.callbacks.onSubmitSuccess = (values, resultVal, formApi) => {
-            if (!resultVal || treeFormProps.callbacks?.onSubmitSuccess?.(values, resultVal, formApi) === false) return;
+            if (!resultVal || userOnSubmitSuccess?.(values, resultVal, formApi) === false) return;
 
-            api.setValues([resultVal as ITreeSelectNode]);
+            const resultNode = {...(formApi.model.getFormDataSet() || {}), ...resultVal};
 
-            if (!treeProps.callbacks?.onDataFetch ||api.getIsAllFetched()) {
-                api.setDataSet([...(api.getDataSet() || []), resultVal]);
+            const formProps = formApi.getFormProps();
+            if (formProps.formMode === 'update') api.updateNodes(resultNode);
+            else {
+                const parents = api.getValues();
+                const parent = parents && parents.length > 0 ? parents[0] : undefined;
+                api.addNodes(parent, resultNode);
             }
 
-            if (!treeProps.multiple) treeProps.callbacks?.onChange?.(resultVal || null);
-            else treeProps.callbacks?.onChange?.([resultVal as ITreeSelectNode] || []);
+            api.setValues([resultNode as ITreeSelectNode]);
+
+            /*if (!treeProps.callbacks?.onDataFetch || api.getIsAllFetched()) {
+                api.setDataSet([...(api.getDataSet() || []), resultNode]);
+            }*/
         };
 
         return props;
-    }, [treeFormProps, formApi, formId, isEditFormOpened, api, treeProps]);
+    }, [treeFormProps, formApi, formId, api]);
 
-    return [openCreateHandler, openUpdateHandler, formProps];
+    return [formProps, formApi];
 };

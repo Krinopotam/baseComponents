@@ -11,7 +11,6 @@ import React, { useSyncExternalStore } from 'react';
 import { BaseComponent } from '../components/baseComponent';
 import { FieldGroupRender } from './fieldGroupRender';
 import { IDFormApi } from "baseComponents/dForm/hooks/api";
-import { IDFormProps } from '../dForm';
 
 interface IFieldsRenderProps {
     /** Tab name */
@@ -24,7 +23,6 @@ interface IFieldsRenderProps {
 export const TabContentRender = ({tabName, formApi}: IFieldsRenderProps): JSX.Element => {
     useExternalRenderCall(formApi, tabName);
 
-    const formProps = formApi.getFormProps();
     const groupsProp = formApi.model.getGroupsProps(tabName);
 
     return (

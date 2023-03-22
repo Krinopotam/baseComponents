@@ -1,11 +1,9 @@
 import {DForm} from 'baseComponents/dForm/dForm';
 import React from 'react';
-import {TreeSelectComponentConfig} from 'baseComponents/dForm/configBuilder/treeSelectComponentConfig';
 import {DFormConfig} from 'baseComponents/dForm/configBuilder/dFormConfig';
-
-interface IFields {
-    department: {id: string; title: string};
-}
+import {DFormModalConfig} from 'baseComponents/dForm/configBuilder/dFormModalConfig';
+import {InputComponentConfig} from 'baseComponents/dForm/configBuilder/inputComponentConfig';
+import {TreeSelectComponentConfig} from 'baseComponents/dForm/configBuilder/treeSelectComponentConfig';
 
 const dataSet = [
     {
@@ -16,9 +14,9 @@ const dataSet = [
                 id: '01-01',
                 title: 'Управление аналитики продаж',
                 children: [
-                    {id: '01-01-01', title: 'Отдел прода север'},
-                    {id: '01-01-02', title: 'Отдел прода юг'},
-                    {id: '01-01-03', title: 'Отдел прода запад'},
+                    {id: '01-01-01', title: 'Отдел продаж север'},
+                    {id: '01-01-02', title: 'Отдел продаж юг'},
+                    {id: '01-01-03', title: 'Отдел продаж запад'},
                 ],
             },
             {
@@ -108,17 +106,58 @@ const dataSet = [
         ],
     },
 ];
+
+interface IEditFormFields {
+    title: string;
+}
+const editForm = new DFormModalConfig<IEditFormFields>('EditForm')
+    .confirmChanges(true)
+    .bodyHeight(100)
+    .addFields(new InputComponentConfig('title').label('Подразделение'))
+    .callbacks({
+        onSubmit: (values: Record<string, unknown>) => {
+            return new Promise((resolve, reject) => {
+                setTimeout(() => {
+                    if (Math.random() < 0.3) reject({message: 'Ошибка сохранения', code: 400});
+                    else resolve({data: values});
+                }, 3000);
+            });
+        },
+    })
+    .getConfig();
+
+interface IFields {
+    departments: {id: string; title: string};
+}
+
 const formProps = new DFormConfig<IFields>('Test form')
     .confirmChanges(true)
-    .addFields(new TreeSelectComponentConfig('departments').label('Подразделения').dataSet(dataSet))
+    .addFields(
+        new TreeSelectComponentConfig('departments')
+            .label('Подразделения')
+            .editFormProps(editForm)
+            .confirmDelete(true)
+            .dataSet(dataSet)
+            .callbacks({
+                onDelete: () => {
+                    return new Promise((resolve, reject) => {
+                        setTimeout(() => {
+                            if (Math.random() < 0.3) reject({message: 'Ошибка удаления строк', code: 400});
+                            else resolve({data: {result: 'OK'}});
+                        }, 2000);
+                    });
+                },
+            })
+    )
     .buttons(null)
     .getConfig();
 
-export const TreeSelectBasic = (): JSX.Element => {
+export const TreeSelectWithFormAsync = (): JSX.Element => {
     return (
         <>
             {/*Description Start*/}
-            <h1>Пример TreeSelect на форме</h1>
+            <h1>Пример TreeSelect с асинхронной формой редактирования</h1>
+            <p>Для данного примера операция завершится ошибкой с вероятностью 30%</p>
             {/*Description End*/}
             <div style={{maxWidth: 500}}>
                 <DForm {...formProps} />

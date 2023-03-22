@@ -8,7 +8,8 @@
 
 import {IDFormComponentProps, IDFormFieldProps} from './baseComponent';
 import {ITreeSelectNode, ITreeSelectProps, ITreeSelectValue, TreeSelect} from 'baseComponents/treeSelect';
-import React, {useCallback, useEffect} from 'react';
+import React, {useCallback, useEffect, useMemo} from 'react';
+import {splitObject} from 'helpers/helpersObjects';
 
 //region Types
 type IDFormFieldTreeSelectProps_ = ITreeSelectProps & IDFormFieldProps;
@@ -18,9 +19,6 @@ export interface IDFormFieldTreeSelectProps extends IDFormFieldTreeSelectProps_ 
     /** Default value */
     default?: ITreeSelectValue;
 
-    /** Is user can clear value. Default: true */
-    allowClear?: boolean;
-
     /** @deprecated The callback should not be used. Use callbacks.onChange instead  */
     onCustomChange?: (value: unknown) => void;
 }
@@ -29,7 +27,9 @@ export interface IDFormFieldTreeSelectProps extends IDFormFieldTreeSelectProps_ 
 
 export const TreeSelectComponent = ({formApi, fieldName}: IDFormComponentProps): JSX.Element => {
     const formProps = formApi.getFormProps();
+
     const fieldProps = formProps.fieldsProps[fieldName] as IDFormFieldTreeSelectProps;
+    const treeProps = useGetTreeSelectProps(fieldProps);
     const value = formApi.model.getFieldValue(fieldName) as ITreeSelectNode | ITreeSelectNode[] | undefined;
 
     const onChange = useCallback(
@@ -58,33 +58,42 @@ export const TreeSelectComponent = ({formApi, fieldName}: IDFormComponentProps):
 
     return (
         <TreeSelect
+            style={{width: '100%'}}
+            {...treeProps}
             autoFocus={fieldProps.autoFocus}
             defaultValueCallback={fieldProps.defaultValueCallback}
-            style={{width: '100%'}}
             disabled={formApi.model.isFieldDisabled(fieldName)}
             readOnly={formApi.model.isFieldReadOnly(fieldName)}
             value={value}
             placeholder={fieldProps.placeholder || 'Выберите из списка'}
-            allowClear={typeof fieldProps.allowClear === 'undefined' ? true : fieldProps.allowClear}
-            fetchMode={fieldProps.fetchMode}
-            dataSet={fieldProps.dataSet}
-            multiple={fieldProps.multiple}
-            treeCheckable={fieldProps.treeCheckable}
-            minSearchLength={fieldProps.minSearchLength}
-            labelRender={fieldProps.labelRender}
-            titleRender={fieldProps.titleRender}
-            filterTreeNode={fieldProps.filterTreeNode}
-            fieldNames={fieldProps.fieldNames}
-            selectedLabelProp={fieldProps.selectedLabelProp}
-            debounce={fieldProps.debounce}
-            noCacheFetchedData={fieldProps.noCacheFetchedData}
-            editableFormProps={fieldProps.editableFormProps}
+            allowClear={fieldProps.allowClear !== false}
             callbacks={{
                 onChange: onChange,
                 onClear: onClear,
-                ...fieldProps.callbacks
+                ...fieldProps.callbacks,
             }}
             onBlur={onBlur}
         />
     );
+};
+
+const useGetTreeSelectProps = (props: IDFormFieldTreeSelectProps) => {
+    return useMemo((): ITreeSelectProps => {
+        const result = splitObject(props, [
+            'onCustomChange',
+            'component',
+            'helpClass',
+            'label',
+            'placeholder',
+            'tab',
+            'inlineGroup',
+            'default',
+            'hidden',
+            'dependsOn',
+            'width',
+            'autoFocus',
+        ]);
+
+        return result[1] as ITreeSelectProps;
+    }, [props]);
 };

@@ -58,11 +58,12 @@ const formProps = new DFormConfig<IFields>('Test form')
             const tipValue = formApi.model.getFieldValue('tip') as Record<'id', unknown>;
             let newDataSet: Partial<IDFormFieldTreeSelectProps>;
 
-            if (tipValue.id === '1') newDataSet = {dataSet: dataSet2_1};
-            else if (tipValue.id === '2') newDataSet = {dataSet: dataSet2_2};
-            else newDataSet = {dataSet: []};
+            if (!tipValue) newDataSet = [];
+            else if (tipValue.id === '1') newDataSet = dataSet2_1;
+            else if (tipValue.id === '2') newDataSet = dataSet2_2;
+            else newDataSet = [];
 
-            formApi.model.updateFieldProps('process', newDataSet);
+            formApi.model.updateFieldProps('process', {dataSet: newDataSet});
         },
     })
     .buttons({ok: {position: 'right'}})

@@ -22,7 +22,7 @@ import {getUuid} from 'helpers/helpersString';
 import {useCallbacks} from 'baseComponents/dForm/hooks/callbacks';
 import {useGetButtons} from './hooks/buttons';
 import {useUpdateMessageBoxTheme} from 'baseComponents/messageBox/hooks/updateModalTheme';
-import {useGetActualProps} from "baseComponents/libs/commonHooks/getActualProps";
+import {useGetActualProps} from 'baseComponents/libs/commonHooks/getActualProps';
 
 //import './dynamicForm.css';
 
@@ -32,7 +32,7 @@ import {useGetActualProps} from "baseComponents/libs/commonHooks/getActualProps"
 export interface IDFormProps {
     /** A mutable object to merge with these controls api */
     apiRef?: unknown;
-    
+
     /** Form formId */
     formId?: string;
 
@@ -71,6 +71,9 @@ export interface IDFormProps {
 
     /** Form mode */
     formMode?: IDFormMode;
+
+    /** The form is read only */
+    readOnly?: boolean;
 
     /** Disable automatic hiding the fields if they depend on the fields for which the values are not set */
     noAutoHideDependedFields?: boolean;
@@ -232,7 +235,8 @@ export const DForm = (props: IDFormProps): JSX.Element => {
 
 const useFormModel = (formId: string, formProps: IDFormProps, callbacks: IDFormModelCallbacks) => {
     const modelRef = useRef<DModel>();
-    if (!modelRef.current) modelRef.current = new DModel(formId, formProps, callbacks);
+    if (!modelRef.current) modelRef.current = new DModel(formId);
+    modelRef.current.reinitModel(formProps, callbacks);
 
     return modelRef.current;
 };

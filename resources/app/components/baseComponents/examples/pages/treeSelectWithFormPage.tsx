@@ -120,6 +120,7 @@ interface IEditFormFields {
 }
 const editForm = new DFormModalConfig<IEditFormFields>('EditForm')
     .confirmChanges(true)
+    .bodyHeight(100)
     .addFields(new InputComponentConfig('title').label('Подразделение'))
     .getConfig();
 

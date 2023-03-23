@@ -120,7 +120,18 @@ interface IEditFormFields {
 }
 const editForm = new DFormModalConfig<IEditFormFields>('EditForm')
     .confirmChanges(true)
+    .bodyHeight(100)
     .addFields(new InputComponentConfig('title').label('Подразделение'))
+    .callbacks({
+        onSubmit: (values: Record<string, unknown>) => {
+            return new Promise((resolve, reject) => {
+                setTimeout(() => {
+                    if (Math.random() < 0.3) reject({message: 'Ошибка сохранения', code: 400});
+                    else resolve({data: values});
+                }, 3000);
+            });
+        },
+    })
     .getConfig();
 
 interface IFields {
@@ -129,7 +140,23 @@ interface IFields {
 
 const formProps = new DFormConfig<IFields>('Test form')
     .confirmChanges(true)
-    .addFields(new TreeSelectComponentConfig('departments').label('Подразделения').editFormProps(editForm).confirmDelete(true).dataSet(dataSet))
+    .addFields(
+        new TreeSelectComponentConfig('departments')
+            .label('Подразделения')
+            .editFormProps(editForm)
+            .confirmDelete(true)
+            .dataSet(dataSet)
+            .callbacks({
+                onDelete: () => {
+                    return new Promise((resolve, reject) => {
+                        setTimeout(() => {
+                            if (Math.random() < 0.3) reject({message: 'Ошибка удаления строк', code: 400});
+                            else resolve({data: {result: 'OK'}});
+                        }, 2000);
+                    });
+                },
+            })
+    )
     .buttons(null)
     .getConfig();
 

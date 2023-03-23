@@ -19,6 +19,7 @@
     import {ModalFormWithTabsPage} from './pages/modalFormWithTabsPage';
     import {ModalFormWithTabsGroupsPage} from './pages/modalFormWithTabsGroupsPage';
     import {PlayGroundPage} from './pages/playGroundPage';
+    import {TabulatorGridCellFormatPage} from './pages/tabulatorGridCellFormatPage';
     import {TabulatorGridSimplePage} from './pages/tabulatorGridSimplePage';
     import {TabulatorGridTreePage} from './pages/tabulatorGridTreePage';
     import {TabulatorGridTreeWithFormPage} from './pages/tabulatorGridTreeWithFormPage';
@@ -54,6 +55,7 @@ export const ExamplesRoutes = () => {
                 <Route path="ModalFormWithTabs" element={<ModalFormWithTabsPage />} />;
                 <Route path="ModalFormWithTabsGroups" element={<ModalFormWithTabsGroupsPage />} />;
                 <Route path="PlayGround" element={<PlayGroundPage />} />;
+                <Route path="TabulatorGridCellFormat" element={<TabulatorGridCellFormatPage />} />;
                 <Route path="TabulatorGridSimple" element={<TabulatorGridSimplePage />} />;
                 <Route path="TabulatorGridTree" element={<TabulatorGridTreePage />} />;
                 <Route path="TabulatorGridTreeWithForm" element={<TabulatorGridTreeWithFormPage />} />;

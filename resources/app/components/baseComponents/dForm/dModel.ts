@@ -1,6 +1,6 @@
 /**
  * @DynamicFormModel
- * @version 0.0.38.16
+ * @version 0.0.38.17
  * @link omegatester@gmail.com
  * @author Maksim Zaytsev
  * @license MIT
@@ -228,30 +228,39 @@ export class DModel {
     //endregion
 
     //region Init class
-    constructor(formId: string, formProps: IDFormProps, callbacks: IDFormModelCallbacks) {
+    constructor(formId: string) {
         this._formId = formId;
-        this._formProps = cloneObject(formProps);
-        this._fieldsProps = this._formProps.fieldsProps;
+        this._validator = new BaseValidator();
+    }
+
+    public reinitModel(formProps: IDFormProps, callbacks: IDFormModelCallbacks) {
         this._callbacks = callbacks;
 
-        this._dataSet = this._callbacks.onDataSetChange?.(formProps.dataSet, this) || formProps.dataSet;
+        if (this._formProps === formProps) return;
 
+        //the form props have changed
+        this._formProps = formProps;
+        this._formMode = formProps.formMode || 'create';
+        this._formReadOnly = !!formProps.readOnly;
         this._validationRules = formProps.validationRules || ({} as IDFormFieldValidationRules);
 
-        this._formMode = formProps.formMode || 'create';
-        this._formReadOnly = this._formMode === 'view' || false; //TODO implement mode changes
+        const oldFieldsProps = this.getFieldsProps();
+        if (oldFieldsProps !== formProps.fieldsProps) {
+            // the fields props have changed
+            this._fieldsProps = formProps.fieldsProps;
+            this._tabsProps = this.preparePropsCollection(formProps.fieldsProps);
 
-        this._validator = new BaseValidator();
+            [this._labels, this._values, this._hidden, this._readOnly, this._disabled] = this.initFieldsParameters(
+                oldFieldsProps,
+                formProps.fieldsProps,
+                formProps.formMode || 'create'
+            );
+        }
 
-        this._tabsProps = this.preparePropsCollection(this._fieldsProps);
-        [this._labels, this._values, this._hidden, this._readOnly, this._disabled] = this.initFieldsParameters(
-            this._fieldsProps,
-            this._formProps.formMode || 'create',
-            this._formProps.dataSet,
-            this._formProps.noAutoHideDependedFields
-        );
+        const oldDataSet = this.getFormDataSet();
+        if (oldDataSet !== formProps.dataSet) this.setFormValues(formProps.dataSet, true);
 
-        console.log('Model created');
+        if (!formProps.noAutoHideDependedFields) this._hidden = this.calculateHiddenFields(this.getFieldsProps(), this.getFormValues(), this._hidden);
     }
 
     /**
@@ -260,6 +269,7 @@ export class DModel {
      */
     private preparePropsCollection(fieldsProps: IDFormFieldsProps) {
         const tabsProps: Record<string, Record<string, IDFormFieldsProps>> = {};
+        if (!fieldsProps) return tabsProps;
         let i = 1;
         for (const fieldName in fieldsProps) {
             const field = fieldsProps[fieldName];
@@ -276,28 +286,24 @@ export class DModel {
     }
 
     private initFieldsParameters(
-        fieldsProps: IDFormFieldsProps,
-        mode: IDFormMode,
-        dataSet?: IDFormDataSet,
-        noAutoHideDependedFields?: boolean
+        oldFieldsProps: IDFormFieldsProps | undefined,
+        fieldsProps: IDFormFieldsProps | undefined,
+        mode: IDFormMode
     ): [Record<string, React.ReactNode | undefined>, Record<string, unknown>, Record<string, boolean>, Record<string, boolean>, Record<string, boolean>] {
         const values: Record<string, unknown> = {};
-        let hidden: Record<string, boolean> = {};
+        const hidden: Record<string, boolean> = {};
         const readOnly: Record<string, boolean> = {};
         const disabled: Record<string, boolean> = {};
         const labels: Record<string, React.ReactNode> = {};
 
-        const clonedDataSet = dataSet ? cloneObject(dataSet) : {};
-
+        if (!fieldsProps) return;
         for (const fieldName in fieldsProps) {
+            const oldField = oldFieldsProps?.[fieldName];
             const field = fieldsProps[fieldName];
+
             let fieldValue: unknown = undefined;
-
-            fieldValue = clonedDataSet[fieldName];
-            if (mode === 'create' && field.default) fieldValue = field.default;
-
-            //if ((mode === 'view' || mode === 'update' || mode === 'clone') && clonedDataSet) fieldValue = clonedDataSet[fieldName];
-            //else if (mode === 'create') fieldValue = field.default;
+            if (oldField === field) fieldValue = this._values[fieldName]; // keep the user entered value if the field props have not changed
+            if (mode === 'create' && field.default && !fieldValue) fieldValue = field.default;
 
             labels[fieldName] = field.label;
             values[fieldName] = fieldValue;
@@ -305,9 +311,6 @@ export class DModel {
             readOnly[fieldName] = !!field.readOnly || mode === 'view';
             disabled[fieldName] = !!field.disabled;
         }
-
-        if (noAutoHideDependedFields) return [labels, values, hidden, readOnly, disabled];
-        hidden = this.calculateHiddenFields(fieldsProps, values, hidden);
 
         return [labels, values, hidden, readOnly, disabled];
     }
@@ -493,7 +496,7 @@ export class DModel {
      * @returns field read only status
      */
     public isFieldReadOnly(fieldName: string): boolean {
-        return !!this._readOnly[fieldName];
+        return !!this._readOnly[fieldName] || this._formMode === 'view';
     }
 
     /**
@@ -757,7 +760,7 @@ export class DModel {
      * @returns Tab read only status
      */
     public isTabReadOnly(tabName: string): boolean {
-        return !!this._readOnlyTabs[tabName];
+        return !!this._readOnlyTabs[tabName] || this._formMode === 'view';
     }
 
     /**
@@ -789,7 +792,7 @@ export class DModel {
      * @returns Tab disabled status
      */
     public isTabDisabled(tabName: string): boolean {
-        return !!this._readOnlyTabs[tabName];
+        return !!this._disabledTabs[tabName];
     }
 
     /**
@@ -829,15 +832,17 @@ export class DModel {
         return this._values;
     }
 
-    /** Update form values */
-    public setFormValues(dataSet: IDFormDataSet | undefined) {
-        const extDataSet = this._callbacks.onDataSetChange?.(dataSet, this);
-        const newDataSet = extDataSet || dataSet;
+    /** Update form values
+     * @param dataSet - new data set
+     * @param noEvents- does not raise events/callbacks and the field rerender
+     */
+    public setFormValues(dataSet: IDFormDataSet | undefined, noEvents?: boolean) {
+        const newDataSet = noEvents ? dataSet : this._callbacks.onDataSetChange?.(dataSet, this) || dataSet;
 
         this._dataSet = newDataSet;
         const fieldsProps = this.getFieldsProps();
         for (const fieldName in fieldsProps) {
-            this.setFieldValue(fieldName, newDataSet?.[fieldName]);
+            this.setFieldValue(fieldName, newDataSet?.[fieldName], noEvents);
         }
     }
 
@@ -1236,7 +1241,7 @@ export class DModel {
     private isFieldMustBeHidden(
         fieldName: string,
         fieldsProps: IDFormFieldsProps,
-        values: Record<string, unknown>,
+        values: Record<string, unknown> | undefined,
         hiddenFields: Record<string, boolean | undefined>
     ) {
         const field = fieldsProps[fieldName];
@@ -1251,7 +1256,7 @@ export class DModel {
 
             if (parentField.hidden) return true;
 
-            const parentHasNoValue = !values[parentName];
+            const parentHasNoValue = !values?.[parentName];
             const parentIsHidden = hiddenFields[parentName] && !field.dependsOn; //You can take current hidden status only for the root fields. Others must be updated despite the current hidden status
             if (parentHasNoValue || parentIsHidden) return true;
 

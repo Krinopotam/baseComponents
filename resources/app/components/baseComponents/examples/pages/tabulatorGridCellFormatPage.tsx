@@ -33,7 +33,7 @@ const data: IGridRowData[] = [
     {id: '20', surname: 'Андросов', name: 'Андрей', patronic: 'Андреевич', email: 'androsov@mail.ru', birthday: '10.04.1966'},
 ];
 
-function fioFilter(headerValue, rowValue, rowData, filterParams) {
+const fioFilter = (headerValue, rowValue, rowData, filterParams) => {
     if (!headerValue) return true;
     //if (!filter) return true;
     //headerValue - the value of the header filter element
@@ -43,8 +43,21 @@ function fioFilter(headerValue, rowValue, rowData, filterParams) {
 
     //must return a boolean, true if it passes the filter.
     return \`\${rowData['surname']} \${rowData['name']} \${rowData['patronic']} (\${rowData['email']})\`.toLowerCase().indexOf(headerValue.toLowerCase()) >= 0;
-}
+};
 
+const fioSorter = (a, b, aRow, bRow, column, dir, sorterParams) => {
+    //a, b - the two values being compared
+    //aRow, bRow - the row components for the values being compared (useful if you need to access additional fields in the row data for the sort)
+    //column - the column component for the column being sorted
+    //dir - the direction of the sort ("asc" or "desc")
+    //sorterParams - sorterParams object from column definition array
+    const rowDataA = aRow.getData();
+    const rowDataB = bRow.getData();
+    const valA = \`\${rowDataA['surname']} \${rowDataA['name']} \${rowDataA['patronic']} (\${rowDataA['email']})\`;
+    const valB = \`\${rowDataB['surname']} \${rowDataB['name']} \${rowDataB['patronic']} (\${rowDataB['email']})\`;
+
+    return valA > valB; //you must return the difference between the two values
+};
 const columns: IReactTabulatorProps['columns'] = [
     {
         title: 'ФИО',
@@ -58,6 +71,7 @@ const columns: IReactTabulatorProps['columns'] = [
             return \`<span>\${rowData['surname']} \${rowData['name']} \${rowData['patronic']}</span><br/><small style="color:#808080;">\${rowData['email']}</small>\`; //return the contents of the cell;
         },
         headerFilterFunc: fioFilter,
+        sorter: fioSorter,
     },
     {
         title: 'День рождения',

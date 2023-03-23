@@ -90,6 +90,12 @@ export class DFormConfig<T>  {
         return this;
     }
 
+    /** The form is read only */
+    readOnly(value: IDFormProps['readOnly']) {
+        this._config.readOnly = value;
+        return this;
+    }
+
     /** Disable automatic hiding the fields if they depend on the fields for which the values are not set */
     noAutoHideDependedFields(value: IDFormProps['noAutoHideDependedFields']) {
         this._config.noAutoHideDependedFields = value;

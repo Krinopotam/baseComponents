@@ -42,7 +42,7 @@ function fioFilter(headerValue, rowValue, rowData, filterParams) {
     //filterParams - params object passed to the headerFilterFuncParams property
 
     //must return a boolean, true if it passes the filter.
-    return `${rowData['surname']} ${rowData['name']} ${rowData['patronic']} (${rowData['email']})`.toLowerCase().indexOf(headerValue.toLowerCase()) >= 0;
+    return \`\${rowData['surname']} \${rowData['name']} \${rowData['patronic']} (\${rowData['email']})\`.toLowerCase().indexOf(headerValue.toLowerCase()) >= 0;
 }
 
 const columns: IReactTabulatorProps['columns'] = [
@@ -55,7 +55,7 @@ const columns: IReactTabulatorProps['columns'] = [
             //onRendered - function to call when the formatter has been rendered
             const row = cell.getRow();
             const rowData = row.getData();
-            return `<span>${rowData['surname']} ${rowData['name']} ${rowData['patronic']}</span><br/><small style="color:#808080;">${rowData['email']}</small>`; //return the contents of the cell;
+            return \`<span>\${rowData['surname']} \${rowData['name']} \${rowData['patronic']}</span><br/><small style="color:#808080;">\${rowData['email']}</small>\`; //return the contents of the cell;
         },
         headerFilterFunc: fioFilter,
     },

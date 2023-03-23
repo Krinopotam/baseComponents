@@ -39,6 +39,9 @@ function generatePageComponent(componentFileName, componentPath, source, pagesPa
     source = source.replaceAll(/\s*\{\/\*Description Start\*\/}[\S\s]*?\{\/\*Description End\*\/}/gi, ''); //remove {/*Description Start/*} blocks
     source = source.replaceAll(/\s*\/\*Description Start\*\/[\S\s]*?\/\*Description End\*\//gi, ''); //remove /*Description Start*/ blocks
 
+    source = source.replaceAll(/\$\{/g, '\\${');
+    source = source.replaceAll(/`/g, '\\`');
+
     const importStr = `
     import React from 'react';
     import {${componentName}} from '${importExamplesRoot + moduleName}';

@@ -1,9 +1,125 @@
 import React from 'react';
 import TabulatorGrid, {IGridRowData} from 'baseComponents/tabulatorGrid/tabulatorGrid';
 import {IReactTabulatorProps} from 'baseComponents/tabulatorGrid/reactTabulator/reactTabulator';
+import {ColumnDefinition} from "tabulator-tables";
+
+let deepMatchHeaderFilterStatusMap = {};
+function deepMatchHeaderFilterStatusMapGetter(fieldName, k) {
+    return (deepMatchHeaderFilterStatusMap[fieldName] || {})[k];
+}
+function deepMatchHeaderFilterStatusMapSetter(fieldName, k, v) {
+    let fieldMap = deepMatchHeaderFilterStatusMap[fieldName];
+    if (fieldMap == null) {
+        fieldMap = {};
+        deepMatchHeaderFilterStatusMap[fieldName] = fieldMap;
+    }
+    fieldMap[k] = v;
+}
+function deepMatchHeaderFilterIsActualMatch(k) {
+    // All fields must match to match the row.
+    for (const fieldMap of Object.values(deepMatchHeaderFilterStatusMap)) {
+        if (fieldMap[k] != 2) {
+            return false;
+        }
+    }
+    return true;
+}
+
+const tableTreeCreateDeepMatchHeaderFilter = function (
+    getDeepMatchHeaderFilterStatusMap,
+    setDeepMatchHeaderFilterStatusMap,
+    matchFunction,
+    indexField,
+    childrenField
+) {
+    /*
+     Tabulator (at least version 4.9) seems to be missing a way to access the Row Component
+     from the header callback itself, so we can't use row.getIndex() from there.
+     We're passing indexField and childrenField explicitly because of that.
+     */
+    if (indexField == null) {
+        indexField = 'id';
+    }
+    if (childrenField == null) {
+        childrenField = 'children';
+    }
+
+    if (matchFunction == null) {
+        matchFunction = function (headerValue, rowValue, rowData, filterParams) {
+            return rowValue != null && rowValue.toString().toLowerCase().includes(headerValue.toLowerCase());
+        };
+    }
+
+    function deepMatchHeaderFilter(headerValue, rowValue, rowData, filterParams, fieldName) {
+        // We check if we've already walked through that node (and therefore subtree).
+        const cachedStatus = getDeepMatchHeaderFilterStatusMap(fieldName, rowData[indexField]);
+        if (cachedStatus != null) {
+            // If so, we return the cached result.
+            return cachedStatus > 0;
+        }
+
+        /* jshint -W040 */
+        const columnDef = this;
+        /* jshint +W040 */
+
+        if (fieldName == null) {
+            if (filterParams && filterParams.fieldName) {
+                fieldName = filterParams.fieldName;
+            } else {
+                fieldName = columnDef.field;
+            }
+        }
+
+        let anyChildMatch = false;
+        for (const childRow of rowData[childrenField] || []) {
+            // We walk down the tree recursively
+            const match = deepMatchHeaderFilter.apply(columnDef, [headerValue, childRow[fieldName], childRow, filterParams, fieldName]);
+            if (match) {
+                anyChildMatch = true;
+            }
+        }
+
+        // We run the actual maching test where applicable. This could be a customised function
+        //(passed in the filterParams, for example).
+        if (matchFunction(headerValue, rowValue, rowData, filterParams)) {
+            setDeepMatchHeaderFilterStatusMap(fieldName, rowData[indexField], 2);
+            return true;
+        }
+
+        // If any child (and therefore any descendant) matched, we return true.
+        if (anyChildMatch) {
+            setDeepMatchHeaderFilterStatusMap(fieldName, rowData[indexField], 1);
+            return true;
+        }
+
+        return false;
+    }
+
+    return deepMatchHeaderFilter;
+};
+
+const deepMatchHeaderFilter = tableTreeCreateDeepMatchHeaderFilter(
+    deepMatchHeaderFilterStatusMapGetter,
+    deepMatchHeaderFilterStatusMapSetter,
+    null,
+    null,
+    null
+);
+
+const fioFilter: ColumnDefinition['headerFilterFunc'] = (headerValue, _rowValue, rowData) => {
+    if (!headerValue) return true;
+    //if (!filter) return true;
+    //headerValue - the value of the header filter element
+    //rowValue - the value of the column in this row
+    //rowData - the data for the row being filtered
+    //filterParams - params object passed to the headerFilterFuncParams property
+
+    //must return a boolean, true if it passes the filter.
+    return true
+};
 
 const columns: IReactTabulatorProps['columns'] = [
-    {title: 'Name', field: 'name'},
+    {title: 'Name', field: 'name', headerFilterFunc:deepMatchHeaderFilter},
     {title: 'Age', field: 'age', hozAlign: 'left', formatter: 'progress'},
     {title: 'Favourite Color', field: 'col'},
     {title: 'Date Of Birth', field: 'dob', hozAlign: 'center'},
@@ -12,6 +128,20 @@ const columns: IReactTabulatorProps['columns'] = [
 ];
 
 const data: IGridRowData[] = [
+    {
+        id: '1',
+        name: 'Root',
+        age: '12',
+        col: 'red',
+        dob: '',
+        children: [
+            {id: '1_1', name: 'Child 1', age: '4', col: 'green', dob: '22/05/20119'},
+            {id: '1_2', name: 'Child 2', age: '2', col: 'orange', dob: '01/08/2021'},
+        ],
+    },
+];
+
+const data2: IGridRowData[] = [
     {
         id: '1',
         name: 'Oli Bob1',

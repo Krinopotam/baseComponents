@@ -36,15 +36,14 @@ const fioFormatter: ColumnDefinition['formatter'] = (cell) => {
 };
 
 const fioFilter: ColumnDefinition['headerFilterFunc'] = (headerValue, _rowValue, rowData) => {
-    if (!headerValue) return true;
-    //if (!filter) return true;
     //headerValue - the value of the header filter element
     //rowValue - the value of the column in this row
     //rowData - the data for the row being filtered
     //filterParams - params object passed to the headerFilterFuncParams property
 
     //must return a boolean, true if it passes the filter.
-    return `${rowData['surname']} ${rowData['name']} ${rowData['patronymic']} (${rowData['email']})`.toLowerCase().indexOf(headerValue.toLowerCase()) >= 0;
+    const rowString = `${rowData['surname']} ${rowData['name']} ${rowData['patronic']} (${rowData['email']})`.toLowerCase();
+    return rowString.indexOf(headerValue.toLowerCase()) >= 0;
 };
 
 const fioSorter: ColumnDefinition['sorter'] = (_a, _b, aRow, bRow): number => {

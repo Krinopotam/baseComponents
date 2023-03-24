@@ -51,6 +51,7 @@ const items: MenuProps['items'] = [
     getItem('TreeSelect - древоводиный комбобокс', 'TreeSelect', <FolderOutlined />, [
         getItem(<Link to="TreeSelectBasic">Простой TreeSelect</Link>, 'TreeSelectBasic'),
         getItem(<Link to="TreeSelectDepended">Зависимые TreeSelect</Link>, 'TreeSelectDepended'),
+        getItem(<Link to="TreeSelectNodeRender">TreeSelect с настраиваемым отображением</Link>, 'TreeSelectNodeRender'),
         getItem(<Link to="TreeSelectAsync">TreeSelect с асинхронной загрузкой dataSet</Link>, 'TreeSelectAsync'),
         getItem(<Link to="TreeSelectAsyncSearch">TreeSelect с асинхронным поиском</Link>, 'TreeSelectAsyncSearch'),
         getItem(<Link to="TreeSelectDependedAsync">Зависимые асинхронные TreeSelect</Link>, 'TreeSelectDependedAsync'),

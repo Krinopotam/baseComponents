@@ -10,6 +10,7 @@
 import React from 'react';
 import {TreeSelectComponentConfig} from 'baseComponents/dForm/configBuilder/treeSelectComponentConfig';
 import {DFormConfig} from 'baseComponents/dForm/configBuilder/dFormConfig';
+import {ITreeSelectProps} from 'baseComponents/treeSelect/treeSelect';
 
 interface IFields {
     department: {id: string; title: string};
@@ -25,9 +26,9 @@ const dataSet = [
                 id: '01-01',
                 title: 'Управление аналитики продаж',
                 children: [
-                    {id: '01-01-01', title: 'Отдел прода север', head: 'Петров Петр петрович'},
-                    {id: '01-01-02', title: 'Отдел прода юг', head: 'Сидоров Сидр Сидорович'},
-                    {id: '01-01-03', title: 'Отдел прода запад', head: 'Дмитриев Дмитрий Дмитриевич'},
+                    {id: '01-01-01', title: 'Отдел продаж север', head: 'Петров Петр Петрович'},
+                    {id: '01-01-02', title: 'Отдел продаж юг', head: 'Сидоров Сидр Сидорович'},
+                    {id: '01-01-03', title: 'Отдел продаж запад', head: 'Дмитриев Дмитрий Дмитриевич'},
                 ],
             },
             {
@@ -123,9 +124,40 @@ const dataSet = [
         ],
     },
 ];
+
+const titleRender: ITreeSelectProps['titleRender'] = (treeNode: ITreeSelectNode | unknown) => {
+    return (
+        <>
+            {treeNode.title}
+            <br />
+            <small style={{color: '#808080'}}>{treeNode.head}</small>
+        </>
+    );
+};
+
+const labelRender: ITreeSelectProps['labelRender'] = (treeNode: ITreeSelectNode | unknown) => {
+    return (
+        <>
+            {treeNode.title} (<small style={{color: '#808080'}}>{treeNode.head}</small>)
+        </>
+    );
+};
+
+const filterTreeNode: ITreeSelectProps['filterTreeNode'] = (inputValue: string, treeNode: ITreeSelectNode | unknown) => {
+    const nodeString = (treeNode.title + ' (' + treeNode.head + ')').toLowerCase();
+    return nodeString.indexOf(inputValue.toLowerCase()) >= 0;
+};
+
 const formProps = new DFormConfig<IFields>('Test form')
     .confirmChanges(true)
-    .addFields(new TreeSelectComponentConfig('departments').label('Подразделения').dataSet(dataSet))
+    .addFields(
+        new TreeSelectComponentConfig('departments')
+            .label('Подразделения')
+            .dataSet(dataSet)
+            .titleRender(titleRender) //node title render
+            .labelRender(labelRender) //selected value render
+            .filterTreeNode(filterTreeNode) //custom filter
+    )
     .buttons(null)
     .getConfig();
 

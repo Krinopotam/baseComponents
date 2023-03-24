@@ -3,6 +3,7 @@ import {EventCallBackMethods, TabulatorFull as Tabulator} from 'tabulator-tables
 import {IReactTabulatorProps, ITabulator} from 'baseComponents/tabulatorGrid/reactTabulator/reactTabulator';
 import {render} from 'react-dom';
 import {ActiveSelectionModule} from '../modules/activeSelectionModule';
+import {AdvancedTreeModule} from '../modules/advancedTreeModule';
 import {collapseButton, expandButton} from 'baseComponents/tabulatorGrid/reactTabulator/parts/icons';
 import {setPatches} from 'baseComponents/tabulatorGrid/reactTabulator/patches/setPatches';
 
@@ -71,7 +72,7 @@ function syncRender(component: JSX.Element, el: HTMLElement): Promise<HTMLElemen
 }
 
 const propsToOptions = async (props: IReactTabulatorProps) => {
-    const output = {...props} as ITabulator["options"];
+    const output = {...props} as ITabulator['options'];
     if (typeof props['footerElement'] === 'object') {
         // convert from JSX to HTML string (tabulator's footerElement accepts string)
         const el = await syncRender(props['footerElement'], document.createElement('div'));
@@ -92,11 +93,14 @@ const propsToOptions = async (props: IReactTabulatorProps) => {
     return output;
 };
 
-const initTabulatorClass = ($container: HTMLDivElement, options: ITabulator["options"]): ITabulator => {
+const initTabulatorClass = ($container: HTMLDivElement, options: ITabulator['options']): ITabulator => {
     Tabulator.registerModule(ActiveSelectionModule);
-
+    Tabulator.registerModule(AdvancedTreeModule);
+    
     const tableApi = new Tabulator($container, options) as ITabulator;
-    setPatches(tableApi) //!TODO: Monkey patches. Check if the developer fixed it
+
+    
+    setPatches(tableApi); //!TODO: Monkey patches. Check if the developer fixed it
 
     return tableApi;
 };

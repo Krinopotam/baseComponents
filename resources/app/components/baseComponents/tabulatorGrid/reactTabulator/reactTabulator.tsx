@@ -6,13 +6,14 @@ import {
     IActiveSelectionModuleTableEvents,
     IActiveSelectionTabulator,
 } from 'baseComponents/tabulatorGrid/reactTabulator/modules/activeSelectionModule';
+import {IAdvancedTreeTabulator} from 'baseComponents/tabulatorGrid/reactTabulator/modules/advancedTreeModule';
 import {getUuid} from 'helpers/helpersString';
 
-export type ITabulator = IActiveSelectionTabulator;
+export type ITabulator = IActiveSelectionTabulator & IAdvancedTreeTabulator;
 
 export type ITabulatorRow = RowComponent & IActiveSelectionModuleRow;
 
-export interface IReactTabulatorProps extends Omit<ITabulator["options"], 'footerElement'> {
+export interface IReactTabulatorProps extends Omit<ITabulator['options'], 'footerElement'> {
     /** On the tableRef ready callback */
     onTableRef?: (ref: React.MutableRefObject<ITabulator | null>) => void;
 

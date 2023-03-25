@@ -94,12 +94,11 @@ const propsToOptions = async (props: IReactTabulatorProps) => {
 };
 
 const initTabulatorClass = ($container: HTMLDivElement, options: ITabulator['options']): ITabulator => {
+
     Tabulator.registerModule(ActiveSelectionModule);
     Tabulator.registerModule(AdvancedTreeModule);
-    
-    const tableApi = new Tabulator($container, options) as ITabulator;
 
-    
+    const tableApi = new Tabulator($container, options) as ITabulator;
     setPatches(tableApi); //!TODO: Monkey patches. Check if the developer fixed it
 
     return tableApi;

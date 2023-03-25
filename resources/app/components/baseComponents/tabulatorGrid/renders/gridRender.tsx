@@ -115,6 +115,7 @@ export const useColumnDef = (columnDef: ColumnDefinition | undefined) => {
         const colDef: Partial<ColumnDefinition> = {
             resizable: 'header',
             headerFilter: true,
+            headerFilterFunc:'like'
         };
 
         const userColDef = columnDef || {};

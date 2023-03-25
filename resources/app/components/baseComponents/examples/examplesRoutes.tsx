@@ -22,6 +22,7 @@
     import {TabulatorGridCellFormatPage} from './pages/tabulatorGridCellFormatPage';
     import {TabulatorGridSimplePage} from './pages/tabulatorGridSimplePage';
     import {TabulatorGridTreePage} from './pages/tabulatorGridTreePage';
+    import {TabulatorGridTreeCellFormatPage} from './pages/tabulatorGridTreeCellFormatPage';
     import {TabulatorGridTreeWithFormPage} from './pages/tabulatorGridTreeWithFormPage';
     import {TabulatorGridWithFormPage} from './pages/tabulatorGridWithFormPage';
     import {TabulatorGridWithFormAsyncPage} from './pages/tabulatorGridWithFormAsyncPage';
@@ -59,6 +60,7 @@ export const ExamplesRoutes = () => {
                 <Route path="TabulatorGridCellFormat" element={<TabulatorGridCellFormatPage />} />;
                 <Route path="TabulatorGridSimple" element={<TabulatorGridSimplePage />} />;
                 <Route path="TabulatorGridTree" element={<TabulatorGridTreePage />} />;
+                <Route path="TabulatorGridTreeCellFormat" element={<TabulatorGridTreeCellFormatPage />} />;
                 <Route path="TabulatorGridTreeWithForm" element={<TabulatorGridTreeWithFormPage />} />;
                 <Route path="TabulatorGridWithForm" element={<TabulatorGridWithFormPage />} />;
                 <Route path="TabulatorGridWithFormAsync" element={<TabulatorGridWithFormAsyncPage />} />;

@@ -1,11 +1,13 @@
 import React, {useMemo} from 'react';
-import ReactTabulator, {ITabulator} from 'baseComponents/tabulatorGrid/reactTabulator/reactTabulator';
+import ReactTabulator, {IReactTabulatorProps, ITabulator} from 'baseComponents/tabulatorGrid/reactTabulator/reactTabulator';
 import {ColumnDefinition, RowComponent, TabulatorFull as Tabulator} from 'tabulator-tables';
 import {IGridApi} from 'baseComponents/tabulatorGrid/hooks/api';
+import {IFilterFunction} from 'baseComponents/tabulatorGrid/reactTabulator/modules/advancedTreeModule';
 
 export const GridRender = ({tableRef, gridApi}: {tableRef: React.MutableRefObject<Tabulator | null>; gridApi: IGridApi}): JSX.Element => {
     const gridProps = gridApi.gridProps;
-    const columnDef = useColumnDef(gridProps.columnDefaults);
+    const columnDef = useColumnDef(gridProps.columnDefaults, gridApi);
+    const columns = usePrepareColumns(gridProps.columns, gridProps.dataTree, gridApi);
     return useMemo(() => {
         let tableBuilt = false;
         return (
@@ -21,7 +23,7 @@ export const GridRender = ({tableRef, gridApi}: {tableRef: React.MutableRefObjec
                 dataTreeChildIndent={gridProps.dataTreeChildIndent || 22}
                 dataTreeFilter={true}
                 data={gridApi.getDataSet()}
-                columns={gridProps.columns}
+                columns={columns}
                 containerClassName={gridProps.className}
                 placeholder={gridProps.placeholder || 'Строки отсутствуют'}
                 layout={gridProps.layout || 'fitData'}
@@ -73,12 +75,13 @@ export const GridRender = ({tableRef, gridApi}: {tableRef: React.MutableRefObjec
         );
     }, [
         columnDef,
+        columns,
         gridApi,
         gridProps.className,
-        gridProps.columns,
         gridProps.dataTree,
         gridProps.dataTreeChildField,
         gridProps.dataTreeChildIndent,
+        gridProps.dataTreeParentField,
         gridProps.frozenRows,
         gridProps.frozenRowsField,
         gridProps.gridMode,
@@ -110,15 +113,44 @@ export const GridRender = ({tableRef, gridApi}: {tableRef: React.MutableRefObjec
     ]);
 };
 
-export const useColumnDef = (columnDef: ColumnDefinition | undefined) => {
+export const useColumnDef = (columnDef: ColumnDefinition | undefined, gridApi: IGridApi) => {
     return useMemo(() => {
         const colDef: Partial<ColumnDefinition> = {
             resizable: 'header',
             headerFilter: true,
-            headerFilterFunc:'like'
+            headerFilterFunc: 'like',
         };
 
-        const userColDef = columnDef || {};
-        return {...colDef, ...userColDef} as ColumnDefinition;
-    }, [columnDef]);
+        const userColDef = columnDef || ({} as ColumnDefinition);
+
+        const resultColDef = {...colDef, ...userColDef} as ColumnDefinition;
+        if (typeof userColDef.headerFilterFunc === 'function') {
+            resultColDef.headerFilterFunc = gridApi.tableApi?.getBaseTreeDataFilter(userColDef.headerFilterFunc);
+        }
+
+        return resultColDef;
+    }, [columnDef, gridApi.tableApi]);
+};
+
+export const usePrepareColumns = (columns: IReactTabulatorProps['columns'], dataTree: boolean|undefined, gridApi: IGridApi) => {
+    return useMemo(() => {
+        if (!columns || !dataTree) return columns;
+
+        const resultColumns = [];
+
+        for (let i = 0; i < columns.length; i++) {
+            const colClone = {...columns[i]};
+            if (typeof columns[i].headerFilterFunc === 'function') {
+                colClone.headerFilterFunc = (filterVal, rowValue, rowData, filterParams) => {
+                    const filter = gridApi.tableApi?.getBaseTreeDataFilter(columns[i].headerFilterFunc as IFilterFunction);
+                    if (!filter) return true;
+                    return filter(filterVal, rowValue, rowData, filterParams);
+                };
+            }
+
+            resultColumns.push(colClone);
+        }
+
+        return resultColumns;
+    }, [columns, dataTree, gridApi.tableApi]);
 };

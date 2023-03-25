@@ -42,7 +42,7 @@ const fioFilter: ColumnDefinition['headerFilterFunc'] = (headerValue, _rowValue,
     //filterParams - params object passed to the headerFilterFuncParams property
 
     //must return a boolean, true if it passes the filter.
-    const rowString = `${rowData['surname']} ${rowData['name']} ${rowData['patronic']} (${rowData['email']})`.toLowerCase();
+    const rowString = `${rowData['surname']} ${rowData['name']} ${rowData['patronymic']} (${rowData['email']})`.toLowerCase();
     return rowString.indexOf(headerValue.toLowerCase()) >= 0;
 };
 

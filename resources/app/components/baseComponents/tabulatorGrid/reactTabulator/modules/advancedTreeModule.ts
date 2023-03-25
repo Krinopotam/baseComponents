@@ -11,12 +11,19 @@ export interface IAdvancedTreeModuleTableOptions {
     dataTreeParentField?: string | number;
 }
 
-export interface IAdvancedTreeModuleTable {}
+type AnyType = any;
+export type IFilterFunction = (filterVal: AnyType, rowValue: AnyType, rowData: AnyType, filterParams: AnyType) => boolean
+
+export interface IAdvancedTreeModuleTable {
+    getBaseTreeDataFilter: (
+        matchFunction: IFilterFunction | undefined
+    ) => IFilterFunction;
+}
+
 
 //endregion
 
-type AnyType = any;
-const defaultFilters: Record<string, (filterVal: AnyType, rowValue: AnyType, rowData: AnyType, filterParams: AnyType) => boolean> = {
+const defaultFilters: Record<string, IFilterFunction | undefined> = {
     //equal to
     '=': function (filterVal, rowVal) {
         return rowVal == filterVal;
@@ -137,6 +144,7 @@ export class AdvancedTreeModule extends Module {
         Tabulator.extendModule('filter', 'filters', filterFunctions);
 
         _this.registerTableOption('dataTreeParentField', undefined);
+        _this.registerTableFunction('getBaseTreeDataFilter', this.getBaseTreeDataFilter.bind(this));
     }
 
     // noinspection JSUnusedGlobalSymbols
@@ -144,9 +152,6 @@ export class AdvancedTreeModule extends Module {
         if (!this.table.options.dataTree) return;
 
         const _this = this as unknown as IModule;
-
-        this.table.on('dataFiltering', this.onDataFiltering.bind(this));
-        this.table.on('dataFiltered', this.onDataFiltered.bind(this));
         _this.subscribe('filter-changed', this.onFilterChanged.bind(this));
     }
 
@@ -160,15 +165,16 @@ export class AdvancedTreeModule extends Module {
         return newDefFilters;
     }
 
-    private getBaseTreeDataFilter(matchFunction: (filterVal: AnyType, rowValue: AnyType, rowData: AnyType, filterParams: AnyType) => boolean) {
+    public getBaseTreeDataFilter(matchFunction: IFilterFunction | undefined) {
+        if (!matchFunction) return undefined;
         const filter = (filterVal: AnyType, rowValue: AnyType, rowData: AnyType, filterParams: AnyType, force?: boolean) => {
-            console.log(rowData)
             const fieldName = this.getFilterFieldName(filterVal, rowValue, rowData, filterParams);
             const indexField = this.table.options.index || 'id';
             const childrenField = this.table.options.dataTreeChildField || 'children';
 
             if (force === true) {
                 this.setFilterCache(fieldName, rowData[indexField], true);
+                for (const childRow of rowData[childrenField] || []) filter(filterVal, childRow[fieldName], childRow, filterParams, true);
                 return true;
             }
 
@@ -177,7 +183,7 @@ export class AdvancedTreeModule extends Module {
 
             if (matchFunction(filterVal, rowValue, rowData, filterParams)) {
                 this.setFilterCache(fieldName, rowData[indexField], true);
-                //force set children visible
+                //force set children visible if parent is visible
                 for (const childRow of rowData[childrenField] || []) filter(filterVal, childRow[fieldName], childRow, filterParams, true);
                 return true;
             }
@@ -228,22 +234,14 @@ export class AdvancedTreeModule extends Module {
         fieldMap[key] = val;
     }
 
-    private onDataFiltering() {
-        console.log('onDataFiltering', arguments);
-    }
-
-    private onDataFiltered(filters, rows) {
-        console.log('onDataFiltered', arguments);
-    }
-
     private onFilterChanged() {
         const headerFilters = this.table.getHeaderFilters();
         const curHeaderFilterValues: Record<string, unknown> = {};
         for (const filter of headerFilters) {
             if (this.curHeaderFilterValues[filter.field] !== filter.value) {
+                //the filter value for this field has changed
                 this.filteredCacheMap[filter.field] = {}; //clear filtered cache
                 this.lastFilteredField = filter.field;
-                console.log('filter ' + filter.field + ' changed');
             }
 
             curHeaderFilterValues[filter.field] = filter.value;

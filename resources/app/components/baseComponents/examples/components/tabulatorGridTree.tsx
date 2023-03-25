@@ -12,6 +12,7 @@ const columns: IReactTabulatorProps['columns'] = [
     {title: 'Passed?', field: 'passed', hozAlign: 'center', formatter: 'tickCross'},
 ];
 
+/*Description Start*/
 /*
 const data: IGridRowData[] = [
     {
@@ -27,6 +28,9 @@ const data: IGridRowData[] = [
     },
 ];
 */
+
+/*Description End*/
+
 const data: IGridRowData[] = [
     {
         id: '1',

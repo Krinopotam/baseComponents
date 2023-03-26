@@ -1,15 +1,21 @@
-import React, {useMemo} from 'react';
-import ReactTabulator, {IReactTabulatorProps, ITabulator} from 'baseComponents/tabulatorGrid/reactTabulator/reactTabulator';
-import {ColumnDefinition, RowComponent, TabulatorFull as Tabulator} from 'tabulator-tables';
+import React, {useEffect, useMemo} from 'react';
+import ReactTabulator, {IReactTabulatorProps} from 'baseComponents/tabulatorGrid/reactTabulator/reactTabulator';
+import {ColumnDefinition, TabulatorFull as Tabulator} from 'tabulator-tables';
 import {IGridApi} from 'baseComponents/tabulatorGrid/hooks/api';
 import {IFilterFunction} from 'baseComponents/tabulatorGrid/reactTabulator/modules/advancedTreeModule';
+import dispatcher from 'baseComponents/modal/service/formsDispatcher';
 
 export const GridRender = ({tableRef, gridApi}: {tableRef: React.MutableRefObject<Tabulator | null>; gridApi: IGridApi}): JSX.Element => {
     const gridProps = gridApi.gridProps;
     const columnDef = useColumnDef(gridProps.columnDefaults, gridApi);
     const columns = usePrepareColumns(gridProps.columns, gridProps.dataTree, gridApi);
+
+    useEffect(() => {
+        dispatcher.pushToStack(gridApi.getGridId());
+    }, [gridApi]);
+
     return useMemo(() => {
-        let tableBuilt = false;
+        // noinspection JSUnusedGlobalSymbols
         return (
             <ReactTabulator
                 onTableRef={(tabulatorRef) => {
@@ -56,16 +62,37 @@ export const GridRender = ({tableRef, gridApi}: {tableRef: React.MutableRefObjec
                 sortMode={gridProps.gridMode}
                 filterMode={gridProps.gridMode}
                 dataTreeBranchElement={false}
-                rowFormatter={(row: RowComponent) => {
+                /*rowFormatter={(row: RowComponent) => {
                     const table = row.getTable() as ITabulator;
                     if (!tableBuilt) return;
                     const data = row.getData(); //get data object for row
                     if (data.id === table.getActiveRowKey()) row.getElement().style.borderColor = '#ff0000'; //apply css change to row element
                     else row.getElement().style.borderColor = '#f5f5f5';
-                }}
+                }}*/
                 events={{
+                    /*
                     tableBuilt: () => {
                         tableBuilt = true;
+                    },*/
+                    keyDown: (e: KeyboardEvent) => {
+                        if (!dispatcher?.isActive(gridApi.getGridId())) return;
+
+                        if (!e.ctrlKey && !e.shiftKey && e.key === 'Insert') {
+                            gridApi.buttonsApi?.triggerClick('create');
+                            e.stopPropagation();
+                        } else if (!e.ctrlKey && !e.shiftKey && e.key === 'F9') {
+                            gridApi.buttonsApi?.triggerClick('clone');
+                            e.stopPropagation();
+                        } else if (!e.ctrlKey && !e.shiftKey && (e.key === 'F2' || e.key === 'Enter')) {
+                            gridApi.buttonsApi?.triggerClick('update');
+                            e.stopPropagation();
+                        } else if (!e.ctrlKey && !e.shiftKey && e.key === 'Delete') {
+                            gridApi.buttonsApi?.triggerClick('delete');
+                            e.stopPropagation();
+                        }
+                    },
+                    rowDblClick: () => {
+                        gridApi.buttonsApi.triggerClick('update');
                     },
                     activeRowChanged: () => {
                         gridApi.buttonsApi.refreshButtons();
@@ -132,7 +159,7 @@ export const useColumnDef = (columnDef: ColumnDefinition | undefined, gridApi: I
     }, [columnDef, gridApi.tableApi]);
 };
 
-export const usePrepareColumns = (columns: IReactTabulatorProps['columns'], dataTree: boolean|undefined, gridApi: IGridApi) => {
+export const usePrepareColumns = (columns: IReactTabulatorProps['columns'], dataTree: boolean | undefined, gridApi: IGridApi) => {
     return useMemo(() => {
         if (!columns || !dataTree) return columns;
 

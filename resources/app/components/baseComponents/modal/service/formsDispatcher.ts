@@ -1,6 +1,6 @@
 /**
  * @FormsDispatcher
- * @description The form dispatcher stores information about open forms and their order  
+ * @description The form dispatcher stores information about open forms and their order
  * @version 0.0.28.35
  * @link omegatester@gmail.com
  * @author Maksim Zaytsev
@@ -23,6 +23,7 @@ export class FormsDispatcher {
     }
 
     pushToStack(id: string) {
+        if (this._activeFormId === id) return;
         this._formsStack.push(id);
         this._activeFormId = id;
     }

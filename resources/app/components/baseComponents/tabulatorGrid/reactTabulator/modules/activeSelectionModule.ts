@@ -8,6 +8,8 @@ export interface IActiveSelectionTabulator extends Tabulator, IActiveSelectionMo
 
 export interface IActiveSelectionModuleTableEvents {
     activeRowChanged?: (row: RowComponent) => void;
+    keyUp?: (e: KeyboardEvent) => void | boolean;
+    keyDown?: (e: KeyboardEvent) => void | boolean;
 }
 
 export interface IActiveSelectionModuleTableOptions {
@@ -125,7 +127,7 @@ export class ActiveSelectionModule extends Module {
 
         row.select();
         if (scrollPosition && !row.isFrozen()) this.table.scrollToRow(row, scrollPosition, false).then();
-        row.reformat();
+        //row.reformat(); //TODO: it would be nice to redraw the active line, but because of this, the double click event does not work. Make sure everything works or come up with a solution
     }
 
     public setActiveRowByKey(key: string | number | undefined | null, clearSelection?: boolean, scrollPosition?: ScrollToRowPosition) {
@@ -273,6 +275,9 @@ export class ActiveSelectionModule extends Module {
     }
 
     private onKeyDownHandler(e: KeyboardEvent) {
+        const _this = this as unknown as IModule;
+        _this.dispatchExternal('keyDown', e);
+
         switch (e.key) {
             case 'Shift':
                 return this.onShiftKeyDown();
@@ -280,6 +285,10 @@ export class ActiveSelectionModule extends Module {
                 return this.onKeyPressArrowUp(e);
             case 'ArrowDown':
                 return this.onKeyPressArrowDown(e);
+            case 'ArrowRight':
+                return this.onKeyPressArrowRight(e);
+            case 'ArrowLeft':
+                return this.onKeyPressArrowLeft(e);
             case 'PageDown':
                 return this.onKeyPressPageDown(e);
             case 'PageUp':
@@ -297,6 +306,9 @@ export class ActiveSelectionModule extends Module {
     }
 
     private onKeyUpHandler(e: KeyboardEvent) {
+        const _this = this as unknown as IModule;
+        _this.dispatchExternal('keyUp', e);
+
         if (e.key === 'Shift') this.onShiftKeyUp();
     }
 
@@ -344,6 +356,26 @@ export class ActiveSelectionModule extends Module {
             if (prevRow !== nextRow && nextRow?.isSelected()) prevRow?.deselect();
             this.setActiveRow(nextRow, false, 'bottom');
         }
+    }
+
+    private onKeyPressArrowLeft(e: KeyboardEvent) {
+        if (!this.table.options.dataTree) return;
+        e.preventDefault();
+        e.stopPropagation();
+
+        const curRow = this.getActiveRow();
+        if (!curRow) return;
+        if (curRow.isTreeExpanded()) curRow.treeCollapse();
+    }
+
+    private onKeyPressArrowRight(e: KeyboardEvent) {
+        if (!this.table.options.dataTree) return;
+        e.preventDefault();
+        e.stopPropagation();
+
+        const curRow = this.getActiveRow();
+        if (!curRow) return;
+        if (!curRow.isTreeExpanded()) curRow?.treeExpand();
     }
 
     private onKeyPressPageDown(e: KeyboardEvent) {

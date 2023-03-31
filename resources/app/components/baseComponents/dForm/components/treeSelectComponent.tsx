@@ -7,7 +7,7 @@
  */
 
 import {IDFormComponentProps, IDFormFieldProps} from './baseComponent';
-import {ITreeSelectNode, ITreeSelectProps, ITreeSelectValue, TreeSelect} from 'baseComponents/treeSelect';
+import {ITreeSelectProps, ITreeSelectValue, TreeSelect} from 'baseComponents/treeSelect';
 import React, {useCallback, useEffect, useMemo} from 'react';
 import {splitObject} from 'helpers/helpersObjects';
 

@@ -6,7 +6,7 @@ const {useToken} = theme;
 
 const TabulatorCss = createGlobalStyle`
   .tabulator {
-    background-color:  ${(props:  GlobalToken) => props.colorBgContainer};
+    background-color:  ${(props: GlobalToken) => props.colorBgContainer};
     
     .tabulator-header {
       background-color: transparent;
@@ -74,16 +74,24 @@ const TabulatorCss = createGlobalStyle`
           &.tabulator-selectable:hover {
             background-color: ${(props: GlobalToken) => props.colorFillQuaternary};
           }
+
+          &:hover {
+              //background-color: ${(props: GlobalToken) => props.colorPrimaryBgHover};
+          }
           
           &.tabulator-selected {
             background-color: ${(props: GlobalToken) => props.colorPrimaryBg};
           }
-
+          
           &.tabulator-selected:hover {
-            background-color: ${(props: GlobalToken) => props.colorPrimaryBgHover};
+              //background-color: ${(props: GlobalToken) => props.colorPrimaryBgHover};
           }
           
-          &.tabulator-row-odd{
+          &.tabulator-active {
+            background-color: ${(props: GlobalToken) => props.colorPrimaryBgHover};
+          }
+
+          &.tabulator-row-odd {
             //background-color: transparent;
           }
 

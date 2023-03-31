@@ -118,16 +118,18 @@ export class ActiveSelectionModule extends Module {
         const _this = this as unknown as IModule;
         const prevActiveRow = this.activeRow;
         this.activeRow = row || undefined;
-        _this.dispatchExternal('activeRowChanged', row);
 
-        if (clearSelection || !row) this.table.deselectRow();
-        if (prevActiveRow !== this.activeRow) prevActiveRow?.reformat();
+        if (prevActiveRow !== this.activeRow) {
+            if (clearSelection || !row) this.table.deselectRow();
+            prevActiveRow?.reformat();
+            row?.reformat();
+            row?.select();
+            prevActiveRow?.getElement()?.classList?.remove('tabulator-active');
+            row?.getElement()?.classList?.add('tabulator-active');
+            _this.dispatchExternal('activeRowChanged', row);
+        }
 
-        if (!row) return;
-
-        row.select();
-        if (scrollPosition && !row.isFrozen()) this.table.scrollToRow(row, scrollPosition, false).then();
-        //row.reformat(); //TODO: it would be nice to redraw the active line, but because of this, the double click event does not work. Make sure everything works or come up with a solution
+        if (scrollPosition && row && !row.isFrozen()) this.table.scrollToRow(row, scrollPosition, false).then();
     }
 
     public setActiveRowByKey(key: string | number | undefined | null, clearSelection?: boolean, scrollPosition?: ScrollToRowPosition) {

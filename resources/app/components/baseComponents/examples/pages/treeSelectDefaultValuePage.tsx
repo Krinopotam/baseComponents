@@ -118,7 +118,7 @@ const dataSet = [
 ];
 const formProps = new DFormConfig<IFields>('Test form')
     .confirmChanges(true)
-    .addFields(new TreeSelectComponentConfig('department').dataSet(dataSet).default('03-03-01').label('Подразделения'))
+    .addFields(new TreeSelectComponentConfig<IFields>('department').dataSet(dataSet).default('03-03-01').label('Подразделения'))
     .buttons(null)
     .formMode('create')
     .getConfig();

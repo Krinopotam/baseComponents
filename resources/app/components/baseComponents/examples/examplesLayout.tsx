@@ -44,6 +44,7 @@ const items: MenuProps['items'] = [
     getItem('TabulatorGrid - грид', 'TabulatorGrid', <FolderOutlined />, [
         getItem(<Link to="TabulatorGridSimple">Простой грид</Link>, 'TabulatorGridSimple'),
         getItem(<Link to="TabulatorGridCellFormat">Грид с настраиваемым отображением ячеек</Link>, 'TabulatorGridCellFormat'),
+        getItem(<Link to="TabulatorGridMultiSelect">Грид с multi select</Link>, 'TabulatorGridMultiSelect'),
         getItem(<Link to="TabulatorGridWithForm">Грид с формой редактирования</Link>, 'TabulatorGridWithForm'),
         getItem(<Link to="TabulatorGridWithFormAsync">Грид с асинхронной загрузкой и сохранением</Link>, 'TabulatorGridWithFormAsync'),
         getItem(<Link to="TabulatorGridTree">Иерархический грид</Link>, 'TabulatorGridTree'),

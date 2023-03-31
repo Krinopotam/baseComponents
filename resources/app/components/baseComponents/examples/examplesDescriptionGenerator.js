@@ -47,10 +47,10 @@ function generatePageComponent(componentFileName, componentPath, source, pagesPa
     import {${componentName}} from '${importExamplesRoot + moduleName}';
     import { Divider } from 'antd';
     import SyntaxHighlighter from 'react-syntax-highlighter';
-    import {docco} from 'react-syntax-highlighter/dist/esm/styles/hljs';\n`;
+    import {darcula, docco} from 'react-syntax-highlighter/dist/esm/styles/hljs';\n`;
 
     const bodyStr = `
-    export const ${pageComponentName} = (): JSX.Element => {
+    export const ${pageComponentName} = (props: {darkMode: boolean}): JSX.Element => {
     const source = \`${source}\`
     return (
         <>
@@ -59,7 +59,7 @@ function generatePageComponent(componentFileName, componentPath, source, pagesPa
             </div>
             <Divider />
             <div>
-                <SyntaxHighlighter language="javascript" style={docco}>
+                <SyntaxHighlighter language="javascript" style={props.darkMode ? darcula : docco}>
                     {source}
                 </SyntaxHighlighter>
             </div>
@@ -72,7 +72,7 @@ function generatePageComponent(componentFileName, componentPath, source, pagesPa
     const content = importStr + bodyStr;
     fs.writeFileSync(pagesPath + '/' + pageFileName, content, {encoding: 'utf8', flag: 'w'});
 
-    const routeStr = `                <Route path="${componentName}" element={<${pageComponentName} />} />;`;
+    const routeStr = `                <Route path="${componentName}" element={<${pageComponentName} darkMode={props.darkMode} />} />;`;
     const routeImportStr = `    import {${pageComponentName}} from '${importPagesRoot + moduleName + 'Page'}';`;
     return [routeStr, routeImportStr];
 }
@@ -90,10 +90,10 @@ function generateExamplesRoutes(imports, routers) {
     import {Home} from './home';
 ${imports}
 
-export const ExamplesRoutes = () => {
+export const ExamplesRoutes = (props: {darkMode: boolean; setDarkMode: (mode:boolean) => void}) => {
     return (
         <Routes>
-            <Route path="/" element={<ExamplesLayout />}>
+            <Route path="/" element={<ExamplesLayout setDarkMode={props.setDarkMode} />}>
                 <Route index element={<Home />} />
 ${routers}
                 <Route path="*" element={<Home />} />

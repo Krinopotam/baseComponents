@@ -3,9 +3,9 @@
     import {ModalFormWithGrid} from '../components/modalFormWithGrid';
     import { Divider } from 'antd';
     import SyntaxHighlighter from 'react-syntax-highlighter';
-    import {docco} from 'react-syntax-highlighter/dist/esm/styles/hljs';
+    import {darcula, docco} from 'react-syntax-highlighter/dist/esm/styles/hljs';
 
-    export const ModalFormWithGridPage = (): JSX.Element => {
+    export const ModalFormWithGridPage = (props: {darkMode: boolean}): JSX.Element => {
     const source = `import React, {useCallback} from 'react';
 
 import {Button} from 'baseComponents/button';
@@ -118,7 +118,7 @@ export const ModalFormWithGrid = (): JSX.Element => {
             </div>
             <Divider />
             <div>
-                <SyntaxHighlighter language="javascript" style={docco}>
+                <SyntaxHighlighter language="javascript" style={props.darkMode ? darcula : docco}>
                     {source}
                 </SyntaxHighlighter>
             </div>

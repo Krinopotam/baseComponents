@@ -5,7 +5,7 @@ import {DFormConfig} from './dFormConfig';
 export class DFormModalConfig<T>  extends DFormConfig<T> {
 
     constructor(formId: string) {
-        super (formId);; 
+        super (formId); 
     }
 
 

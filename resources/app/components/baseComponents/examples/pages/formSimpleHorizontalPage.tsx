@@ -3,9 +3,9 @@
     import {FormSimpleHorizontal} from '../components/formSimpleHorizontal';
     import { Divider } from 'antd';
     import SyntaxHighlighter from 'react-syntax-highlighter';
-    import {docco} from 'react-syntax-highlighter/dist/esm/styles/hljs';
+    import {darcula, docco} from 'react-syntax-highlighter/dist/esm/styles/hljs';
 
-    export const FormSimpleHorizontalPage = (): JSX.Element => {
+    export const FormSimpleHorizontalPage = (props: {darkMode: boolean}): JSX.Element => {
     const source = `import {DForm} from 'baseComponents/dForm/dForm';
 import React from 'react';
 import {PasswordComponentConfig} from "baseComponents/dForm/configBuilder/passwordComponentConfig";
@@ -44,7 +44,7 @@ export const FormSimpleHorizontal = (): JSX.Element => {
             </div>
             <Divider />
             <div>
-                <SyntaxHighlighter language="javascript" style={docco}>
+                <SyntaxHighlighter language="javascript" style={props.darkMode ? darcula : docco}>
                     {source}
                 </SyntaxHighlighter>
             </div>

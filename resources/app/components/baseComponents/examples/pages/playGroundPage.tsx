@@ -3,9 +3,9 @@
     import {PlayGround} from '../components/playGround';
     import { Divider } from 'antd';
     import SyntaxHighlighter from 'react-syntax-highlighter';
-    import {docco} from 'react-syntax-highlighter/dist/esm/styles/hljs';
+    import {darcula, docco} from 'react-syntax-highlighter/dist/esm/styles/hljs';
 
-    export const PlayGroundPage = (): JSX.Element => {
+    export const PlayGroundPage = (props: {darkMode: boolean}): JSX.Element => {
     const source = `import 'dayjs/locale/ru';
 
 import React, {useCallback} from 'react';
@@ -211,7 +211,7 @@ export const PlayGround = (): JSX.Element => {
             </div>
             <Divider />
             <div>
-                <SyntaxHighlighter language="javascript" style={docco}>
+                <SyntaxHighlighter language="javascript" style={props.darkMode ? darcula : docco}>
                     {source}
                 </SyntaxHighlighter>
             </div>

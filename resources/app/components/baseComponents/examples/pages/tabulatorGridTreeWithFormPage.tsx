@@ -3,9 +3,9 @@
     import {TabulatorGridTreeWithForm} from '../components/tabulatorGridTreeWithForm';
     import { Divider } from 'antd';
     import SyntaxHighlighter from 'react-syntax-highlighter';
-    import {docco} from 'react-syntax-highlighter/dist/esm/styles/hljs';
+    import {darcula, docco} from 'react-syntax-highlighter/dist/esm/styles/hljs';
 
-    export const TabulatorGridTreeWithFormPage = (): JSX.Element => {
+    export const TabulatorGridTreeWithFormPage = (props: {darkMode: boolean}): JSX.Element => {
     const source = `import React from 'react';
 import TabulatorGrid, {IGridRowData} from 'baseComponents/tabulatorGrid/tabulatorGrid';
 import {IReactTabulatorProps} from 'baseComponents/tabulatorGrid/reactTabulator/reactTabulator';
@@ -139,7 +139,7 @@ export const TabulatorGridTreeWithForm = (): JSX.Element => {
             </div>
             <Divider />
             <div>
-                <SyntaxHighlighter language="javascript" style={docco}>
+                <SyntaxHighlighter language="javascript" style={props.darkMode ? darcula : docco}>
                     {source}
                 </SyntaxHighlighter>
             </div>

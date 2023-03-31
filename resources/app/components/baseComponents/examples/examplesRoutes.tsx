@@ -29,6 +29,7 @@
     import {TreeSelectAsyncPage} from './pages/treeSelectAsyncPage';
     import {TreeSelectAsyncSearchPage} from './pages/treeSelectAsyncSearchPage';
     import {TreeSelectBasicPage} from './pages/treeSelectBasicPage';
+    import {TreeSelectDefaultValuePage} from './pages/treeSelectDefaultValuePage';
     import {TreeSelectDependedPage} from './pages/treeSelectDependedPage';
     import {TreeSelectDependedAsyncPage} from './pages/treeSelectDependedAsyncPage';
     import {TreeSelectNodeRenderPage} from './pages/treeSelectNodeRenderPage';
@@ -36,42 +37,43 @@
     import {TreeSelectWithFormAsyncPage} from './pages/treeSelectWithFormAsyncPage';
 
 
-export const ExamplesRoutes = () => {
+export const ExamplesRoutes = (props: {darkMode: boolean; setDarkMode: (mode:boolean) => void}) => {
     return (
         <Routes>
-            <Route path="/" element={<ExamplesLayout />}>
+            <Route path="/" element={<ExamplesLayout setDarkMode={props.setDarkMode} />}>
                 <Route index element={<Home />} />
-                <Route path="FormBetweenFields" element={<FormBetweenFieldsPage />} />;
-                <Route path="FormDependedField" element={<FormDependedFieldPage />} />;
-                <Route path="FormFetching" element={<FormFetchingPage />} />;
-                <Route path="FormSimple" element={<FormSimplePage />} />;
-                <Route path="FormSimpleHorizontal" element={<FormSimpleHorizontalPage />} />;
-                <Route path="FormSubmitting" element={<FormSubmittingPage />} />;
-                <Route path="FormValidation" element={<FormValidationPage />} />;
-                <Route path="FormWithTemplatedFields" element={<FormWithTemplatedFieldsPage />} />;
-                <Route path="ModalFormFetching" element={<ModalFormFetchingPage />} />;
-                <Route path="ModalFormSimple" element={<ModalFormSimplePage />} />;
-                <Route path="ModalFormSubmitting" element={<ModalFormSubmittingPage />} />;
-                <Route path="ModalFormWithGrid" element={<ModalFormWithGridPage />} />;
-                <Route path="ModalFormWithGroups" element={<ModalFormWithGroupsPage />} />;
-                <Route path="ModalFormWithTabs" element={<ModalFormWithTabsPage />} />;
-                <Route path="ModalFormWithTabsGroups" element={<ModalFormWithTabsGroupsPage />} />;
-                <Route path="PlayGround" element={<PlayGroundPage />} />;
-                <Route path="TabulatorGridCellFormat" element={<TabulatorGridCellFormatPage />} />;
-                <Route path="TabulatorGridSimple" element={<TabulatorGridSimplePage />} />;
-                <Route path="TabulatorGridTree" element={<TabulatorGridTreePage />} />;
-                <Route path="TabulatorGridTreeCellFormat" element={<TabulatorGridTreeCellFormatPage />} />;
-                <Route path="TabulatorGridTreeWithForm" element={<TabulatorGridTreeWithFormPage />} />;
-                <Route path="TabulatorGridWithForm" element={<TabulatorGridWithFormPage />} />;
-                <Route path="TabulatorGridWithFormAsync" element={<TabulatorGridWithFormAsyncPage />} />;
-                <Route path="TreeSelectAsync" element={<TreeSelectAsyncPage />} />;
-                <Route path="TreeSelectAsyncSearch" element={<TreeSelectAsyncSearchPage />} />;
-                <Route path="TreeSelectBasic" element={<TreeSelectBasicPage />} />;
-                <Route path="TreeSelectDepended" element={<TreeSelectDependedPage />} />;
-                <Route path="TreeSelectDependedAsync" element={<TreeSelectDependedAsyncPage />} />;
-                <Route path="TreeSelectNodeRender" element={<TreeSelectNodeRenderPage />} />;
-                <Route path="TreeSelectWithForm" element={<TreeSelectWithFormPage />} />;
-                <Route path="TreeSelectWithFormAsync" element={<TreeSelectWithFormAsyncPage />} />;
+                <Route path="FormBetweenFields" element={<FormBetweenFieldsPage darkMode={props.darkMode} />} />;
+                <Route path="FormDependedField" element={<FormDependedFieldPage darkMode={props.darkMode} />} />;
+                <Route path="FormFetching" element={<FormFetchingPage darkMode={props.darkMode} />} />;
+                <Route path="FormSimple" element={<FormSimplePage darkMode={props.darkMode} />} />;
+                <Route path="FormSimpleHorizontal" element={<FormSimpleHorizontalPage darkMode={props.darkMode} />} />;
+                <Route path="FormSubmitting" element={<FormSubmittingPage darkMode={props.darkMode} />} />;
+                <Route path="FormValidation" element={<FormValidationPage darkMode={props.darkMode} />} />;
+                <Route path="FormWithTemplatedFields" element={<FormWithTemplatedFieldsPage darkMode={props.darkMode} />} />;
+                <Route path="ModalFormFetching" element={<ModalFormFetchingPage darkMode={props.darkMode} />} />;
+                <Route path="ModalFormSimple" element={<ModalFormSimplePage darkMode={props.darkMode} />} />;
+                <Route path="ModalFormSubmitting" element={<ModalFormSubmittingPage darkMode={props.darkMode} />} />;
+                <Route path="ModalFormWithGrid" element={<ModalFormWithGridPage darkMode={props.darkMode} />} />;
+                <Route path="ModalFormWithGroups" element={<ModalFormWithGroupsPage darkMode={props.darkMode} />} />;
+                <Route path="ModalFormWithTabs" element={<ModalFormWithTabsPage darkMode={props.darkMode} />} />;
+                <Route path="ModalFormWithTabsGroups" element={<ModalFormWithTabsGroupsPage darkMode={props.darkMode} />} />;
+                <Route path="PlayGround" element={<PlayGroundPage darkMode={props.darkMode} />} />;
+                <Route path="TabulatorGridCellFormat" element={<TabulatorGridCellFormatPage darkMode={props.darkMode} />} />;
+                <Route path="TabulatorGridSimple" element={<TabulatorGridSimplePage darkMode={props.darkMode} />} />;
+                <Route path="TabulatorGridTree" element={<TabulatorGridTreePage darkMode={props.darkMode} />} />;
+                <Route path="TabulatorGridTreeCellFormat" element={<TabulatorGridTreeCellFormatPage darkMode={props.darkMode} />} />;
+                <Route path="TabulatorGridTreeWithForm" element={<TabulatorGridTreeWithFormPage darkMode={props.darkMode} />} />;
+                <Route path="TabulatorGridWithForm" element={<TabulatorGridWithFormPage darkMode={props.darkMode} />} />;
+                <Route path="TabulatorGridWithFormAsync" element={<TabulatorGridWithFormAsyncPage darkMode={props.darkMode} />} />;
+                <Route path="TreeSelectAsync" element={<TreeSelectAsyncPage darkMode={props.darkMode} />} />;
+                <Route path="TreeSelectAsyncSearch" element={<TreeSelectAsyncSearchPage darkMode={props.darkMode} />} />;
+                <Route path="TreeSelectBasic" element={<TreeSelectBasicPage darkMode={props.darkMode} />} />;
+                <Route path="TreeSelectDefaultValue" element={<TreeSelectDefaultValuePage darkMode={props.darkMode} />} />;
+                <Route path="TreeSelectDepended" element={<TreeSelectDependedPage darkMode={props.darkMode} />} />;
+                <Route path="TreeSelectDependedAsync" element={<TreeSelectDependedAsyncPage darkMode={props.darkMode} />} />;
+                <Route path="TreeSelectNodeRender" element={<TreeSelectNodeRenderPage darkMode={props.darkMode} />} />;
+                <Route path="TreeSelectWithForm" element={<TreeSelectWithFormPage darkMode={props.darkMode} />} />;
+                <Route path="TreeSelectWithFormAsync" element={<TreeSelectWithFormAsyncPage darkMode={props.darkMode} />} />;
 
                 <Route path="*" element={<Home />} />
             </Route>

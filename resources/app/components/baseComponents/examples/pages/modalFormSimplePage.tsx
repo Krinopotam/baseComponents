@@ -3,9 +3,9 @@
     import {ModalFormSimple} from '../components/modalFormSimple';
     import { Divider } from 'antd';
     import SyntaxHighlighter from 'react-syntax-highlighter';
-    import {docco} from 'react-syntax-highlighter/dist/esm/styles/hljs';
+    import {darcula, docco} from 'react-syntax-highlighter/dist/esm/styles/hljs';
 
-    export const ModalFormSimplePage = (): JSX.Element => {
+    export const ModalFormSimplePage = (props: {darkMode: boolean}): JSX.Element => {
     const source = `import React, {useCallback} from 'react';
 
 import {Button} from 'baseComponents/button';
@@ -52,7 +52,7 @@ export const ModalFormSimple = (): JSX.Element => {
             </div>
             <Divider />
             <div>
-                <SyntaxHighlighter language="javascript" style={docco}>
+                <SyntaxHighlighter language="javascript" style={props.darkMode ? darcula : docco}>
                     {source}
                 </SyntaxHighlighter>
             </div>

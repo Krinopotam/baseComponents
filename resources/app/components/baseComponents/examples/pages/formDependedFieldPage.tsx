@@ -3,9 +3,9 @@
     import {FormDependedField} from '../components/formDependedField';
     import { Divider } from 'antd';
     import SyntaxHighlighter from 'react-syntax-highlighter';
-    import {docco} from 'react-syntax-highlighter/dist/esm/styles/hljs';
+    import {darcula, docco} from 'react-syntax-highlighter/dist/esm/styles/hljs';
 
-    export const FormDependedFieldPage = (): JSX.Element => {
+    export const FormDependedFieldPage = (props: {darkMode: boolean}): JSX.Element => {
     const source = `import {DForm} from 'baseComponents/dForm/dForm';
 import {DFormConfig} from 'baseComponents/dForm/configBuilder/dFormConfig';
 import {InputComponentConfig} from 'baseComponents/dForm/configBuilder/inputComponentConfig';
@@ -49,7 +49,7 @@ export const FormDependedField = (): JSX.Element => {
             </div>
             <Divider />
             <div>
-                <SyntaxHighlighter language="javascript" style={docco}>
+                <SyntaxHighlighter language="javascript" style={props.darkMode ? darcula : docco}>
                     {source}
                 </SyntaxHighlighter>
             </div>

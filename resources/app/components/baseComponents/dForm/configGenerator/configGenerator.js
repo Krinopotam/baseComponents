@@ -137,7 +137,7 @@ function generateFormConfigClass() {
         ],
         constructor: {
             parameters: [{var: 'formId', type: 'string'}],
-            rows: [`this._config.formId = formId;`],
+            rows: [`this._config.formId = formId`],
         },
         fields: [{access: 'protected', name: '_config', type: 'Record<string, unknown>', value: '{}'}],
         propMethods: properties,
@@ -180,7 +180,7 @@ function generateModalFormConfigClass() {
         imports: [formOptions, {typeName: 'DFormConfig', typePath: './dFormConfig'}, {typeName: 'IDFormModalProps', typePath: formOptions.typePath}],
         constructor: {
             parameters: [{var: 'formId', type: 'string'}],
-            rows: [`super (formId);`],
+            rows: [`super (formId)`],
         },
         propMethods: properties,
         additionalMethods: ['/** Get form config */\n    getConfig() {\n        return this._config as unknown as IDFormModalProps \n    }'],

@@ -1,17 +1,6 @@
 import React from 'react';
-import TabulatorGrid, {IGridRowData} from "baseComponents/tabulatorGrid/tabulatorGrid";
-import {IReactTabulatorProps} from "baseComponents/tabulatorGrid/reactTabulator/reactTabulator";
-import {DFormModalConfig} from "baseComponents/dForm/configBuilder/dFormModalConfig";
-import {InputComponentConfig} from "baseComponents/dForm/configBuilder/inputComponentConfig";
-import {NumberComponentConfig} from "baseComponents/dForm/configBuilder/numberComponentConfig";
-
-type IPerson = {
-    id: string;
-    name: string;
-    age: number;
-    col: string;
-    dob: string;
-};
+import TabulatorGrid, {IGridRowData} from 'baseComponents/tabulatorGrid/tabulatorGrid';
+import {IReactTabulatorProps} from 'baseComponents/tabulatorGrid/reactTabulator/reactTabulator';
 
 const columns: IReactTabulatorProps['columns'] = [
     {title: 'Name', field: 'name'},
@@ -45,22 +34,13 @@ const data: IGridRowData[] = [
     {id: '20', name: 'Margret Marmajuke4', age: '16', col: 'yellow', dob: '31/01/1999'},
 ];
 
-const editFormConfig = new DFormModalConfig<IPerson>('gridEditForm').layout('horizontal')
-    .addFields(
-        new InputComponentConfig('name').label('Name'),
-        new NumberComponentConfig('age').label('Age'),
-        new InputComponentConfig('col').label('Favourite Color'),
-        new InputComponentConfig('dob').label('Day of Birth'),
-    ).confirmChanges(true)
-    .getConfig();
-
-export const TabulatorGridWithForm = (): JSX.Element => {
+export const TabulatorGridMultiSelect = (): JSX.Element => {
     return (
         <>
             {/*Description Start*/}
-            <h1>Пример простого грида Tabulator с формой редактирование</h1>
+            <h1>Пример простого Tabulator с возможностью выбора нескольких строк</h1>
             {/*Description End*/}
-            <TabulatorGrid id={'TabulatorGridWithForm'} columns={columns} dataSet={data} multiSelect={true} editFormProps={editFormConfig} confirmDelete height={500} layout={'fitColumns'} />
+            <TabulatorGrid id={'TabulatorGridSimple'} columns={columns} dataSet={data} multiSelect={true} height={500} layout={'fitColumns'} />
         </>
     );
 };

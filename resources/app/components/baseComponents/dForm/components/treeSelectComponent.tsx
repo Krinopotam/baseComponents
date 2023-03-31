@@ -1,6 +1,6 @@
 /**
  * @TreeSelectComponent
- * @version 0.0.30.34
+ * @version 0.0.30.36
  * @link omegatester@gmail.com
  * @author Maksim Zaytsev
  * @license MIT
@@ -17,7 +17,7 @@ type IDFormFieldTreeSelectProps_ = ITreeSelectProps & IDFormFieldProps;
 // !used in configGenerator parsing. Don't use curly brackets and multi rows comments!
 export interface IDFormFieldTreeSelectProps extends IDFormFieldTreeSelectProps_ {
     /** Default value */
-    default?: ITreeSelectValue;
+    default?: ITreeSelectValue | string;
 
     /** @deprecated The callback should not be used. Use callbacks.onChange instead  */
     onCustomChange?: (value: unknown) => void;
@@ -30,7 +30,7 @@ export const TreeSelectComponent = ({formApi, fieldName}: IDFormComponentProps):
 
     const fieldProps = formProps.fieldsProps[fieldName] as IDFormFieldTreeSelectProps;
     const treeProps = useGetTreeSelectProps(fieldProps);
-    const value = formApi.model.getFieldValue(fieldName) as ITreeSelectNode | ITreeSelectNode[] | undefined;
+    const value = formApi.model.getFieldValue(fieldName) as ITreeSelectValue | string;
 
     const onChange = useCallback(
         (value: ITreeSelectValue) => {

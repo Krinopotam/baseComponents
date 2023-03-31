@@ -1,17 +1,11 @@
-
-    import React from 'react';
-    import {TreeSelectWithForm} from '../components/treeSelectWithForm';
-    import { Divider } from 'antd';
-    import SyntaxHighlighter from 'react-syntax-highlighter';
-    import {darcula, docco} from 'react-syntax-highlighter/dist/esm/styles/hljs';
-
-    export const TreeSelectWithFormPage = (props: {darkMode: boolean}): JSX.Element => {
-    const source = `import {DForm} from 'baseComponents/dForm/dForm';
+import {DForm} from 'baseComponents/dForm/dForm';
 import React from 'react';
-import {DFormConfig} from 'baseComponents/dForm/configBuilder/dFormConfig';
-import {DFormModalConfig} from 'baseComponents/dForm/configBuilder/dFormModalConfig';
-import {InputComponentConfig} from 'baseComponents/dForm/configBuilder/inputComponentConfig';
 import {TreeSelectComponentConfig} from 'baseComponents/dForm/configBuilder/treeSelectComponentConfig';
+import {DFormConfig} from 'baseComponents/dForm/configBuilder/dFormConfig';
+
+interface IFields {
+    department: {id: string; title: string};
+}
 
 const dataSet = [
     {
@@ -22,9 +16,9 @@ const dataSet = [
                 id: '01-01',
                 title: 'Управление аналитики продаж',
                 children: [
-                    {id: '01-01-01', title: 'Отдел продаж север'},
-                    {id: '01-01-02', title: 'Отдел продаж юг'},
-                    {id: '01-01-03', title: 'Отдел продаж запад'},
+                    {id: '01-01-01', title: 'Отдел прода север'},
+                    {id: '01-01-02', title: 'Отдел прода юг'},
+                    {id: '01-01-03', title: 'Отдел прода запад'},
                 ],
             },
             {
@@ -114,46 +108,21 @@ const dataSet = [
         ],
     },
 ];
-
-interface IEditFormFields {
-    title: string;
-}
-const editForm = new DFormModalConfig<IEditFormFields>('EditForm')
-    .confirmChanges(true)
-    .bodyHeight(100)
-    .addFields(new InputComponentConfig('title').label('Подразделение'))
-    .getConfig();
-
-interface IFields {
-    departments: {id: string; title: string};
-}
-
 const formProps = new DFormConfig<IFields>('Test form')
     .confirmChanges(true)
-    .addFields(new TreeSelectComponentConfig('departments').label('Подразделения').editFormProps(editForm).confirmDelete(true).dataSet(dataSet))
+    .addFields(new TreeSelectComponentConfig<IFields>('department').dataSet(dataSet).default('03-03-01').label('Подразделения'))
     .buttons(null)
+    .formMode('create')
     .getConfig();
 
-export const TreeSelectWithForm = (): JSX.Element => {
+export const TreeSelectDefaultValue = (): JSX.Element => {
     return (
         <>
+            {/*Description Start*/}
+            <h1>Пример TreeSelect с предзаполненным значением по умолчанию</h1>
+            {/*Description End*/}
             <div style={{maxWidth: 500}}>
                 <DForm {...formProps} />
-            </div>
-        </>
-    );
-};
-`
-    return (
-        <>
-            <div>
-                <TreeSelectWithForm />
-            </div>
-            <Divider />
-            <div>
-                <SyntaxHighlighter language="javascript" style={props.darkMode ? darcula : docco}>
-                    {source}
-                </SyntaxHighlighter>
             </div>
         </>
     );

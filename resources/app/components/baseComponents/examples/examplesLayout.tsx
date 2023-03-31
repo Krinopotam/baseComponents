@@ -1,10 +1,11 @@
 import {FolderOutlined, HomeOutlined} from '@ant-design/icons';
-import {Layout, Menu, MenuProps, theme} from 'antd';
+import {Divider, Layout, Menu, MenuProps, Space, Switch, theme, Typography} from 'antd';
 import {Link, Outlet} from 'react-router-dom';
 
-import React from 'react';
+import React, {useCallback} from 'react';
 
-const {Header, Sider, Content} = Layout;
+const { Title } = Typography;
+const {Sider, Content} = Layout;
 
 type MenuItem = Required<MenuProps>['items'][number];
 
@@ -51,6 +52,7 @@ const items: MenuProps['items'] = [
     ]),
     getItem('TreeSelect - древоводиный комбобокс', 'TreeSelect', <FolderOutlined />, [
         getItem(<Link to="TreeSelectBasic">Простой TreeSelect</Link>, 'TreeSelectBasic'),
+        getItem(<Link to="TreeSelectDefaultValue">TreeSelect со значением по умолчанию</Link>, 'TreeSelectDefaultValue'),
         getItem(<Link to="TreeSelectDepended">Зависимые TreeSelect</Link>, 'TreeSelectDepended'),
         getItem(<Link to="TreeSelectNodeRender">TreeSelect с настраиваемым отображением</Link>, 'TreeSelectNodeRender'),
         getItem(<Link to="TreeSelectAsync">TreeSelect с асинхронной загрузкой dataSet</Link>, 'TreeSelectAsync'),
@@ -64,17 +66,29 @@ const items: MenuProps['items'] = [
     getItem(<Link to="PlayGround">Песочница</Link>, 'PlayGround'),
 ];
 
-export const ExamplesLayout = (): JSX.Element => {
+export const ExamplesLayout = (props: {setDarkMode: (mode: boolean) => void}): JSX.Element => {
     const {
         token: {colorBgContainer},
     } = theme.useToken();
 
+    const onChange = useCallback(
+        (checked: boolean) => {
+            props.setDarkMode(checked);
+        },
+        [props]
+    );
+
     return (
         <>
             <Layout>
-                <Header className="header">
-                    <div className="logo" /> Header
-                </Header>
+                <Space style={{height: 50, background: '#222222', color: '#FFFFFF', padding: 10}} align="center" split={<Divider type="vertical" />}>
+                    <div>
+                        <h1>Примеры компонентов</h1>
+                    </div>
+                    <div>
+                        Тема: <Switch onChange={onChange} />
+                    </div>
+                </Space>
                 <Layout>
                     <Sider width={400} style={{background: colorBgContainer}}>
                         <Menu

@@ -8,7 +8,7 @@ export class DFormConfig<T>  {
     protected _config: Record<string, unknown> = {};
 
     constructor(formId: string) {
-        this._config.formId = formId;; 
+        this._config.formId = formId; 
     }
 
 

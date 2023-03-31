@@ -29,7 +29,7 @@ export interface ITreeSelectApi {
     getValues: () => ITreeSelectNode[];
 
     /** Set the TreeSelect selected nodes*/
-    setValues: (values: ITreeSelectValue | null) => void;
+    setValues: (values: ITreeSelectValue | string | null) => void;
 
     /** Get internal TreeSelect value (like {value: string | number; label: React.ReactNode}) */
     getInternalValue: () => ITreeSelectInternalValue | ITreeSelectInternalValue[] | null | undefined;
@@ -185,18 +185,26 @@ const useApiGetValues = (selectedNodesRef: React.MutableRefObject<ITreeSelectNod
 
 const useApiSetValue = (setValue: (value: ITreeSelectValue | null) => void, api: ITreeSelectApi) => {
     return useCallback(
-        (value: ITreeSelectValue | null) => {
-            setValue(value || []);
-
+        (value: ITreeSelectValue | string | null) => {
             const treeProps = api.getProps();
-            if (!value) {
+            const keyField = treeProps.fieldNames?.value || 'id';
+            let newVal: ITreeSelectValue | null;
+            if (typeof value !== 'string') newVal = value;
+            else {
+                newVal = {} as ITreeSelectNode;
+                newVal[keyField] = value;
+            }
+
+            setValue(newVal || []);
+
+            if (!newVal) {
                 treeProps.callbacks?.onChange?.(null);
             } else if (!treeProps.multiple) {
                 treeProps.callbacks?.onChange?.(
-                    isArray(value) && (value as ITreeSelectNode[]).length > 0 ? (value as ITreeSelectNode[])[0] : (value as ITreeSelectNode)
+                    isArray(newVal) && (newVal as ITreeSelectNode[]).length > 0 ? (newVal as ITreeSelectNode[])[0] : (newVal as ITreeSelectNode)
                 );
             } else {
-                treeProps.callbacks?.onChange?.(value || []);
+                treeProps.callbacks?.onChange?.(newVal || []);
             }
         },
         [api, setValue]

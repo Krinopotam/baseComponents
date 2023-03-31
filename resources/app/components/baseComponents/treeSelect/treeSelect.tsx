@@ -62,7 +62,7 @@ export interface ITreeSelectProps extends IAntTreeSelectProps {
     readOnly?: boolean; //TODO: Make readonly
 
     /** Value */
-    value?: ITreeSelectValue;
+    value?: ITreeSelectValue | string;
 
     /** Value */
     defaultValueCallback?: (data: ITreeSelectNode[]) => ITreeSelectNode | ITreeSelectNode[];

@@ -3,9 +3,9 @@
     import {TreeSelectWithFormAsync} from '../components/treeSelectWithFormAsync';
     import { Divider } from 'antd';
     import SyntaxHighlighter from 'react-syntax-highlighter';
-    import {docco} from 'react-syntax-highlighter/dist/esm/styles/hljs';
+    import {darcula, docco} from 'react-syntax-highlighter/dist/esm/styles/hljs';
 
-    export const TreeSelectWithFormAsyncPage = (): JSX.Element => {
+    export const TreeSelectWithFormAsyncPage = (props: {darkMode: boolean}): JSX.Element => {
     const source = `import {DForm} from 'baseComponents/dForm/dForm';
 import React from 'react';
 import {DFormConfig} from 'baseComponents/dForm/configBuilder/dFormConfig';
@@ -177,7 +177,7 @@ export const TreeSelectWithFormAsync = (): JSX.Element => {
             </div>
             <Divider />
             <div>
-                <SyntaxHighlighter language="javascript" style={docco}>
+                <SyntaxHighlighter language="javascript" style={props.darkMode ? darcula : docco}>
                     {source}
                 </SyntaxHighlighter>
             </div>

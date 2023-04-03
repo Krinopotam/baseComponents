@@ -245,10 +245,10 @@ const useApiGetNextRowKey = (gridApi: IGridApi): IGridApi['getNextRowKey'] => {
         (key: IRowKey, step?: number) => {
             if (!key) return undefined;
             if (!step) step = 1;
-            let curNode: RowComponent | false = gridApi.tableApi?.getRow(key) || false;
+            let curNode: RowComponent | undefined = gridApi.tableApi?.getRow(key);
             if (!curNode) return undefined;
             for (let i = 0; i < step; i++) {
-                const nextNode = curNode.getNextRow();
+                const nextNode = curNode?.getNextRow();
                 if (!nextNode) return curNode.getData().id;
                 curNode = nextNode;
             }

@@ -1,4 +1,4 @@
-import {EventCallBackMethods, RowComponent} from 'tabulator-tables';
+import {EventCallBackMethods, RowComponent, TabulatorFull as Tabulator} from 'tabulator-tables';
 import React from 'react';
 import {useInit} from 'baseComponents/tabulatorGrid/reactTabulator/hooks/init';
 import {
@@ -9,7 +9,7 @@ import {
 import {IAdvancedTreeTabulator} from 'baseComponents/tabulatorGrid/reactTabulator/modules/advancedTreeModule';
 import {getUuid} from 'helpers/helpersString';
 
-export type ITabulator = IActiveSelectionTabulator & IAdvancedTreeTabulator;
+export type ITabulator = Tabulator & IActiveSelectionTabulator & IAdvancedTreeTabulator;
 
 export type ITabulatorRow = RowComponent & IActiveSelectionModuleRow;
 
@@ -44,8 +44,8 @@ export interface IReactTabulatorProps extends Omit<ITabulator['options'], 'foote
 }
 
 const ReactTabulator = ({onTableRef, gridId, events, containerClassName, width, minWidth, maxWidth, ...props}: IReactTabulatorProps): JSX.Element => {
-    const containerRef = React.useRef<HTMLDivElement>(null);
-    const tableRef = React.useRef<ITabulator>(null);
+    const containerRef = React.useRef<HTMLDivElement>(null as HTMLDivElement);
+    const tableRef = React.useRef<ITabulator>(null as ITabulator);
 
     const [newId] = React.useState(getUuid());
 

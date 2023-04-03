@@ -4,7 +4,6 @@ import {ColumnDefinition, TabulatorFull as Tabulator} from 'tabulator-tables';
 import {IGridApi} from 'baseComponents/tabulatorGrid/hooks/api';
 import {IFilterFunction} from 'baseComponents/tabulatorGrid/reactTabulator/modules/advancedTreeModule';
 import dispatcher from 'baseComponents/modal/service/formsDispatcher';
-import {useWhyDidYouUpdate} from 'ahooks';
 
 export const GridRender = ({tableRef, gridApi}: {tableRef: React.MutableRefObject<Tabulator | null>; gridApi: IGridApi}): JSX.Element => {
     const gridProps = gridApi.gridProps;
@@ -166,11 +165,11 @@ export const usePrepareColumns = (columns: IReactTabulatorProps['columns'], data
 
         const resultColumns = [];
 
-        for (let i = 0; i < columns.length; i++) {
-            const colClone = {...columns[i]};
-            if (typeof columns[i].headerFilterFunc === 'function') {
+        for (const column of columns) {
+            const colClone = {...column};
+            if (typeof column.headerFilterFunc === 'function') {
                 colClone.headerFilterFunc = (filterVal, rowValue, rowData, filterParams) => {
-                    const filter = gridApi.tableApi?.getBaseTreeDataFilter(columns[i].headerFilterFunc as IFilterFunction);
+                    const filter = gridApi.tableApi?.getBaseTreeDataFilter(column.headerFilterFunc as IFilterFunction);
                     if (!filter) return true;
                     return filter(filterVal, rowValue, rowData, filterParams);
                 };

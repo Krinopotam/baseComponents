@@ -30,13 +30,13 @@ export interface IGridProps {
     /** Tree view mode */
     dataTree?: boolean;
 
-    /** The tree children field name */
+    /** The dataTree children field name */
     dataTreeChildField?: string;
 
     /** The parent key field name */
     dataTreeParentField? : string;
 
-    /** The tree children indentation */
+    /** The dataTree children indentation */
     dataTreeChildIndent?: number;
 
     /** Grid columns */

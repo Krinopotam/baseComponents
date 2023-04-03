@@ -16,7 +16,7 @@ export const useInit = ({
 }: {
     props: IReactTabulatorProps;
     events?: Partial<EventCallBackMethods>;
-    containerRef: React.RefObject<HTMLDivElement>;
+    containerRef: React.RefObject<HTMLDivElement | null>;
     tableRef: React.MutableRefObject<ITabulator | null>;
     onTableRef?: (ref: React.MutableRefObject<ITabulator | null>) => void;
 }) => {
@@ -45,7 +45,7 @@ const initTabulator = async ({
 }: {
     props: IReactTabulatorProps;
     events?: Partial<EventCallBackMethods>;
-    containerRef: React.RefObject<HTMLDivElement>;
+    containerRef: React.RefObject<HTMLDivElement | null>;
     tableRef: React.MutableRefObject<ITabulator | null>;
     onTableRef?: (ref: React.MutableRefObject<ITabulator | null>) => void;
 }) => {
@@ -94,7 +94,6 @@ const propsToOptions = async (props: IReactTabulatorProps) => {
 };
 
 const initTabulatorClass = ($container: HTMLDivElement, options: ITabulator['options']): ITabulator => {
-
     Tabulator.registerModule(ActiveSelectionModule);
     Tabulator.registerModule(AdvancedTreeModule);
 

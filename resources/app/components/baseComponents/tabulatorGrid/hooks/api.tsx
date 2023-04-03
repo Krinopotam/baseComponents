@@ -30,7 +30,7 @@ export interface IGridApi {
     getDataSet: () => IGridRowData[];
 
     /** Set data set*/
-    setDataSet: (dataSet: IGridRowData[] | null) => void;
+    setDataSet: (dataSet: IGridRowData[] | null | undefined) => void;
 
     /** Get current loading state */
     getIsLoading: () => boolean;
@@ -111,19 +111,23 @@ export interface IGridApi {
 export type IGridDataFetchPromise = TPromise<{data: IGridRowData[]}, {message: string; code: number}>;
 
 export const useInitGridApi = ({
+    gridApi,
     props,
     tableRef,
     editFormApi,
     buttonsApi,
 }: {
+    gridApi: IGridApi;
     props: IGridApi['gridProps'];
     tableRef: MutableRefObject<Tabulator | null>;
     editFormApi: IGridApi['editFormApi'];
     buttonsApi: IGridApi['buttonsApi'];
 }): IGridApi => {
-    const [gridApi] = useState({} as IGridApi);
+    const dataSetRef = useRef<IGridProps['dataSet']>(undefined);
     const [isLoading, setIsLoading] = useState(false);
     const unmountRef = useUnmountedRef();
+
+    useUpdateDataSetFromProps(dataSetRef, props.dataSet);
 
     gridApi.gridProps = props;
     gridApi.tableApi = tableRef.current as ITabulator;
@@ -131,8 +135,8 @@ export const useInitGridApi = ({
     gridApi.buttonsApi = buttonsApi;
     gridApi.getIsMounted = useApiIsMounted(unmountRef);
     gridApi.getGridId = useApiGetGridId(gridApi);
-    gridApi.getDataSet = useApiGetDataSet(props.dataSet || [], gridApi);
-    gridApi.setDataSet = useApiSetDataSet(gridApi);
+    gridApi.getDataSet = useApiGetDataSet(dataSetRef);
+    gridApi.setDataSet = useApiSetDataSet(dataSetRef, gridApi);
     gridApi.getIsLoading = useApiGetIsLoading(isLoading);
     gridApi.setIsLoading = useApiSetIsLoading(setIsLoading);
     gridApi.setActiveRowKey = useApiSetActiveRowKey(gridApi);
@@ -161,6 +165,17 @@ export const useInitGridApi = ({
     return gridApi;
 };
 
+/**
+ * DataSet can change both via Props and via api.
+ * If the DataSet has changed via Props, set the new current dataSet
+ */
+const useUpdateDataSetFromProps = (curDataSetRef: MutableRefObject<IGridProps['dataSet'] | undefined>, propsDataSet: IGridProps['dataSet']) => {
+    const propsDataSetRef = useRef<IGridProps['dataSet']>(undefined);
+    if (propsDataSetRef.current === propsDataSet) return;
+    propsDataSetRef.current = propsDataSet;
+    curDataSetRef.current = propsDataSet;
+};
+
 const useApiGetGridId = (gridApi: IGridApi): IGridApi['getGridId'] => {
     const [gridId] = useState(gridApi.gridProps.id || 'grid-' + getUuid());
     return useCallback(() => gridId, [gridId]);
@@ -170,22 +185,20 @@ const useApiIsMounted = (unmountRef: React.MutableRefObject<boolean>): IGridApi[
     return useCallback(() => !unmountRef.current, [unmountRef]);
 };
 
-const useApiGetDataSet = (dataSet: IGridRowData[], gridApi: IGridApi): IGridApi['getDataSet'] => {
-    return useCallback(() => {
-        const gridDataSet = gridApi.tableApi?.getData();
-        if (gridDataSet !== undefined && gridDataSet?.length > 0) return gridDataSet;
-        return dataSet || [];
-    }, [dataSet, gridApi.tableApi]);
+const useApiGetDataSet = (dataSetRef: React.MutableRefObject<IGridProps['dataSet'] | undefined>): IGridApi['getDataSet'] => {
+    return useCallback(() => dataSetRef.current || [], [dataSetRef]);
 };
 
-const useApiSetDataSet = (gridApi: IGridApi): IGridApi['setDataSet'] => {
+const useApiSetDataSet = (dataSetRef: React.MutableRefObject<IGridProps['dataSet']>, gridApi: IGridApi): IGridApi['setDataSet'] => {
     return useCallback(
-        (dataSet: IGridRowData[] | null) => {
+        (dataSet: IGridProps['dataSet'] | null) => {
+            gridApi.tableApi?.deselectRow();
             gridApi.tableApi?.clearData();
-            const newDataSet = gridApi.gridProps.callbacks?.onDataSetChange?.(dataSet || [], gridApi) || dataSet;
-            gridApi.tableApi?.addData(newDataSet || []);
+            const newDataSet = gridApi.gridProps.callbacks?.onDataSetChange?.(dataSet || undefined, gridApi) || dataSet;
+            dataSetRef.current = newDataSet as IGridProps['dataSet'];
+            gridApi.tableApi?.addData(dataSetRef.current);
         },
-        [gridApi]
+        [dataSetRef, gridApi]
     );
 };
 
@@ -529,9 +542,9 @@ const useApiFetchData = (gridApi: IGridApi): IGridApi['fetchData'] => {
             curDataSource.then(
                 (result) => {
                     if (!gridApi.getIsMounted()) return;
-                    gridApi.setIsLoading(false);
                     const values = (result.data || []) as IGridRowData[];
                     gridApi.setDataSet(values);
+                    gridApi.setIsLoading(false);
                 },
                 (error) => {
                     if (!gridApi.getIsMounted()) return;

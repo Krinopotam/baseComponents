@@ -18,6 +18,9 @@ export interface IGridRowData extends Record<string, unknown> {
 }
 
 export interface IGridProps {
+    /** A mutable object to merge with these controls api */
+    apiRef?: unknown;
+
     /** Grid Id */
     id?: string;
 
@@ -155,7 +158,7 @@ export interface IGridCallbacks {
     onMenuVisibilityChanged?: (isVisible: boolean, gridApi: IGridApi) => void;
 
     /** Fires, when the dataSet changed. User can modify the dataSet before dataSet will apply */
-    onDataSetChange?: (dataSet: IGridRowData[], gridApi: IGridApi) => IGridRowData[] | void;
+    onDataSetChange?: (dataSet: IGridRowData[] | undefined, gridApi: IGridApi) => IGridRowData[] | void;
 
     /** fires when the grid trying to fetch data */
     onDataFetch?: (gridApi: IGridApi) => IGridDataSourcePromise | undefined | void;
@@ -174,7 +177,8 @@ const TabulatorGrid = (props: IGridProps): JSX.Element => {
     const tableRef = useRef<Tabulator>(null);
     const [editFormApi] = useState<IDFormModalApi>({} as IDFormModalApi);
     const [buttonsApi] = useState({} as IButtonsRowApi & {refreshButtons: () => void});
-    const gridApi = useInitGridApi({props, tableRef, editFormApi, buttonsApi});
+    const [gridApi] = useState((props.apiRef || {}) as IGridApi);
+    useInitGridApi({gridApi, props, tableRef, editFormApi, buttonsApi});
     useInitialFetchData(gridApi);
 
     return (

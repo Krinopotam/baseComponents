@@ -4,6 +4,7 @@ import {ColumnDefinition, TabulatorFull as Tabulator} from 'tabulator-tables';
 import {IGridApi} from 'baseComponents/tabulatorGrid/hooks/api';
 import {IFilterFunction} from 'baseComponents/tabulatorGrid/reactTabulator/modules/advancedTreeModule';
 import dispatcher from 'baseComponents/modal/service/formsDispatcher';
+import {useWhyDidYouUpdate} from 'ahooks';
 
 export const GridRender = ({tableRef, gridApi}: {tableRef: React.MutableRefObject<Tabulator | null>; gridApi: IGridApi}): JSX.Element => {
     const gridProps = gridApi.gridProps;

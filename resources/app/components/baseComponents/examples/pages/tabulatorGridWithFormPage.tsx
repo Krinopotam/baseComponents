@@ -65,7 +65,7 @@ const editFormConfig = new DFormModalConfig<IPerson>('gridEditForm').layout('hor
 export const TabulatorGridWithForm = (): JSX.Element => {
     return (
         <>
-            <TabulatorGrid id={'TabulatorGridWithForm'} columns={columns} dataSet={data} editFormProps={editFormConfig} confirmDelete height={500} layout={'fitColumns'} />
+            <TabulatorGrid id={'TabulatorGridWithForm'} columns={columns} dataSet={data} multiSelect={true} editFormProps={editFormConfig} confirmDelete height={500} layout={'fitColumns'} />
         </>
     );
 };

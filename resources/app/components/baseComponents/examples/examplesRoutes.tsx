@@ -20,6 +20,7 @@
     import {ModalFormWithTabsGroupsPage} from './pages/modalFormWithTabsGroupsPage';
     import {PlayGroundPage} from './pages/playGroundPage';
     import {TabulatorGridCellFormatPage} from './pages/tabulatorGridCellFormatPage';
+    import {TabulatorGridChangeDataSetPage} from './pages/tabulatorGridChangeDataSetPage';
     import {TabulatorGridMultiSelectPage} from './pages/tabulatorGridMultiSelectPage';
     import {TabulatorGridSimplePage} from './pages/tabulatorGridSimplePage';
     import {TabulatorGridTreePage} from './pages/tabulatorGridTreePage';
@@ -60,6 +61,7 @@ export const ExamplesRoutes = (props: {darkMode: boolean; setDarkMode: (mode:boo
                 <Route path="ModalFormWithTabsGroups" element={<ModalFormWithTabsGroupsPage darkMode={props.darkMode} />} />;
                 <Route path="PlayGround" element={<PlayGroundPage darkMode={props.darkMode} />} />;
                 <Route path="TabulatorGridCellFormat" element={<TabulatorGridCellFormatPage darkMode={props.darkMode} />} />;
+                <Route path="TabulatorGridChangeDataSet" element={<TabulatorGridChangeDataSetPage darkMode={props.darkMode} />} />;
                 <Route path="TabulatorGridMultiSelect" element={<TabulatorGridMultiSelectPage darkMode={props.darkMode} />} />;
                 <Route path="TabulatorGridSimple" element={<TabulatorGridSimplePage darkMode={props.darkMode} />} />;
                 <Route path="TabulatorGridTree" element={<TabulatorGridTreePage darkMode={props.darkMode} />} />;

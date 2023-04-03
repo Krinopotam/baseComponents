@@ -50,6 +50,7 @@ const items: MenuProps['items'] = [
         getItem(<Link to="TabulatorGridTree">Иерархический грид</Link>, 'TabulatorGridTree'),
         getItem(<Link to="TabulatorGridTreeCellFormat">Иерархический грид с настраиваемым отображением ячеек</Link>, 'TabulatorGridTreeCellFormat'),
         getItem(<Link to="TabulatorGridTreeWithForm">Иерархический грид с формой редактирования</Link>, 'TabulatorGridTreeWithForm'),
+        getItem(<Link to="TabulatorGridChangeDataSet">Обновление dataSet грида</Link>, 'TabulatorGridChangeDataSet'),
     ]),
     getItem('TreeSelect - древоводиный комбобокс', 'TreeSelect', <FolderOutlined />, [
         getItem(<Link to="TreeSelectBasic">Простой TreeSelect</Link>, 'TreeSelectBasic'),

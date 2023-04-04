@@ -16,9 +16,9 @@ export const useInit = ({
 }: {
     props: IReactTabulatorProps;
     events?: Partial<EventCallBackMethods>;
-    containerRef: React.RefObject<HTMLDivElement>;
-    tableRef: React.MutableRefObject<ITabulator | null>;
-    onTableRef?: (ref: React.MutableRefObject<ITabulator | null>) => void;
+    containerRef: React.RefObject<HTMLDivElement | null>;
+    tableRef: React.MutableRefObject<ITabulator | undefined>;
+    onTableRef?: (ref: React.MutableRefObject<ITabulator | undefined>) => void;
 }) => {
     React.useEffect(() => {
         initTabulator({props, events, containerRef, tableRef, onTableRef}).then();
@@ -45,9 +45,9 @@ const initTabulator = async ({
 }: {
     props: IReactTabulatorProps;
     events?: Partial<EventCallBackMethods>;
-    containerRef: React.RefObject<HTMLDivElement>;
-    tableRef: React.MutableRefObject<ITabulator | null>;
-    onTableRef?: (ref: React.MutableRefObject<ITabulator | null>) => void;
+    containerRef: React.RefObject<HTMLDivElement | null>;
+    tableRef: React.MutableRefObject<ITabulator | undefined>;
+    onTableRef?: (ref: React.MutableRefObject<ITabulator | undefined>) => void;
 }) => {
     const $container = containerRef.current as HTMLDivElement; // mounted DOM element
     const propOptions = await propsToOptions(props);
@@ -64,7 +64,8 @@ const initTabulator = async ({
 };
 
 function syncRender(component: JSX.Element, el: HTMLElement): Promise<HTMLElement> {
-    return new Promise(function (resolve) {
+    // noinspection TypeScriptValidateTypes
+    return new Promise((resolve) => {
         render(component, el, () => {
             resolve(el);
         });
@@ -73,9 +74,9 @@ function syncRender(component: JSX.Element, el: HTMLElement): Promise<HTMLElemen
 
 const propsToOptions = async (props: IReactTabulatorProps) => {
     const output = {...props} as ITabulator['options'];
-    if (typeof props['footerElement'] === 'object') {
+    if (typeof props.footerElement === 'object') {
         // convert from JSX to HTML string (tabulator's footerElement accepts string)
-        const el = await syncRender(props['footerElement'], document.createElement('div'));
+        const el = await syncRender(props.footerElement as JSX.Element, document.createElement('div'));
         output.footerElement = el.innerHTML;
         //output.layout = props.layout || 'fitColumns';
     }
@@ -94,7 +95,6 @@ const propsToOptions = async (props: IReactTabulatorProps) => {
 };
 
 const initTabulatorClass = ($container: HTMLDivElement, options: ITabulator['options']): ITabulator => {
-
     Tabulator.registerModule(ActiveSelectionModule);
     Tabulator.registerModule(AdvancedTreeModule);
 

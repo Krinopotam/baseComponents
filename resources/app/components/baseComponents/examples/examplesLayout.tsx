@@ -1,10 +1,9 @@
 import {FolderOutlined, HomeOutlined} from '@ant-design/icons';
-import {Divider, Layout, Menu, MenuProps, Space, Switch, theme, Typography} from 'antd';
+import {Divider, Layout, Menu, MenuProps, Space, Switch, theme} from 'antd';
 import {Link, Outlet} from 'react-router-dom';
 
 import React, {useCallback} from 'react';
 
-const { Title } = Typography;
 const {Sider, Content} = Layout;
 
 type MenuItem = Required<MenuProps>['items'][number];
@@ -21,7 +20,7 @@ function getItem(label: React.ReactNode, key: React.Key, icon?: React.ReactNode,
 
 const items: MenuProps['items'] = [
     getItem(<Link to="home">Начало</Link>, 'home', <HomeOutlined />),
-    {type: 'divider'},
+    {type: 'divider', key: 'divider1'},
     getItem('DForm - Форма', 'dForm', <FolderOutlined />, [
         getItem(<Link to="FormSimple">Простая форма (вертикальная)</Link>, 'FormSimple'),
         getItem(<Link to="FormSimpleHorizontal">Простая форма (горизонтальная)</Link>, 'FormSimpleHorizontal'),
@@ -64,7 +63,7 @@ const items: MenuProps['items'] = [
         getItem(<Link to="TreeSelectWithFormAsync">TreeSelect с асинхронной формой редактирования</Link>, 'TreeSelectWithFormAsync'),
     ]),
     //
-    {type: 'divider'},
+    {type: 'divider', key: 'divider2'},
     getItem(<Link to="PlayGround">Песочница</Link>, 'PlayGround'),
 ];
 

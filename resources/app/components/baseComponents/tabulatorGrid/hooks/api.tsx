@@ -21,7 +21,7 @@ export interface IGridApi {
     gridProps: IGridProps;
 
     /** Component table instance (Tabulator) */
-    tableApi: ITabulator | null;
+    tableApi: ITabulator | undefined;
 
     /** Get grid mounted state */
     getIsMounted: () => boolean;
@@ -119,7 +119,7 @@ export const useInitGridApi = ({
 }: {
     gridApi: IGridApi;
     props: IGridApi['gridProps'];
-    tableRef: MutableRefObject<Tabulator | null>;
+    tableRef: MutableRefObject<Tabulator | undefined>;
     editFormApi: IGridApi['editFormApi'];
     buttonsApi: IGridApi['buttonsApi'];
 }): IGridApi => {
@@ -151,9 +151,9 @@ export const useInitGridApi = ({
     gridApi.setSelectedRowKeys = useApiSetSelectedRowsKeys(gridApi);
     gridApi.getNodeByKey = useApiGetNodeByKey(gridApi);
     gridApi.getRowByKey = useApiGetRowByKey(gridApi);
-    gridApi.insertRows = useApiInsertRows(gridApi);
-    gridApi.updateRows = useApiUpdateRows(gridApi);
-    gridApi.deleteRowsByKeys = useApiDeleteRowsByKeys(gridApi);
+    gridApi.insertRows = useApiInsertRows(dataSetRef, gridApi);
+    gridApi.updateRows = useApiUpdateRows(dataSetRef, gridApi);
+    gridApi.deleteRowsByKeys = useApiDeleteRowsByKeys(dataSetRef, gridApi);
     gridApi.deleteRows = useApiDeleteRows(gridApi);
     gridApi.fetchData = useApiFetchData(gridApi);
     /*
@@ -192,8 +192,10 @@ const useApiGetDataSet = (dataSetRef: React.MutableRefObject<IGridProps['dataSet
 const useApiSetDataSet = (dataSetRef: React.MutableRefObject<IGridProps['dataSet']>, gridApi: IGridApi): IGridApi['setDataSet'] => {
     return useCallback(
         (dataSet: IGridProps['dataSet'] | null) => {
-            gridApi.tableApi?.deselectRow();
-            gridApi.tableApi?.clearData();
+            if (gridApi.tableApi?.initialized) {
+                gridApi.tableApi?.deselectRow();
+                gridApi.tableApi?.clearData();
+            }
             const newDataSet = gridApi.gridProps.callbacks?.onDataSetChange?.(dataSet || undefined, gridApi) || dataSet;
             dataSetRef.current = newDataSet as IGridProps['dataSet'];
             gridApi.tableApi?.addData(dataSetRef.current);
@@ -227,11 +229,11 @@ const useApiSetActiveRowKey = (gridApi: IGridApi): IGridApi['setActiveRowKey'] =
 };
 
 const useApiGetActiveRowKey = (gridApi: IGridApi): IGridApi['getActiveRowKey'] => {
-    return useCallback(() => gridApi.tableApi?.getActiveRowKey(), [gridApi]);
+    return useCallback(() => (gridApi.tableApi?.initialized ? gridApi.tableApi?.getActiveRowKey() : undefined), [gridApi]);
 };
 
 const useApiGetActiveNode = (gridApi: IGridApi): IGridApi['getActiveNode'] => {
-    return useCallback(() => gridApi.tableApi?.getActiveRow(), [gridApi]);
+    return useCallback(() => (gridApi.tableApi?.initialized ? gridApi.tableApi?.getActiveRow() : undefined), [gridApi]);
 };
 
 const useApiGetActiveRow = (gridApi: IGridApi): IGridApi['getActiveRow'] => {
@@ -264,10 +266,10 @@ const useApiGetPrevRowKey = (gridApi: IGridApi): IGridApi['getPrevRowKey'] => {
         (key: IRowKey, step?: number) => {
             if (!key) return undefined;
             if (!step) step = 1;
-            let curNode: RowComponent | false = gridApi.tableApi?.getRow(key) || false;
+            let curNode: RowComponent | undefined = gridApi.tableApi?.getRow(key);
             if (!curNode) return undefined;
             for (let i = 0; i < step; i++) {
-                const prevNode = curNode.getPrevRow();
+                const prevNode = curNode?.getPrevRow();
                 if (!prevNode) return curNode.getData().id;
                 curNode = prevNode;
             }
@@ -309,7 +311,7 @@ const useApiSetSelectedRowsKeys = (gridApi: IGridApi): IGridApi['setSelectedRowK
 const useApiGetSelectedNodes = (gridApi: IGridApi): IGridApi['getSelectedNodes'] => {
     const emptyArray = useRef<RowComponent[]>([]);
     return useCallback((): RowComponent[] => {
-        if (!gridApi.tableApi) return emptyArray.current;
+        if (!gridApi.tableApi?.initialized) return emptyArray.current;
         return gridApi.tableApi.getSelectedRows();
     }, [gridApi]);
 };
@@ -317,7 +319,7 @@ const useApiGetSelectedNodes = (gridApi: IGridApi): IGridApi['getSelectedNodes']
 const useApiGetSelectedRows = (gridApi: IGridApi): IGridApi['getSelectedRows'] => {
     const emptyArray = useRef<IGridRowData[]>([]);
     return useCallback((): IGridRowData[] => {
-        if (!gridApi.tableApi) return emptyArray.current;
+        if (!gridApi.tableApi?.initialized) return emptyArray.current;
         return gridApi.tableApi.getSelectedData() as IGridRowData[];
     }, [gridApi]);
 };
@@ -341,7 +343,7 @@ const useApiGetRowByKey = (gridApi: IGridApi): IGridApi['getRowByKey'] => {
     );
 };
 
-const useApiInsertRows = (gridApi: IGridApi): IGridApi['insertRows'] => {
+const useApiInsertRows = (dataSetRef: React.MutableRefObject<IGridProps['dataSet'] | undefined>, gridApi: IGridApi): IGridApi['insertRows'] => {
     return useCallback(
         (rows: IGridRowData[] | IGridRowData, place?: 'above' | 'below', key?: IRowKey, updateActiveRow?: boolean) => {
             if (!gridApi.tableApi) return;
@@ -357,17 +359,18 @@ const useApiInsertRows = (gridApi: IGridApi): IGridApi['insertRows'] => {
                 else addTreeRows(gridApi, [row], place, key);
             }
 
-            gridApi.gridProps.callbacks?.onDataSetChange?.(gridApi.tableApi?.getData() || [], gridApi);
+            dataSetRef.current = gridApi.tableApi?.getData() || [];
+            gridApi.gridProps.callbacks?.onDataSetChange?.(dataSetRef.current, gridApi);
 
             if (updateActiveRow && clonedRows[0]) gridApi.setActiveRowKey(clonedRows[0].id, true, 'center');
 
             gridApi.tableApi.setTableBodyFocus();
         },
-        [gridApi]
+        [dataSetRef, gridApi]
     );
 };
 
-const useApiUpdateRows = (gridApi: IGridApi): IGridApi['updateRows'] => {
+const useApiUpdateRows = (dataSetRef: React.MutableRefObject<IGridProps['dataSet'] | undefined>, gridApi: IGridApi): IGridApi['updateRows'] => {
     return useCallback(
         (rows: IGridRowData[] | IGridRowData, updateActiveRow?: boolean) => {
             if (!gridApi.tableApi) return;
@@ -380,12 +383,14 @@ const useApiUpdateRows = (gridApi: IGridApi): IGridApi['updateRows'] => {
                 else updateTreeRows(gridApi, row);
             }
 
-            gridApi.gridProps.callbacks?.onDataSetChange?.(gridApi.tableApi?.getData() || [], gridApi);
+            dataSetRef.current = gridApi.tableApi?.getData() || [];
+
+            gridApi.gridProps.callbacks?.onDataSetChange?.(dataSetRef.current, gridApi);
 
             if (updateActiveRow && clonedRows[0]) gridApi.setActiveRowKey(clonedRows[0].id, true, 'center');
             gridApi.tableApi.setTableBodyFocus();
         },
-        [gridApi]
+        [dataSetRef, gridApi]
     );
 };
 
@@ -486,7 +491,7 @@ const cascadeNodeExpand = (node: RowComponent | false) => {
     if (!node.isTreeExpanded()) node.treeExpand();
 };
 
-const useApiDeleteRowsByKeys = (gridApi: IGridApi): IGridApi['deleteRowsByKeys'] => {
+const useApiDeleteRowsByKeys = (dataSetRef: React.MutableRefObject<IGridProps['dataSet'] | undefined>, gridApi: IGridApi): IGridApi['deleteRowsByKeys'] => {
     return useCallback(
         (keys: IRowKeys) => {
             if (!gridApi.tableApi) return;
@@ -512,11 +517,12 @@ const useApiDeleteRowsByKeys = (gridApi: IGridApi): IGridApi['deleteRowsByKeys']
             if (newActiveNode && indexField) newActiveNode = gridApi.tableApi.getRow(newActiveNode.getData()[indexField]); //we update the link to the node, because after deleting the node map is rebuilt and the objects are not equal to each other (glitches occur)
             gridApi.tableApi.setActiveRow(newActiveNode || null, true, 'bottom');
 
-            gridApi.gridProps.callbacks?.onDataSetChange?.(gridApi.tableApi?.getData() || [], gridApi);
+            dataSetRef.current = gridApi.tableApi?.getData() || [];
+            gridApi.gridProps.callbacks?.onDataSetChange?.(dataSetRef.current, gridApi);
 
             gridApi.tableApi.setTableBodyFocus();
         },
-        [gridApi]
+        [dataSetRef, gridApi]
     );
 };
 

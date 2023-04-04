@@ -462,7 +462,7 @@ export class ActiveSelectionModule extends Module {
         const body = this.table.element.querySelector('.tabulator-tableholder') as HTMLDivElement;
         if (!body) return;
         setTimeout(() => {
-            body.focus();
+            body.focus({preventScroll: true});
         }, 300);
     }
 }

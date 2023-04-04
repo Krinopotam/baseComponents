@@ -1,18 +1,19 @@
 /**
  * @CheckboxComponent
- * @version 0.0.28.93
+ * @version 0.0.29.17
  * @link omegatester@gmail.com
  * @author Maksim Zaytsev
  * @license MIT
  */
 
-import React, {useEffect, useMemo} from 'react';
+import React, {useEffect, useMemo, useRef, useState} from 'react';
 
 import {IDFormComponentProps, IDFormFieldProps} from './baseComponent';
 import TabulatorGrid, {IGridCallbacks, IGridRowData} from 'baseComponents/tabulatorGrid/tabulatorGrid';
 import {IReactTabulatorProps} from 'baseComponents/tabulatorGrid/reactTabulator/reactTabulator';
 import {IFormButton, IFormButtons} from 'baseComponents/buttonsRow';
 import {IDFormModalProps} from 'baseComponents/dFormModal/dFormModal';
+import {IGridApi} from 'baseComponents/tabulatorGrid/hooks/api';
 
 // !used in configGenerator parsing. Don't use curly brackets and multi rows comments!
 export interface IDFormFieldTabulatorGridProps extends IDFormFieldProps {
@@ -29,7 +30,7 @@ export interface IDFormFieldTabulatorGridProps extends IDFormFieldProps {
     dataTreeChildField?: string;
 
     /** The parent key field name */
-    dataTreeParentField? : string;
+    dataTreeParentField?: string;
 
     /** The tree children indentation */
     dataTreeChildIndent?: number;
@@ -146,15 +147,30 @@ export const TabulatorGridComponent = ({formApi, fieldName}: IDFormComponentProp
     const formProps = formApi.getFormProps();
     const fieldProps = formProps.fieldsProps[fieldName] as IDFormFieldTabulatorGridProps;
     const value = formApi.model.getFieldValue(fieldName) as IGridRowData[];
+    const prevDataSetRef = useRef<IGridRowData[]>();
+    const prevValueRef = useRef<IGridRowData[]>();
+
+    // Workaround: it is necessary to ensure that,
+    // on the one hand, when changing the rows by the grid itself, the memorized dataSet stay the same and the grid is not re-rendered.
+    // On the other hand, if the dataSet is modified by the user, the grid must re-render
+    // So the grid's memorized dataSet stays the same until it's set outside onDataSetChange
+    if (prevValueRef.current !== value) {
+        prevDataSetRef.current = value;
+        prevValueRef.current = value;
+    }
+    const curDataSet = prevDataSetRef.current;
+
+    const [gridApi] = useState({} as IGridApi);
 
     const callbacks = useMemo(() => {
-        const oldDataSetChange = fieldProps.callbacks?.onDataSetChange;
+        const _onDataSetChange = fieldProps.callbacks?.onDataSetChange;
         const updatedCallbacks = fieldProps.callbacks || {};
-        updatedCallbacks['onDataSetChange'] = (dataSet: IGridRowData[], gridApi) => {
-            formApi.model.setFieldValue(fieldName, dataSet || null);
+        updatedCallbacks.onDataSetChange = (dataSet: IGridRowData[], gridApi) => {
+            prevValueRef.current = dataSet;
+            formApi.model.setFieldValue(fieldName, dataSet || undefined);
             formApi.model.setFieldDirty(fieldName, true);
             formApi.model.setFieldTouched(fieldName, true);
-            oldDataSetChange?.(dataSet, gridApi);
+            _onDataSetChange?.(dataSet, gridApi);
         };
         return updatedCallbacks;
     }, [fieldName, fieldProps.callbacks, formApi.model]);
@@ -164,52 +180,105 @@ export const TabulatorGridComponent = ({formApi, fieldName}: IDFormComponentProp
         formApi.model.setFieldReady(fieldName, true);
     }, [fieldName, formApi.model]);
 
-    return (
-        <TabulatorGrid
-            id={fieldProps.id}
-            gridMode={fieldProps.gridMode}
-            dataTree={fieldProps.dataTree}
-            dataTreeChildField={fieldProps.dataTreeChildField}
-            dataTreeParentField={fieldProps.dataTreeParentField}
-            dataTreeChildIndent={fieldProps.dataTreeChildIndent}
-            columns={fieldProps.columns}
-            dataSet={value}
-            className={fieldProps.className}
-            buttons={fieldProps.buttons}
-            readOnly={fieldProps.readOnly}
-            editFormProps={fieldProps.editFormProps}
-            noHover={fieldProps.noHover}
-            rowDeleteMessage={fieldProps.rowDeleteMessage}
-            confirmDelete={fieldProps.confirmDelete}
-            placeholder={fieldProps.placeholder}
-            layout={fieldProps.layout}
-            layoutColumnsOnNewData={fieldProps.layoutColumnsOnNewData}
-            width={fieldProps.width}
-            maxWidth={fieldProps.maxWidth}
-            minWidth={fieldProps.minWidth}
-            height={fieldProps.height}
-            minHeight={fieldProps.minHeight}
-            maxHeight={fieldProps.maxHeight}
-            multiSelect={fieldProps.multiSelect}
-            resizableColumnFit={fieldProps.resizableColumnFit}
-            rowHeight={fieldProps.rowHeight}
-            resizableRows={fieldProps.resizableRows}
-            movableColumns={fieldProps.movableColumns}
-            movableRows={fieldProps.movableRows}
-            groupBy={fieldProps.groupBy}
-            persistence={fieldProps.persistence}
-            persistenceID={fieldProps.persistenceID}
-            persistentLayout={fieldProps.persistentLayout}
-            persistentFilter={fieldProps.persistentFilter}
-            persistentSort={fieldProps.persistentSort}
-            frozenRows={fieldProps.frozenRows}
-            frozenRowsField={fieldProps.frozenRowsField}
-            initialFilter={fieldProps.initialFilter}
-            initialSort={fieldProps.initialSort}
-            initialHeaderFilter={fieldProps.initialHeaderFilter}
-            headerVisible={fieldProps.headerVisible}
-            columnDefaults={fieldProps.columnDefaults}
-            callbacks={callbacks}
-        />
-    );
+    //TODO update datSet via model.setFieldValue not working now
+
+    const render = useMemo(() => {
+        return (
+            <TabulatorGrid
+                id={fieldProps.id}
+                apiRef={gridApi}
+                gridMode={fieldProps.gridMode}
+                dataTree={fieldProps.dataTree}
+                dataTreeChildField={fieldProps.dataTreeChildField}
+                dataTreeParentField={fieldProps.dataTreeParentField}
+                dataTreeChildIndent={fieldProps.dataTreeChildIndent}
+                columns={fieldProps.columns}
+                dataSet={curDataSet}
+                className={fieldProps.className}
+                buttons={fieldProps.buttons}
+                readOnly={fieldProps.readOnly}
+                editFormProps={fieldProps.editFormProps}
+                noHover={fieldProps.noHover}
+                rowDeleteMessage={fieldProps.rowDeleteMessage}
+                confirmDelete={fieldProps.confirmDelete}
+                placeholder={fieldProps.placeholder}
+                layout={fieldProps.layout}
+                layoutColumnsOnNewData={fieldProps.layoutColumnsOnNewData}
+                width={fieldProps.width}
+                maxWidth={fieldProps.maxWidth}
+                minWidth={fieldProps.minWidth}
+                height={fieldProps.height}
+                minHeight={fieldProps.minHeight}
+                maxHeight={fieldProps.maxHeight}
+                multiSelect={fieldProps.multiSelect}
+                resizableColumnFit={fieldProps.resizableColumnFit}
+                rowHeight={fieldProps.rowHeight}
+                resizableRows={fieldProps.resizableRows}
+                movableColumns={fieldProps.movableColumns}
+                movableRows={fieldProps.movableRows}
+                groupBy={fieldProps.groupBy}
+                persistence={fieldProps.persistence}
+                persistenceID={fieldProps.persistenceID}
+                persistentLayout={fieldProps.persistentLayout}
+                persistentFilter={fieldProps.persistentFilter}
+                persistentSort={fieldProps.persistentSort}
+                frozenRows={fieldProps.frozenRows}
+                frozenRowsField={fieldProps.frozenRowsField}
+                initialFilter={fieldProps.initialFilter}
+                initialSort={fieldProps.initialSort}
+                initialHeaderFilter={fieldProps.initialHeaderFilter}
+                headerVisible={fieldProps.headerVisible}
+                columnDefaults={fieldProps.columnDefaults}
+                callbacks={callbacks}
+            />
+        );
+    }, [
+        callbacks,
+        fieldProps.buttons,
+        fieldProps.className,
+        fieldProps.columnDefaults,
+        fieldProps.columns,
+        fieldProps.confirmDelete,
+        fieldProps.dataTree,
+        fieldProps.dataTreeChildField,
+        fieldProps.dataTreeChildIndent,
+        fieldProps.dataTreeParentField,
+        fieldProps.editFormProps,
+        fieldProps.frozenRows,
+        fieldProps.frozenRowsField,
+        fieldProps.gridMode,
+        fieldProps.groupBy,
+        fieldProps.headerVisible,
+        fieldProps.height,
+        fieldProps.id,
+        fieldProps.initialFilter,
+        fieldProps.initialHeaderFilter,
+        fieldProps.initialSort,
+        fieldProps.layout,
+        fieldProps.layoutColumnsOnNewData,
+        fieldProps.maxHeight,
+        fieldProps.maxWidth,
+        fieldProps.minHeight,
+        fieldProps.minWidth,
+        fieldProps.movableColumns,
+        fieldProps.movableRows,
+        fieldProps.multiSelect,
+        fieldProps.noHover,
+        fieldProps.persistence,
+        fieldProps.persistenceID,
+        fieldProps.persistentFilter,
+        fieldProps.persistentLayout,
+        fieldProps.persistentSort,
+        fieldProps.placeholder,
+        fieldProps.readOnly,
+        fieldProps.resizableColumnFit,
+        fieldProps.resizableRows,
+        fieldProps.rowDeleteMessage,
+        fieldProps.rowHeight,
+        fieldProps.width,
+        gridApi,
+        curDataSet, // changing the value causes the component to rerender and reset its state
+    ]);
+
+    return render;
 };

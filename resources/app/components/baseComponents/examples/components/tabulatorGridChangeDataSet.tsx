@@ -33,7 +33,7 @@ export const TabulatorGridChangeDataSet = (): JSX.Element => {
     }, [gridApi]);
 
     const updateDataViaApiAsync = useCallback(() => {
-        gridApi.fetchData(new Promise((resolve, reject) => {
+        gridApi.fetchData(new Promise((resolve) => {
             setTimeout(() => {
                 resolve({data: generateDataSet(100, 'async')});
             }, 1000);

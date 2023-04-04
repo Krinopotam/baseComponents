@@ -174,17 +174,18 @@ export type IGridDataSourcePromise = TPromise<{data: Record<string, unknown>[]},
 export type IGridDeletePromise = TPromise<{data: Record<string, unknown>}, {message: string; code: number}>;
 
 const TabulatorGrid = (props: IGridProps): JSX.Element => {
-    const tableRef = useRef<Tabulator>(null);
+    const tableRef = useRef<Tabulator>();
     const [editFormApi] = useState<IDFormModalApi>({} as IDFormModalApi);
     const [buttonsApi] = useState({} as IButtonsRowApi & {refreshButtons: () => void});
     const [gridApi] = useState((props.apiRef || {}) as IGridApi);
+
     useInitGridApi({gridApi, props, tableRef, editFormApi, buttonsApi});
     useInitialFetchData(gridApi);
 
     return (
         <>
             <Stylization />
-            <ContainerRender tableRef={tableRef} gridApi={gridApi} />
+            <ContainerRender tableRef={tableRef} gridApi={gridApi} gridProps={props} />
         </>
     );
 };

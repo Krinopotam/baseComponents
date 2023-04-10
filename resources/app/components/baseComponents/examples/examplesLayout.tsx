@@ -37,6 +37,7 @@ const items: MenuProps['items'] = [
         getItem(<Link to="ModalFormWithGroups">Модальная форма с группами</Link>, 'ModalFormWithGroups'),
         getItem(<Link to="ModalFormWithTabsGroups">Модальная форма с вкладками и группами</Link>, 'ModalModalWithTabsGroups'),
         getItem(<Link to="ModalFormWithGrid">Модальная форма с гридом</Link>, 'ModalFormWithGrid'),
+        getItem(<Link to="ModalFormWithAsyncGrid">Модальная форма с асинхронным гридом</Link>, 'ModalFormWithAsyncGrid'),
         getItem(<Link to="ModalFormFetching">Загрузка данных модальной формы с сервера</Link>, 'ModalFormFetching'),
         getItem(<Link to="ModalFormSubmitting">Отправка данных модальной формы на сервер</Link>, 'ModalFormSubmitting'),
     ]),

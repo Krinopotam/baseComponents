@@ -162,6 +162,15 @@ export interface IGridCallbacks {
     /** fires when the grid trying to fetch data */
     onDataFetch?: (gridApi: IGridApi) => IGridDataSourcePromise | undefined | void;
 
+    /** fires when the grid data fetch success */
+    onDataFetchSuccess?: (dataSet: IGridRowData[] | undefined, gridApi: IGridApi) =>  void;
+
+    /** fires when the grid data fetch failed */
+    onDataFetchError?: (message: string, code: number, gridApi: IGridApi) =>  void;
+
+    /** fires when the grid data fetch completed */
+    onDataFetchCompleted?: (gridApi: IGridApi) =>  void;
+
     /** Callback executed when selected rows change */
     onSelectionChange?: (keys: string[], selectedRows: IGridRowData[], gridApi: IGridApi) => void;
 

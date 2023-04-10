@@ -1,6 +1,6 @@
 /**
  * @CheckboxComponent
- * @version 0.0.29.19
+ * @version 0.0.29.24
  * @link omegatester@gmail.com
  * @author Maksim Zaytsev
  * @license MIT
@@ -16,7 +16,7 @@ import {IDFormModalProps} from 'baseComponents/dFormModal/dFormModal';
 import {IGridApi} from 'baseComponents/tabulatorGrid/hooks/api';
 
 // !used in configGenerator parsing. Don't use curly brackets and multi rows comments!
-export interface IDFormFieldTabulatorGridProps extends Omit<IDFormFieldProps,'width'> {
+export interface IDFormFieldTabulatorGridProps extends Omit<IDFormFieldProps, 'width'> {
     /** Grid Id */
     id?: string;
 
@@ -168,17 +168,31 @@ export const TabulatorGridComponent = ({formApi, fieldName}: IDFormComponentProp
         updatedCallbacks.onDataSetChange = (dataSet: IGridRowData[], gridApi) => {
             prevValueRef.current = dataSet;
             formApi.model.setFieldValue(fieldName, dataSet || undefined);
-            formApi.model.setFieldDirty(fieldName, true);
-            formApi.model.setFieldTouched(fieldName, true);
+            if (formApi.model.isFieldReady(fieldName)) {
+                formApi.model.setFieldDirty(fieldName, true);
+                formApi.model.setFieldTouched(fieldName, true);
+            }
             _onDataSetChange?.(dataSet, gridApi);
+        };
+
+        const _onDataFetch = fieldProps.callbacks?.onDataFetch;
+        const _onDataFetchSuccess = fieldProps.callbacks?.onDataFetchSuccess;
+        updatedCallbacks.onDataFetch = (gridApi: IGridApi) => {
+            formApi.model.setFieldReady(fieldName, false);
+            return _onDataFetch?.(gridApi);
+        };
+
+        updatedCallbacks.onDataFetchSuccess = (dataSet: (IGridRowData[] | undefined), gridApi: IGridApi) => {
+            formApi.model.setFieldReady(fieldName, true);
+            return _onDataFetchSuccess?.(dataSet, gridApi);
         };
         return updatedCallbacks;
     }, [fieldName, fieldProps.callbacks, formApi.model]);
 
     //TODO implement grid ready
-    useEffect(() => {
+    /*useEffect(() => {
         formApi.model.setFieldReady(fieldName, true);
-    }, [fieldName, formApi.model]);
+    }, [fieldName, formApi.model]);*/
 
     return useMemo(() => {
         return (

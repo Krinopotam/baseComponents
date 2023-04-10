@@ -189,11 +189,6 @@ export const TabulatorGridComponent = ({formApi, fieldName}: IDFormComponentProp
         return updatedCallbacks;
     }, [fieldName, fieldProps.callbacks, formApi.model]);
 
-    //TODO implement grid ready
-    /*useEffect(() => {
-        formApi.model.setFieldReady(fieldName, true);
-    }, [fieldName, formApi.model]);*/
-
     return useMemo(() => {
         return (
             <TabulatorGrid

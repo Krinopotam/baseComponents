@@ -1,6 +1,7 @@
 import hash from 'object-hash';
 import isEqual from 'lodash.isequal';
 import merge from 'lodash.merge';
+import {diff, addedDiff, deletedDiff, updatedDiff, detailedDiff} from 'deep-object-diff';
 
 /** Check if parameter is array */
 export function isArray(val: unknown): boolean {
@@ -102,7 +103,7 @@ export function cloneObject<TObject>(object: TObject, maxLevel?: number): TObjec
 }
 
 /** Get object content hash */
-export function hashObjectContent(obj: Record<string, unknown> | null, options?: hash.NormalOption): string {
+export function hashObjectContent(obj: Record<string, unknown> | null, options?: hash.NormalOption | hash.WithBufferOption): string|Buffer {
     return hash(obj, options);
 }
 
@@ -133,4 +134,15 @@ export function splitObject<TObject>(obj: TObject, propNames: (keyof TObject)[])
     }
 
     return [obj1, obj2];
+}
+
+/**
+ * Deep compares two JavaScript Objects, including nested structures of arrays and object
+ */
+export function objectDiffs<T1, T2>(obj1: T1, obj2: T2, mode?: 'added' | 'deleted' | 'updated' | 'detailed') {
+    if (mode === 'added') return addedDiff(obj1, obj2);
+    else if (mode === 'deleted') return deletedDiff(obj1, obj2);
+    else if (mode === 'updated') return updatedDiff(obj1, obj2);
+    else if (mode === 'detailed') return detailedDiff(obj1, obj2);
+    else return diff(obj1, obj2);
 }

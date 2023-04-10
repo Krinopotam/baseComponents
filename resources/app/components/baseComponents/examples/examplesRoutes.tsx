@@ -14,6 +14,7 @@
     import {ModalFormFetchingPage} from './pages/modalFormFetchingPage';
     import {ModalFormSimplePage} from './pages/modalFormSimplePage';
     import {ModalFormSubmittingPage} from './pages/modalFormSubmittingPage';
+    import {ModalFormWithAsyncGridPage} from './pages/modalFormWithAsyncGridPage';
     import {ModalFormWithGridPage} from './pages/modalFormWithGridPage';
     import {ModalFormWithGroupsPage} from './pages/modalFormWithGroupsPage';
     import {ModalFormWithTabsPage} from './pages/modalFormWithTabsPage';
@@ -55,6 +56,7 @@ export const ExamplesRoutes = (props: {darkMode: boolean; setDarkMode: (mode:boo
                 <Route path="ModalFormFetching" element={<ModalFormFetchingPage darkMode={props.darkMode} />} />;
                 <Route path="ModalFormSimple" element={<ModalFormSimplePage darkMode={props.darkMode} />} />;
                 <Route path="ModalFormSubmitting" element={<ModalFormSubmittingPage darkMode={props.darkMode} />} />;
+                <Route path="ModalFormWithAsyncGrid" element={<ModalFormWithAsyncGridPage darkMode={props.darkMode} />} />;
                 <Route path="ModalFormWithGrid" element={<ModalFormWithGridPage darkMode={props.darkMode} />} />;
                 <Route path="ModalFormWithGroups" element={<ModalFormWithGroupsPage darkMode={props.darkMode} />} />;
                 <Route path="ModalFormWithTabs" element={<ModalFormWithTabsPage darkMode={props.darkMode} />} />;

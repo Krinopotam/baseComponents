@@ -51,7 +51,7 @@ export const TabulatorGridChangeDataSet = (): JSX.Element => {
             <Button onClick={updateDataViaApi}>Обновить dataSet через Api</Button> - dataSet обновляется, но это не вызывает ререндер грида
             <br />
             <br />
-            <Button onClick={updateDataViaApiAsync}>Обновить dataSet асинхронно через Api</Button> - грид перерендеривается, так как закрывается лоадером на время загрузки
+            <Button onClick={updateDataViaApiAsync}>Обновить dataSet асинхронно через Api</Button> - ререндер вызывается, так как закрывается лоадером на время загрузки, но используется мемоизированный компонет. Поэтому фактически ререндера нет.
             <TabulatorGrid
                 id={'TabulatorGridSimple'}
                 apiRef={gridApi}

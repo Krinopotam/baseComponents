@@ -541,8 +541,12 @@ const useApiDeleteRows = (gridApi: IGridApi): IGridApi['deleteRows'] => {
 const useApiFetchData = (gridApi: IGridApi): IGridApi['fetchData'] => {
     return useCallback(
         (dataSource?: IGridDataFetchPromise) => {
-            const curDataSource = dataSource || gridApi.gridProps.callbacks?.onDataFetch?.(gridApi);
-            if (!curDataSource) return;
+            const props = gridApi.gridProps;
+            const curDataSource = dataSource || props.callbacks?.onDataFetch?.(gridApi);
+            if (!curDataSource) {
+                props.callbacks?.onDataFetchCompleted?.(gridApi);
+                return;
+            }
 
             gridApi.setIsLoading(true);
             curDataSource.then(
@@ -550,10 +554,14 @@ const useApiFetchData = (gridApi: IGridApi): IGridApi['fetchData'] => {
                     if (!gridApi.getIsMounted()) return;
                     const values = (result.data || []) as IGridRowData[];
                     gridApi.setDataSet(values);
+                    props.callbacks?.onDataFetchCompleted?.(gridApi);
+                    props.callbacks?.onDataFetchSuccess?.(values, gridApi);
                     gridApi.setIsLoading(false);
                 },
                 (error) => {
                     if (!gridApi.getIsMounted()) return;
+                    props.callbacks?.onDataFetchCompleted?.(gridApi);
+                    props.callbacks?.onDataFetchError?.(error.message, error.code, gridApi);
                     gridApi.setIsLoading(false);
                     const box = MessageBox.confirm({
                         content: (

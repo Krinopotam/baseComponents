@@ -1,12 +1,11 @@
 import 'tabulator-tables/dist/css/tabulator_simple.css';
 import React, {useRef, useState} from 'react';
-import {IReactTabulatorProps} from 'baseComponents/tabulatorGrid/reactTabulator/reactTabulator';
+import {IReactTabulatorProps, ITabulator} from 'baseComponents/tabulatorGrid/reactTabulator/reactTabulator';
 import {IButtonsRowApi, IFormButton, IFormButtons} from 'baseComponents/buttonsRow';
 import {IDFormModalProps} from 'baseComponents/dFormModal/dFormModal';
 import {TPromise} from 'baseComponents/serviceTypes';
 import {IGridApi, useInitGridApi} from './hooks/api';
 import {IDFormModalApi} from 'baseComponents/dFormModal/hooks/api';
-import {Tabulator} from 'tabulator-tables';
 import {useInitialFetchData} from 'baseComponents/tabulatorGrid/hooks/initialFetchRows';
 import {ContainerRender} from 'baseComponents/tabulatorGrid/renders/containerRender';
 import {Stylization} from 'baseComponents/tabulatorGrid/stylization';
@@ -163,6 +162,15 @@ export interface IGridCallbacks {
     /** fires when the grid trying to fetch data */
     onDataFetch?: (gridApi: IGridApi) => IGridDataSourcePromise | undefined | void;
 
+    /** fires when the grid data fetch success */
+    onDataFetchSuccess?: (dataSet: IGridRowData[] | undefined, gridApi: IGridApi) =>  void;
+
+    /** fires when the grid data fetch failed */
+    onDataFetchError?: (message: string, code: number, gridApi: IGridApi) =>  void;
+
+    /** fires when the grid data fetch completed */
+    onDataFetchCompleted?: (gridApi: IGridApi) =>  void;
+
     /** Callback executed when selected rows change */
     onSelectionChange?: (keys: string[], selectedRows: IGridRowData[], gridApi: IGridApi) => void;
 
@@ -174,7 +182,7 @@ export type IGridDataSourcePromise = TPromise<{data: Record<string, unknown>[]},
 export type IGridDeletePromise = TPromise<{data: Record<string, unknown>}, {message: string; code: number}>;
 
 const TabulatorGrid = (props: IGridProps): JSX.Element => {
-    const tableRef = useRef<Tabulator>();
+    const tableRef = useRef<ITabulator>();
     const [editFormApi] = useState<IDFormModalApi>({} as IDFormModalApi);
     const [buttonsApi] = useState({} as IButtonsRowApi & {refreshButtons: () => void});
     const [gridApi] = useState((props.apiRef || {}) as IGridApi);

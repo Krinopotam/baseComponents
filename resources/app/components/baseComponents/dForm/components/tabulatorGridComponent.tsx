@@ -1,6 +1,6 @@
 /**
  * @CheckboxComponent
- * @version 0.0.29.17
+ * @version 0.0.29.19
  * @link omegatester@gmail.com
  * @author Maksim Zaytsev
  * @license MIT
@@ -16,7 +16,7 @@ import {IDFormModalProps} from 'baseComponents/dFormModal/dFormModal';
 import {IGridApi} from 'baseComponents/tabulatorGrid/hooks/api';
 
 // !used in configGenerator parsing. Don't use curly brackets and multi rows comments!
-export interface IDFormFieldTabulatorGridProps extends IDFormFieldProps {
+export interface IDFormFieldTabulatorGridProps extends Omit<IDFormFieldProps,'width'> {
     /** Grid Id */
     id?: string;
 
@@ -32,7 +32,7 @@ export interface IDFormFieldTabulatorGridProps extends IDFormFieldProps {
     /** The parent key field name */
     dataTreeParentField?: string;
 
-    /** The tree children indentation */
+    /** The data tree children indentation */
     dataTreeChildIndent?: number;
 
     /** Grid columns */
@@ -180,9 +180,7 @@ export const TabulatorGridComponent = ({formApi, fieldName}: IDFormComponentProp
         formApi.model.setFieldReady(fieldName, true);
     }, [fieldName, formApi.model]);
 
-    //TODO update datSet via model.setFieldValue not working now
-
-    const render = useMemo(() => {
+    return useMemo(() => {
         return (
             <TabulatorGrid
                 id={fieldProps.id}
@@ -279,6 +277,4 @@ export const TabulatorGridComponent = ({formApi, fieldName}: IDFormComponentProp
         gridApi,
         curDataSet, // changing the value causes the component to rerender and reset its state
     ]);
-
-    return render;
 };

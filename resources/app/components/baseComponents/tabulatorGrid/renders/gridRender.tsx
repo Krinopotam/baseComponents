@@ -1,22 +1,31 @@
-import React, {useEffect, useMemo} from 'react';
-import ReactTabulator, {IReactTabulatorProps} from 'baseComponents/tabulatorGrid/reactTabulator/reactTabulator';
-import {ColumnDefinition, TabulatorFull as Tabulator} from 'tabulator-tables';
+import React, {useCallback, useEffect} from 'react';
+import ReactTabulator, {ITabulator} from 'baseComponents/tabulatorGrid/reactTabulator/reactTabulator';
 import {IGridApi} from 'baseComponents/tabulatorGrid/hooks/api';
-import {IFilterFunction} from 'baseComponents/tabulatorGrid/reactTabulator/modules/advancedTreeModule';
 import dispatcher from 'baseComponents/modal/service/formsDispatcher';
 import {IGridProps} from 'baseComponents/tabulatorGrid/tabulatorGrid';
+import {useEvents} from 'baseComponents/tabulatorGrid/hooks/events';
+import {useColumnDef, usePrepareColumns} from 'baseComponents/tabulatorGrid/hooks/columns';
 
 const GridRender_ = ({
     tableRef,
     gridApi,
     gridProps,
 }: {
-    tableRef: React.MutableRefObject<Tabulator | undefined>;
+    tableRef: React.MutableRefObject<ITabulator | undefined>;
     gridApi: IGridApi;
     gridProps: IGridProps;
 }): JSX.Element => {
     const columnDef = useColumnDef(gridProps.columnDefaults, gridApi);
     const columns = usePrepareColumns(gridProps.columns, gridProps.dataTree, gridApi);
+    const events = useEvents(gridApi);
+
+    const onTableRef = useCallback(
+        (tabulatorRef: React.MutableRefObject<ITabulator | undefined>) => {
+            tableRef.current = tabulatorRef.current;
+            gridApi.tableApi = tabulatorRef.current;
+        },
+        [gridApi, tableRef]
+    );
 
     useEffect(() => {
         dispatcher.pushToStack(gridApi.getGridId());
@@ -24,10 +33,7 @@ const GridRender_ = ({
 
     return (
         <ReactTabulator
-            onTableRef={(tabulatorRef) => {
-                tableRef.current = tabulatorRef.current;
-                gridApi.tableApi = tabulatorRef.current;
-            }}
+            onTableRef={onTableRef}
             gridId={gridApi.getGridId()}
             dataTree={gridProps.dataTree}
             dataTreeChildField={gridProps.dataTreeChildField || 'children'}
@@ -75,79 +81,9 @@ const GridRender_ = ({
                     if (data.id === table.getActiveRowKey()) row.getElement().style.borderColor = '#ff0000'; //apply css change to row element
                     else row.getElement().style.borderColor = '#f5f5f5';
                 }}*/
-            events={{
-                /*
-                    tableBuilt: () => {
-                        tableBuilt = true;
-                    },*/
-                keyDown: (e: KeyboardEvent) => {
-                    if (!dispatcher?.isActive(gridApi.getGridId())) return;
-
-                    if (!e.ctrlKey && !e.shiftKey && e.key === 'Insert') {
-                        gridApi.buttonsApi?.triggerClick('create');
-                        e.stopPropagation();
-                    } else if (!e.ctrlKey && !e.shiftKey && e.key === 'F9') {
-                        gridApi.buttonsApi?.triggerClick('clone');
-                        e.stopPropagation();
-                    } else if (!e.ctrlKey && !e.shiftKey && (e.key === 'F2' || e.key === 'Enter')) {
-                        gridApi.buttonsApi?.triggerClick('update');
-                        e.stopPropagation();
-                    } else if (!e.ctrlKey && !e.shiftKey && e.key === 'Delete') {
-                        gridApi.buttonsApi?.triggerClick('delete');
-                        e.stopPropagation();
-                    }
-                },
-                rowDblClick: () => {
-                    gridApi.buttonsApi.triggerClick('update');
-                },
-                activeRowChanged: () => {
-                    gridApi.buttonsApi.refreshButtons();
-                },
-            }}
+            events={events}
         />
     );
 };
 
 export const GridRender = React.memo(GridRender_);
-
-export const useColumnDef = (columnDef: ColumnDefinition | undefined, gridApi: IGridApi) => {
-    return useMemo(() => {
-        const colDef: Partial<ColumnDefinition> = {
-            resizable: 'header',
-            headerFilter: true,
-            headerFilterFunc: 'like',
-        };
-
-        const userColDef = columnDef || ({} as ColumnDefinition);
-
-        const resultColDef = {...colDef, ...userColDef} as ColumnDefinition;
-        if (typeof userColDef.headerFilterFunc === 'function') {
-            resultColDef.headerFilterFunc = gridApi.tableApi?.getBaseTreeDataFilter(userColDef.headerFilterFunc);
-        }
-
-        return resultColDef;
-    }, [columnDef, gridApi]);
-};
-
-export const usePrepareColumns = (columns: IReactTabulatorProps['columns'], dataTree: boolean | undefined, gridApi: IGridApi) => {
-    return useMemo(() => {
-        if (!columns || !dataTree) return columns;
-
-        const resultColumns = [];
-
-        for (const column of columns) {
-            const colClone = {...column};
-            if (typeof column.headerFilterFunc === 'function') {
-                colClone.headerFilterFunc = (filterVal, rowValue, rowData, filterParams) => {
-                    const filter = gridApi.tableApi?.getBaseTreeDataFilter(column.headerFilterFunc as IFilterFunction);
-                    if (!filter) return true;
-                    return filter(filterVal, rowValue, rowData, filterParams);
-                };
-            }
-
-            resultColumns.push(colClone);
-        }
-
-        return resultColumns;
-    }, [columns, dataTree, gridApi]);
-};

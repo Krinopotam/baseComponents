@@ -1,16 +1,14 @@
 import 'tabulator-tables/dist/css/tabulator_simple.css';
 import React, {useRef, useState} from 'react';
-import {IReactTabulatorProps} from 'baseComponents/tabulatorGrid/reactTabulator/reactTabulator';
+import {IReactTabulatorProps, ITabulator} from 'baseComponents/tabulatorGrid/reactTabulator/reactTabulator';
 import {IButtonsRowApi, IFormButton, IFormButtons} from 'baseComponents/buttonsRow';
 import {IDFormModalProps} from 'baseComponents/dFormModal/dFormModal';
 import {TPromise} from 'baseComponents/serviceTypes';
 import {IGridApi, useInitGridApi} from './hooks/api';
 import {IDFormModalApi} from 'baseComponents/dFormModal/hooks/api';
-import {Tabulator} from 'tabulator-tables';
 import {useInitialFetchData} from 'baseComponents/tabulatorGrid/hooks/initialFetchRows';
 import {ContainerRender} from 'baseComponents/tabulatorGrid/renders/containerRender';
 import {Stylization} from 'baseComponents/tabulatorGrid/stylization';
-import {useWhyDidYouUpdate} from "ahooks";
 
 export interface IGridRowData extends Record<string, unknown> {
     /** Row id */
@@ -23,42 +21,42 @@ export interface IGridProps {
     apiRef?: unknown;
 
     /** Grid Id */
-    id?: string | undefined;
+    id?: string;
 
     /** Grid mode: local or remote*/
-    gridMode?: 'local' | 'remote' | undefined;
+    gridMode?: 'local' | 'remote';
 
     /** Tree view mode */
-    dataTree?: boolean | undefined;
+    dataTree?: boolean;
 
     /** The dataTree children field name */
-    dataTreeChildField?: string | undefined;
+    dataTreeChildField?: string;
 
     /** The parent key field name */
-    dataTreeParentField? : string | undefined;
+    dataTreeParentField? : string;
 
     /** The dataTree children indentation */
-    dataTreeChildIndent?: number | undefined;
+    dataTreeChildIndent?: number;
 
     /** Grid columns */
     columns: IReactTabulatorProps['columns'];
 
     /** Grid data set */
-    dataSet?: IGridRowData[] | undefined;
+    dataSet?: IGridRowData[];
 
     /** Grid class name */
-    className?: string | undefined;
+    className?: string;
 
-    buttons?: Record<'view' | 'create' | 'clone' | 'update' | 'delete' | 'filterToggle', IFormButton | null> | IFormButtons | undefined;
+    buttons?: Record<'view' | 'create' | 'clone' | 'update' | 'delete' | 'filterToggle', IFormButton | null> | IFormButtons;
 
     /** Table can't be edited */
-    readOnly?: boolean | undefined;
+    readOnly?: boolean;
 
     /** Edit modal controls parameters */
-    editFormProps?: IDFormModalProps | undefined;
+    editFormProps?: IDFormModalProps;
 
     /** Disable row hover effect */
-    noHover?: boolean | undefined;
+    noHover?: boolean;
 
     /** Grid callbacks */
     callbacks?: IGridCallbacks;
@@ -67,10 +65,10 @@ export interface IGridProps {
     rowDeleteMessage?: React.ReactNode;
 
     /** Should confirm before delete */
-    confirmDelete?: boolean | undefined;
+    confirmDelete?: boolean;
 
     /** No rows placeholder */
-    placeholder?: string | undefined;
+    placeholder?: string;
 
     /** Table layout */
     layout?: IReactTabulatorProps['layout'];
@@ -175,8 +173,7 @@ export type IGridDataSourcePromise = TPromise<{data: Record<string, unknown>[]},
 export type IGridDeletePromise = TPromise<{data: Record<string, unknown>}, {message: string; code: number}>;
 
 const TabulatorGrid = (props: IGridProps): JSX.Element => {
-    useWhyDidYouUpdate('dfsfsf', props)
-    const tableRef = useRef<Tabulator>();
+    const tableRef = useRef<ITabulator>();
     const [editFormApi] = useState<IDFormModalApi>({} as IDFormModalApi);
     const [buttonsApi] = useState({} as IButtonsRowApi & {refreshButtons: () => void});
     const [gridApi] = useState((props.apiRef || {}) as IGridApi);

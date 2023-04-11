@@ -1,15 +1,18 @@
-import {IGridApi} from "baseComponents/tabulatorGrid/hooks/api";
-import {IReactTabulatorProps} from "baseComponents/tabulatorGrid/reactTabulator/reactTabulator";
-import {useMemo} from "react";
-import dispatcher from "baseComponents/modal/service/formsDispatcher";
+import {IGridApi} from 'baseComponents/tabulatorGrid/hooks/api';
+import {IReactTabulatorProps} from 'baseComponents/tabulatorGrid/reactTabulator/reactTabulator';
+import {useMemo} from 'react';
+import dispatcher from 'baseComponents/modal/service/formsDispatcher';
 
-export const useEvents = (gridApi:IGridApi):IReactTabulatorProps['events'] =>{
-    return useMemo(()=>{
+export const useEvents = (gridApi: IGridApi): IReactTabulatorProps['events'] => {
+    return useMemo(() => {
         return {
-            /*
-                tableBuilt: () => {
-                    tableBuilt = true;
-                },*/
+            tableBuilt: () => {
+                const initQue = gridApi.getInitQue();
+                for (const func of initQue) {
+                    func();
+                }
+                initQue.length = 0;
+            },
             keyDown: (e: KeyboardEvent) => {
                 if (!dispatcher?.isActive(gridApi.getGridId())) return;
 
@@ -33,6 +36,6 @@ export const useEvents = (gridApi:IGridApi):IReactTabulatorProps['events'] =>{
             activeRowChanged: () => {
                 gridApi.buttonsApi.refreshButtons();
             },
-        }
-    },[gridApi])
-}
+        };
+    }, [gridApi]);
+};

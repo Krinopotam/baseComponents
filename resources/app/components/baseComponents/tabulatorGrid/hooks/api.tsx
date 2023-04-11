@@ -106,6 +106,12 @@ export interface IGridApi {
 
     /** Fetch data */
     fetchData: (dataSource?: IGridDataFetchPromise) => void;
+
+    /** Add function to init que. This function will be called on table init complete event*/
+    addToInitQue: (func: () => void) => void;
+
+    /** Get init que */
+    getInitQue: () => (() => void)[];
 }
 
 export type IGridDataFetchPromise = TPromise<{data: IGridRowData[]}, {message: string; code: number}>;
@@ -116,12 +122,14 @@ export const useInitGridApi = ({
     tableRef,
     editFormApi,
     buttonsApi,
+    initQue,
 }: {
     gridApi: IGridApi;
     props: IGridApi['gridProps'];
     tableRef: MutableRefObject<Tabulator | undefined>;
     editFormApi: IGridApi['editFormApi'];
     buttonsApi: IGridApi['buttonsApi'];
+    initQue: (() => void)[];
 }): IGridApi => {
     const dataSetRef = useRef<IGridProps['dataSet']>(undefined);
     const [isLoading, setIsLoading] = useState(false);
@@ -156,6 +164,8 @@ export const useInitGridApi = ({
     gridApi.deleteRowsByKeys = useApiDeleteRowsByKeys(dataSetRef, gridApi);
     gridApi.deleteRows = useApiDeleteRows(gridApi);
     gridApi.fetchData = useApiFetchData(gridApi);
+    gridApi.addToInitQue = useApiAddToInitQue(initQue);
+    gridApi.getInitQue = useApiGetInitQue(initQue);
     /*
     gridApi.selectAll = useApiSelectAll(gridApi);
     gridApi.selectNextRow = useApiSelectNextRow(gridApi);
@@ -192,13 +202,17 @@ const useApiGetDataSet = (dataSetRef: React.MutableRefObject<IGridProps['dataSet
 const useApiSetDataSet = (dataSetRef: React.MutableRefObject<IGridProps['dataSet']>, gridApi: IGridApi): IGridApi['setDataSet'] => {
     return useCallback(
         (dataSet: IGridProps['dataSet'] | null) => {
+            const newDataSet = gridApi.gridProps.callbacks?.onDataSetChange?.(dataSet || undefined, gridApi) || dataSet;
+            dataSetRef.current = newDataSet as IGridProps['dataSet'];
             if (gridApi.tableApi?.initialized) {
                 gridApi.tableApi?.deselectRow();
                 gridApi.tableApi?.clearData();
+                gridApi.tableApi?.addData(dataSetRef.current);
+            } else {
+                gridApi.addToInitQue(() => {
+                    gridApi.tableApi?.addData(dataSetRef.current);
+                });
             }
-            const newDataSet = gridApi.gridProps.callbacks?.onDataSetChange?.(dataSet || undefined, gridApi) || dataSet;
-            dataSetRef.current = newDataSet as IGridProps['dataSet'];
-            gridApi.tableApi?.addData(dataSetRef.current);
         },
         [dataSetRef, gridApi]
     );
@@ -585,6 +599,18 @@ const useApiFetchData = (gridApi: IGridApi): IGridApi['fetchData'] => {
         },
         [gridApi]
     );
+};
+
+const useApiAddToInitQue = (initQue: (() => void)[]) => {
+    return useCallback(
+        (func: () => void) => {
+            initQue.push(func);
+        },
+        [initQue]
+    );
+};
+const useApiGetInitQue = (initQue: (() => void)[]) => {
+    return useCallback(() => initQue, [initQue]);
 };
 
 /*

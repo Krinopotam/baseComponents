@@ -186,8 +186,9 @@ const TabulatorGrid = (props: IGridProps): JSX.Element => {
     const [editFormApi] = useState<IDFormModalApi>({} as IDFormModalApi);
     const [buttonsApi] = useState({} as IButtonsRowApi & {refreshButtons: () => void});
     const [gridApi] = useState((props.apiRef || {}) as IGridApi);
+    const [initQue] = useState([] as (()=>void)[]);
 
-    useInitGridApi({gridApi, props, tableRef, editFormApi, buttonsApi});
+    useInitGridApi({gridApi, props, tableRef, editFormApi, buttonsApi, initQue: initQue});
     useInitialFetchData(gridApi);
 
     return (

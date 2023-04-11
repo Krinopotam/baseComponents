@@ -76,6 +76,7 @@ const formProps = new DFormModalConfig<IUsers>('Test form')
     .confirmChanges(true)
     .addFields(
         new TabulatorGridComponentConfig('users')
+            .label('Пользователи')
             .columns(columns)
             .layout('fitColumns')
             .height(300)
@@ -91,7 +92,6 @@ const formProps = new DFormModalConfig<IUsers>('Test form')
                     });
                 },
             })
-            .label('Пользователи')
     )
     .width(900)
     .getConfig();

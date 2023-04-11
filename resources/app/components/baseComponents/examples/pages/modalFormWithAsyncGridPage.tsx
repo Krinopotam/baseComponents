@@ -67,7 +67,7 @@ const gridDefaultData: IGridRowData[] = [
 const formApi = {} as IDFormModalApi;
 
 /** Tabulator edit form props */
-const editFormProps = new DFormModalConfig<IPerson>()
+const editFormProps = new DFormModalConfig<IPerson>('formWithGrid')
     .layout('horizontal')
     .addFields(
         new InputComponentConfig('name').label('Name'),
@@ -84,6 +84,7 @@ const formProps = new DFormModalConfig<IUsers>('Test form')
     .confirmChanges(true)
     .addFields(
         new TabulatorGridComponentConfig('users')
+            .label('Пользователи')
             .columns(columns)
             .layout('fitColumns')
             .height(300)
@@ -91,14 +92,14 @@ const formProps = new DFormModalConfig<IUsers>('Test form')
             .confirmDelete(true)
             .callbacks({
                 onDataFetch: () => {
-                    return new Promise((resolve) => {
+                    return new Promise((resolve, reject) => {
                         setTimeout(() => {
-                            resolve({data: gridDefaultData});
-                        }, 3000);
+                            if (Math.random() < 0.5) reject({message: 'Ошибка загрузки данных', code: 400});
+                            else resolve({data: gridDefaultData});
+                        }, 1000);
                     });
                 },
             })
-            .label('Пользователи')
     )
     .width(900)
     .getConfig();

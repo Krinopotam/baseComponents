@@ -243,7 +243,7 @@ function generaBaseComponentConfigClass() {
             extraMethods.addValidationRules,
             extraMethods.getValidationRules,
             extraMethods.getId,
-            '/** Get field config */\n    getConfig() {\n        return this._config as unknown as ' + baseOptions.typeName + '\n    }',
+            '/** Get field config */\n    getConfig() {\n        return this._config as ' + baseOptions.typeName + '\n    }',
         ],
     };
     const classTxt = classMethods.generateClass(classProps);
@@ -259,6 +259,19 @@ function generaBaseComponentConfigClass() {
  * @returns {IClassProps}
  */
 function generateComponentConfigClass(componentName) {
+    //base options
+    const baseOptions = options['baseComponentProps'];
+    const baseClassName = 'BaseComponentConfig';
+    const basePropertiesResult = parsingMethods.parseProperties(baseOptions);
+
+    if (basePropertiesResult.error) {
+        showStatusMsg(baseClassName, basePropertiesResult.error.operation, basePropertiesResult.error.message);
+        return componentName;
+    }
+    const baseProperties = basePropertiesResult.properties;
+    delete baseProperties['component'];
+
+    //component options
     const componentOptions = options[componentName + 'Props'];
     const componentClassName = capitalizeFirstLetter(componentName) + 'Config';
 
@@ -268,8 +281,9 @@ function generateComponentConfigClass(componentName) {
         return componentName;
     }
 
-    let properties = propertiesResult.properties;
-    delete properties['component'];
+    let componentProperties = propertiesResult.properties;
+    delete componentProperties['component'];
+    let properties = {...baseProperties, ...componentProperties};
 
     //region unique components extra processing
     let treeSelectImport = undefined;
@@ -281,7 +295,7 @@ function generateComponentConfigClass(componentName) {
             return componentName;
         }
         const treeSelectProperties = treeSelectResult.properties;
-        properties = {...treeSelectProperties, ...properties};
+        properties = {...properties, ...treeSelectProperties};
         delete properties['onChange'];
         treeSelectImport = {typeName: 'ITreeSelectProps', typePath: options.treeSelectProps.typePath};
     }
@@ -293,18 +307,30 @@ function generateComponentConfigClass(componentName) {
     const classProps = {
         className: componentClassName + '<T>',
         imports: [
+            baseOptions,
+            {typeName: 'IRuleType', typePath: '../validators/baseValidator'},
             componentOptions,
             {typeName: 'BaseComponentConfig', typePath: './baseComponentConfig'},
             {typeName: capitalizeFirstLetter(componentName), typePath: componentOptions.typePath},
             treeSelectImport,
         ],
         extends: 'BaseComponentConfig<T>',
+        fields: [
+            {access: 'protected', name: '_config', type: 'Record<string, unknown>', value: '{}'},
+            {access: 'protected readonly', name: '_id', type: 'keyof T'},
+            {access: 'protected', name: '_validationRules', type: 'IRuleType[]', value: '[]'},
+        ],
         constructor: {
             parameters: [{var: 'id', type: 'keyof T'}],
-            rows: ['super(id)', `this._config.component = ${capitalizeFirstLetter(componentName)}`],
+            rows: ['super(id)', 'this._id = id', `this._config.component = ${capitalizeFirstLetter(componentName)}`],
         },
         propMethods: properties,
-        additionalMethods: ['/** Get field config */\n    getConfig() {\n        return this._config as unknown as ' + componentOptions.typeName + '\n    }'],
+        additionalMethods: [
+            extraMethods.addValidationRules,
+            extraMethods.getValidationRules,
+            extraMethods.getId,
+            '/** Get field config */\n    getConfig() {\n        return this._config as ' + componentOptions.typeName + '\n    }',
+        ],
     };
     const classTxt = classMethods.generateClass(classProps);
 

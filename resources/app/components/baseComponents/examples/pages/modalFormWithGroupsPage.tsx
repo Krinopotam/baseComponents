@@ -28,10 +28,10 @@ const formProps = new DFormModalConfig<IFields>('Test form')
     .apiRef(formApi)
     .confirmChanges(true)
     .addFields(
-        new InputComponentConfig('nameIn').label('Имя входящего').inlineGroup('row1'),
-        new DateTimeComponentConfig('dateIn').label('Дата входа').width(150).inlineGroup('row1'),
-        new InputComponentConfig('nameOut').label('Имя выходящего').inlineGroup('row2'),
-        new DateTimeComponentConfig('dateOut').label('Дата выхода').width(150).inlineGroup('row2')
+        new InputComponentConfig<IFields>('nameIn').label('Имя входящего').inlineGroup('row1'),
+        new DateTimeComponentConfig<IFields>('dateIn').label('Дата входа').width(150).inlineGroup('row1'),
+        new InputComponentConfig<IFields>('nameOut').label('Имя выходящего').inlineGroup('row2'),
+        new DateTimeComponentConfig<IFields>('dateOut').label('Дата выхода').width(150).inlineGroup('row2')
     )
 
     .getConfig();

@@ -12,7 +12,7 @@ import {TreeSelectComponentConfig} from 'baseComponents/dForm/configBuilder/tree
 import {DFormConfig} from 'baseComponents/dForm/configBuilder/dFormConfig';
 
 interface IFields {
-    department: {id: string; title: string};
+    departments: {id: string; title: string};
 }
 
 const dataSet = [
@@ -119,7 +119,7 @@ const dataSet = [
 const formProps = new DFormConfig<IFields>('Test form')
     .confirmChanges(true)
     .addFields(
-        new TreeSelectComponentConfig('departments')
+        new TreeSelectComponentConfig<IFields>('departments')
             .label('Подразделения')
             .fetchMode('onUse')
             .noCacheFetchedData(true)

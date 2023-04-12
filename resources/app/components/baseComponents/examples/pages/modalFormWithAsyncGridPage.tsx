@@ -67,13 +67,13 @@ const gridDefaultData: IGridRowData[] = [
 const formApi = {} as IDFormModalApi;
 
 /** Tabulator edit form props */
-const editFormProps = new DFormModalConfig<IPerson>()
+const editFormProps = new DFormModalConfig<IPerson>('formWithGrid')
     .layout('horizontal')
     .addFields(
-        new InputComponentConfig('name').label('Name'),
-        new NumberComponentConfig('age').label('Age'),
-        new InputComponentConfig('col').label('Favourite Color'),
-        new InputComponentConfig('dob').label('Day of Birth')
+        new InputComponentConfig<IPerson>('name').label('Name'),
+        new NumberComponentConfig<IPerson>('age').label('Age'),
+        new InputComponentConfig<IPerson>('col').label('Favourite Color'),
+        new InputComponentConfig<IPerson>('dob').label('Day of Birth')
     )
     .confirmChanges(true)
     .getConfig();
@@ -83,7 +83,8 @@ const formProps = new DFormModalConfig<IUsers>('Test form')
     .apiRef(formApi)
     .confirmChanges(true)
     .addFields(
-        new TabulatorGridComponentConfig('users')
+        new TabulatorGridComponentConfig<IUsers>('users')
+            .label('Пользователи')
             .columns(columns)
             .layout('fitColumns')
             .height(300)
@@ -91,14 +92,14 @@ const formProps = new DFormModalConfig<IUsers>('Test form')
             .confirmDelete(true)
             .callbacks({
                 onDataFetch: () => {
-                    return new Promise((resolve) => {
+                    return new Promise((resolve, reject) => {
                         setTimeout(() => {
-                            resolve({data: gridDefaultData});
-                        }, 3000);
+                            if (Math.random() < 0.5) reject({message: 'Ошибка загрузки данных', code: 400});
+                            else resolve({data: gridDefaultData});
+                        }, 1000);
                     });
                 },
             })
-            .label('Пользователи')
     )
     .width(900)
     .getConfig();

@@ -28,13 +28,14 @@ const formProps = new DFormModalConfig<IFields>('Test form')
     .apiRef(formApi)
     .confirmChanges(true)
     .addTab(
-        'Входы', new InputComponentConfig('nameIn').label('Имя входящего'), 
-        new DateTimeComponentConfig('dateIn').label('Дата входа')
+        'Входы',
+        new InputComponentConfig<IFields>('nameIn').label('Имя входящего'),
+        new DateTimeComponentConfig<IFields>('dateIn').label('Дата входа')
     )
     .addTab(
         'Выходы',
-        new InputComponentConfig('nameOut').label('Имя выходящего').inlineGroup('row1'),
-        new DateTimeComponentConfig('dateOut').label('Дата выхода').inlineGroup('row1')
+        new InputComponentConfig<IFields>('nameOut').label('Имя выходящего').inlineGroup('row1'),
+        new DateTimeComponentConfig<IFields>('dateOut').label('Дата выхода').inlineGroup('row1')
     )
     .bodyHeight(250)
     .getConfig();

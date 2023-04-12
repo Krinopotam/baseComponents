@@ -113,7 +113,7 @@ interface IEditFormFields {
 const editForm = new DFormModalConfig<IEditFormFields>('EditForm')
     .confirmChanges(true)
     .bodyHeight(100)
-    .addFields(new InputComponentConfig('title').label('Подразделение'))
+    .addFields(new InputComponentConfig<IEditFormFields>('title').label('Подразделение'))
     .callbacks({
         onSubmit: (values: Record<string, unknown>) => {
             return new Promise((resolve, reject) => {
@@ -133,7 +133,7 @@ interface IFields {
 const formProps = new DFormConfig<IFields>('Test form')
     .confirmChanges(true)
     .addFields(
-        new TreeSelectComponentConfig('departments')
+        new TreeSelectComponentConfig<IFields>('departments')
             .label('Подразделения')
             .editFormProps(editForm)
             .confirmDelete(true)

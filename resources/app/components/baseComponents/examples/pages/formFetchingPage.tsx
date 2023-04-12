@@ -19,7 +19,9 @@ interface IFields {
 const formProps = new DFormConfig<IFields>('Test form')
     .formMode('update')
     .confirmChanges(true)
-    .addFields(new InputComponentConfig('position').label('Должность'), new InputComponentConfig('department').label('Подразделение'))
+    .addFields(
+        new InputComponentConfig<IFields>('position').label('Должность'),
+        new InputComponentConfig<IFields>('department').label('Подразделение'))
     .callbacks({
         onDataFetch: () => {
             return new Promise((resolve, reject) => {

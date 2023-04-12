@@ -55,10 +55,10 @@ const data: IGridRowData[] = [
 
 const editFormConfig = new DFormModalConfig<IPerson>('gridEditForm').layout('horizontal')
     .addFields(
-        new InputComponentConfig('name').label('Name'),
-        new NumberComponentConfig('age').label('Age'),
-        new InputComponentConfig('col').label('Favourite Color'),
-        new InputComponentConfig('dob').label('Day of Birth'),
+        new InputComponentConfig<IPerson>('name').label('Name'),
+        new NumberComponentConfig<IPerson>('age').label('Age'),
+        new InputComponentConfig<IPerson>('col').label('Favourite Color'),
+        new InputComponentConfig<IPerson>('dob').label('Day of Birth'),
     ).confirmChanges(true)
     .getConfig();
 

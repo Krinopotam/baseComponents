@@ -10,7 +10,7 @@
 import React from 'react';
 import {TreeSelectComponentConfig} from 'baseComponents/dForm/configBuilder/treeSelectComponentConfig';
 import {DFormConfig} from 'baseComponents/dForm/configBuilder/dFormConfig';
-import {ITreeSelectProps} from 'baseComponents/treeSelect/treeSelect';
+import {ITreeSelectNode, ITreeSelectProps} from 'baseComponents/treeSelect/treeSelect';
 
 interface IFields {
     department: {id: string; title: string};
@@ -130,7 +130,7 @@ const titleRender: ITreeSelectProps['titleRender'] = (treeNode: ITreeSelectNode 
         <>
             {treeNode.title}
             <br />
-            <small style={{color: '#808080'}}>{treeNode.head}</small>
+            <small style={{color: '#808080'}}>{treeNode.head ? '(' + treeNode.head+')' : ''}</small>
         </>
     );
 };
@@ -138,7 +138,7 @@ const titleRender: ITreeSelectProps['titleRender'] = (treeNode: ITreeSelectNode 
 const labelRender: ITreeSelectProps['labelRender'] = (treeNode: ITreeSelectNode | unknown) => {
     return (
         <>
-            {treeNode.title} (<small style={{color: '#808080'}}>{treeNode.head}</small>)
+            {treeNode.title} <small style={{color: '#808080'}}>{treeNode.head ? '(' + treeNode.head+')' : ''}</small>
         </>
     );
 };
@@ -151,7 +151,7 @@ const filterTreeNode: ITreeSelectProps['filterTreeNode'] = (inputValue: string, 
 const formProps = new DFormConfig<IFields>('Test form')
     .confirmChanges(true)
     .addFields(
-        new TreeSelectComponentConfig('departments')
+        new TreeSelectComponentConfig<IFields>('department')
             .label('Подразделения')
             .dataSet(dataSet)
             .titleRender(titleRender) //node title render

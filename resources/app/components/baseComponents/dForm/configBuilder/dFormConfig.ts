@@ -152,7 +152,7 @@ export class DFormConfig<T>  {
     }
 
     /** Add field properties to form config */
-    private addFieldsConfig(tabName: string | undefined, configs: BaseComponentConfig<T>[]) {
+    protected addFieldsConfig(tabName: string | undefined, configs: BaseComponentConfig<T>[]) {
         for (const config of configs) {
             this.updateFieldsProps(config, tabName);
         }
@@ -160,7 +160,7 @@ export class DFormConfig<T>  {
     }
 
     /** Update the field properties */
-    private updateFieldsProps(configClass: BaseComponentConfig<T>, tabName?: string) {
+    protected updateFieldsProps(configClass: BaseComponentConfig<T>, tabName?: string) {
         const id  = configClass.getId();
         const fieldProps = configClass.getConfig();
         const validationRules = configClass.getValidationRules();
@@ -168,11 +168,11 @@ export class DFormConfig<T>  {
         if (!fieldProps || !id) return;
         if (!this._config.fieldsProps) this._config.fieldsProps = {};
         const formFieldsProps = this._config.fieldsProps as Record<keyof T, IDFormFieldProps>;
-        formFieldsProps[id] = {...fieldProps};
+        formFieldsProps[id] = <T>{...fieldProps};
 
         if (!this._config.validationRules) this._config.validationRules = {};
         const formValidationRules = this._config.validationRules as Record<keyof T, IRuleType[]>;
-        if (validationRules && validationRules.length > 0) formValidationRules[id] = [...validationRules];
+        if (validationRules && validationRules.length > 0) formValidationRules[id] = <T>[...validationRules];
 
         if (typeof tabName !== 'undefined') formFieldsProps[id].tab = tabName;
     }

@@ -52,6 +52,8 @@ interface IFields {
     assignDate: string;
 
     name: string;
+    role: string;
+    title:string;
     login: string;
     departments: string;
     password: string;
@@ -96,15 +98,15 @@ const formProps = new DFormModalConfig<IFields>('TestFormModalConfig')
     })
     .addTab(
         'Tab1',
-        new InputComponentConfig('profess').label('Профессия').showCount(true).maxLength(50).inlineGroup('row1'),
-        new InputComponentConfig('specialty').label('Специализация').default('дефолтная специализация').dependsOn(['profess']).inlineGroup('row1'),
+        new InputComponentConfig<IFields>('profess').label('Профессия').showCount(true).maxLength(50).inlineGroup('row1'),
+        new InputComponentConfig<IFields>('specialty').label('Специализация').default('дефолтная специализация').dependsOn(['profess']).inlineGroup('row1'),
 
-        new DateTimeComponentConfig('assignDate').label('Дата назначения'),
+        new DateTimeComponentConfig<IFields>('assignDate').label('Дата назначения'),
 
-        new InputComponentConfig('name').label('Имя пользователя').default('дефолтное имя пользователя').dependsOn(['profess']).inlineGroup('row2'),
-        new InputComponentConfig('login').label('Логин').default('дефолтный логин').dependsOn(['name', 'specialty']).inlineGroup('row2'),
+        new InputComponentConfig<IFields>('name').label('Имя пользователя').default('дефолтное имя пользователя').dependsOn(['profess']).inlineGroup('row2'),
+        new InputComponentConfig<IFields>('login').label('Логин').default('дефолтный логин').dependsOn(['name', 'specialty']).inlineGroup('row2'),
 
-        new TreeSelectComponentConfig('departments')
+        new TreeSelectComponentConfig<IFields>('departments')
             .label('Подразделение')
             .fetchMode('onUse')
             .noCacheFetchedData(false)
@@ -132,7 +134,7 @@ const formProps = new DFormModalConfig<IFields>('TestFormModalConfig')
                 },
                 {title: 'Node2', id: '0-1'},
             ])
-            .editFormProps(new DFormModalConfig<Record<string, unknown>>('treeViewEditForm').addFields(new InputComponentConfig('title').label('title')).getConfig())
+            .editFormProps(new DFormModalConfig<Record<string, unknown>>('treeViewEditForm').addFields(new InputComponentConfig<IFields>('title').label('title')).getConfig())
 
         // .titleRender((treeNode: IApiJUser) => {
         //     return (
@@ -158,18 +160,21 @@ const formProps = new DFormModalConfig<IFields>('TestFormModalConfig')
     )
     .addTab(
         'Таб 2',
-        new PasswordComponentConfig('password').label('Пароль'),
-        new SwitchComponentConfig('isLocked').label('Заблокировано').checkedChildren('Вкл').unCheckedChildren('Выкл')
+        new PasswordComponentConfig<IFields>('password').label('Пароль'),
+        new SwitchComponentConfig<IFields>('isLocked').label('Заблокировано').checkedChildren('Вкл').unCheckedChildren('Выкл')
     )
     .addTab(
         'Tab 3',
-        new TabulatorGridComponentConfig('permissions')
+        new TabulatorGridComponentConfig<IFields>('permissions')
             .label('Полномочия')
             .confirmDelete(true)
             .height(300)
             .editFormProps(
                 new DFormModalConfig<Record<string, unknown>>('grid_edit_form')
-                    .addFields(new InputComponentConfig('name').label('Имя'), new InputComponentConfig('role').label('Роль'))
+                    .addFields(
+                        new InputComponentConfig<IFields>('name').label('Имя'),
+                        new InputComponentConfig<IFields>('role').label('Роль')
+                    )
                     .getConfig()
             )
             .columns([

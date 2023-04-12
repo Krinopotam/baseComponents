@@ -143,7 +143,7 @@ const filterTreeNode: ITreeSelectProps['filterTreeNode'] = (inputValue: string, 
 const formProps = new DFormConfig<IFields>('Test form')
     .confirmChanges(true)
     .addFields(
-        new TreeSelectComponentConfig('departments')
+        new TreeSelectComponentConfig<IFields>('department')
             .label('Подразделения')
             .dataSet(dataSet)
             .titleRender(titleRender) //node title render

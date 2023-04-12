@@ -15,7 +15,7 @@ import {cloneObject} from 'baseComponents/libs/helpers/helpersObjects';
 const formProps = new DFormConfig<IFields>('Test form')
     .confirmChanges(true)
     .addFields(
-        new TreeSelectComponentConfig('departments')
+        new TreeSelectComponentConfig<IFields>('departments')
             .label('Подразделения')
             .fetchMode('onUse')
             .noCacheFetchedData(true)

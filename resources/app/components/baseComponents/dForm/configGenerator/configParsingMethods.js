@@ -5,15 +5,14 @@ const fs = require('fs');
 /**
  * Load file
  * @param {{modulePath: string, savePath: string, typeName: string,typePath: string}} options
- * @returns {{data:string}|{error:{message:string, operation:string}}}
+ * @returns {string}
  */
 function loadFile(options) {
     const path = __dirname + '/' + options.modulePath;
     try {
-        const fileContent = fs.readFileSync(path, 'utf8');
-        return {data: fileContent};
+        return fs.readFileSync(path, 'utf8');
     } catch (err) {
-        return {error: {message: err, operation: 'file loading'}};
+        throw new Error('file loading ' + err);
     }
 }
 
@@ -35,17 +34,13 @@ module.exports.saveFile = function saveFile(filePath, content) {
 //endregion
 
 //region Parse interface properties
-
 /**
  * Get interface text from file content
  * @param {{modulePath: string, savePath: string, typeName: string,typePath: string}} options
- * @returns {{data:string}|{error:{message:string, operation:string}}}
+ * @returns {string}
  */
 function parseInterfaceText(options) {
-    const loadResult = loadFile(options);
-    if (loadResult.error) return loadResult;
-
-    const fileContent = loadResult.data;
+    const fileContent = loadFile(options);
     const matcher = new RegExp(
         'export interface ' + options.typeName + '\\s*(?:extends\\s[A-Za-z_<>,\'"\\s]*\\s*)?{[\\r\\n]([a-zA-Z\\d\\s/*&?:;,.\'`"@_=<>|()\\[\\]+-]*)[\\n\\r]}',
         'gm'
@@ -53,28 +48,26 @@ function parseInterfaceText(options) {
 
     let matched = matcher.exec(fileContent);
     if (!matched || typeof matched[1] === 'undefined') {
-        return {
-            error: {
-                message: 'Can not find interface "' + options.typeName + '" in the file "' + options.modulePath + '" content\nMatcher: ' + matcher.toString(),
-                operation: 'file parsing',
-            },
-        };
+        throw new Error(
+            'file parsing Error: Can not find interface "' +
+                options.typeName +
+                '" in the file "' +
+                options.modulePath +
+                '" content\nMatcher: ' +
+                matcher.toString()
+        );
     }
 
-    return {data: matched[1]};
+    return matched[1];
 }
 
 /**
  * Get properties collection
  * @param {{modulePath: string, savePath: string, typeName: string,typePath: string}} options
- * @returns {{properties:Object.<string, {name: string, type: string, sourceType: string, comment}>}|{error:{message:string, operation:string}}}
+ * @returns {Object<string, {name: string, type: string, sourceType: string, comment}>}
  */
 module.exports.parseProperties = function parseProperties(options) {
-    const parseInterfaceResult = parseInterfaceText(options);
-
-    if (parseInterfaceResult.error) return parseInterfaceResult;
-
-    const interfaceText = parseInterfaceResult.data;
+    const interfaceText = parseInterfaceText(options);
     const rows = interfaceText.split('\n');
     rows.push('//');
 
@@ -98,7 +91,7 @@ module.exports.parseProperties = function parseProperties(options) {
         prevComment = '';
     }
 
-    return {properties: result};
+    return result;
 };
 
 /**

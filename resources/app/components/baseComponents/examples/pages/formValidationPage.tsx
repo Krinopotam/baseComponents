@@ -19,11 +19,11 @@ interface IFields {
 const formProps = new DFormConfig<IFields>('Test form')
     .confirmChanges(true)
     .addFields(
-        new InputComponentConfig('field1')
+        new InputComponentConfig<IFields>('field1')
             .label('Поле 1')
             .placeholder('Я не должно быть пустым')
             .validationRules({type: 'string', rule: 'not-empty', message: 'Поле не должно быть пустым'}),
-        new InputComponentConfig('field2')
+        new InputComponentConfig<IFields>('field2')
             .label('Поле 2')
             .placeholder('Я должно быть числом')
             .validationRules({type: 'number', rule: 'not-empty', message: 'Поле должно быть числом'})

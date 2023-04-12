@@ -19,7 +19,10 @@ interface IFields {
 
 const formProps = new DFormConfig<IFields>('Test form')
     .confirmChanges(true)
-    .addFields(new InputComponentConfig('login').label('Логин'), new PasswordComponentConfig('password').label('Пароль'))
+    .addFields(
+        new InputComponentConfig<IFields>('login').label('Логин'),
+        new PasswordComponentConfig<IFields>('password').label('Пароль')
+    )
     .callbacks({
         onSubmit: () => {
             return new Promise((resolve, reject) => {

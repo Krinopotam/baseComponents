@@ -117,8 +117,8 @@ const divisions3 = [
 const formProps = new DFormConfig<IFields>('Test form')
     .confirmChanges(true)
     .addFields(
-        new TreeSelectComponentConfig('department').label('Департамент').dataSet(departments),
-        new TreeSelectComponentConfig('division').label('Управления').dependsOn(['department'])
+        new TreeSelectComponentConfig<IFields>('department').label('Департамент').dataSet(departments),
+        new TreeSelectComponentConfig<IFields>('division').label('Управления').dependsOn(['department'])
     )
     .callbacks({
         onFieldValueChanged: (fieldName, _value, _prevValue, formApi) => {

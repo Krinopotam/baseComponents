@@ -1,17 +1,12 @@
 import {IDFormFieldProps} from 'baseComponents/dForm/components/baseComponent';
-import {IRuleType} from '../validators/baseValidator';
-import {IDFormFieldSelectProps, SelectComponent} from 'baseComponents/dForm/components/selectComponent';
 import {BaseComponentConfig} from './baseComponentConfig';
+import {IDFormFieldSelectProps, SelectComponent} from 'baseComponents/dForm/components/selectComponent';
 
 
 export class SelectComponentConfig<T>  extends BaseComponentConfig<T> {
-    protected _config: Record<string, unknown> = {};
-    protected readonly _id: keyof T;
-    protected _validationRules: IRuleType[] = [];
 
     constructor(id: keyof T) {
         super(id);
-        this._id = id;
         this._config.component = SelectComponent; 
     }
 
@@ -274,25 +269,6 @@ export class SelectComponentConfig<T>  extends BaseComponentConfig<T> {
         return this;
     }
 
-
-    /** Add validation rules */
-    validationRules(...args: IRuleType[]) {
-        for (const rule of args) {
-            this._validationRules.push(rule)
-        }
-        
-        return this;
-    }
-
-    /** Get validation rules */
-    getValidationRules() {
-        return this._validationRules;
-    }
-
-    /** Get component id */
-    getId() {
-        return this._id as keyof T;
-    }
 
     /** Get field config */
     getConfig() {

@@ -121,7 +121,7 @@ interface IEditFormFields {
 const editForm = new DFormModalConfig<IEditFormFields>('EditForm')
     .confirmChanges(true)
     .bodyHeight(100)
-    .addFields(new InputComponentConfig('title').label('Подразделение'))
+    .addFields(new InputComponentConfig<IEditFormFields>('title').label('Подразделение'))
     .getConfig();
 
 interface IFields {
@@ -130,7 +130,7 @@ interface IFields {
 
 const formProps = new DFormConfig<IFields>('Test form')
     .confirmChanges(true)
-    .addFields(new TreeSelectComponentConfig('departments').label('Подразделения').editFormProps(editForm).confirmDelete(true).dataSet(dataSet))
+    .addFields(new TreeSelectComponentConfig<IFields>('departments').label('Подразделения').editFormProps(editForm).confirmDelete(true).dataSet(dataSet))
     .buttons(null)
     .getConfig();
 

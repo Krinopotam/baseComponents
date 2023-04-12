@@ -17,8 +17,8 @@ const formProps = new DFormConfig<IFields>('Test form')
     .apiRef(formApi)
     .confirmChanges(true)
     .addFields(
-        new InputComponentConfig('position').label('Должность'),
-        new InputComponentConfig('department').label('Подразделение'))
+        new InputComponentConfig<IFields>('position').label('Должность'),
+        new InputComponentConfig<IFields>('department').label('Подразделение'))
     .callbacks({
         onDataFetch: () => {
             return new Promise((resolve, reject) => {

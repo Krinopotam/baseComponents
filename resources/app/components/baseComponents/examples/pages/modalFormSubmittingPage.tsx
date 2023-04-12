@@ -26,8 +26,8 @@ const formProps = new DFormModalConfig<IFields>('Test form')
     .apiRef(formApi)
     .confirmChanges(true)
     .addFields(
-        new InputComponentConfig('login').label('Логин'),
-        new PasswordComponentConfig('password').label('Пароль'))
+        new InputComponentConfig<IFields>('login').label('Логин'),
+        new PasswordComponentConfig<IFields>('password').label('Пароль'))
     .callbacks({
         onSubmit: () => {
             return new Promise((resolve, reject) => {

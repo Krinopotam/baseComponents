@@ -1,18 +1,13 @@
 import {IDFormFieldProps} from 'baseComponents/dForm/components/baseComponent';
-import {IRuleType} from '../validators/baseValidator';
-import {IDFormFieldTreeSelectProps, TreeSelectComponent} from 'baseComponents/dForm/components/treeSelectComponent';
 import {BaseComponentConfig} from './baseComponentConfig';
+import {IDFormFieldTreeSelectProps, TreeSelectComponent} from 'baseComponents/dForm/components/treeSelectComponent';
 import {ITreeSelectProps} from 'baseComponents/treeSelect/treeSelect';
 
 
 export class TreeSelectComponentConfig<T>  extends BaseComponentConfig<T> {
-    protected _config: Record<string, unknown> = {};
-    protected readonly _id: keyof T;
-    protected _validationRules: IRuleType[] = [];
 
     constructor(id: keyof T) {
         super(id);
-        this._id = id;
         this._config.component = TreeSelectComponent; 
     }
 
@@ -92,12 +87,6 @@ export class TreeSelectComponentConfig<T>  extends BaseComponentConfig<T> {
     /** The TreeSelect callbacks */
     callbacks(value: ITreeSelectProps['callbacks']) {
         this._config.callbacks = value;
-        return this;
-    }
-
-    /** @deprecated The callback should not be used. Use callbacks.onChange instead  */
-    onCustomChange(value: IDFormFieldTreeSelectProps['onCustomChange']) {
-        this._config.onCustomChange = value;
         return this;
     }
 
@@ -209,25 +198,12 @@ export class TreeSelectComponentConfig<T>  extends BaseComponentConfig<T> {
         return this;
     }
 
-
-    /** Add validation rules */
-    validationRules(...args: IRuleType[]) {
-        for (const rule of args) {
-            this._validationRules.push(rule)
-        }
-        
+    /** @deprecated The callback should not be used. Use callbacks.onChange instead  */
+    onCustomChange(value: IDFormFieldTreeSelectProps['onCustomChange']) {
+        this._config.onCustomChange = value;
         return this;
     }
 
-    /** Get validation rules */
-    getValidationRules() {
-        return this._validationRules;
-    }
-
-    /** Get component id */
-    getId() {
-        return this._id as keyof T;
-    }
 
     /** Get field config */
     getConfig() {

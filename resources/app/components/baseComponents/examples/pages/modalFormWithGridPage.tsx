@@ -67,13 +67,13 @@ const gridDefaultData: IGridRowData[] = [
 const formApi = {} as IDFormModalApi;
 
 /** Tabulator edit form props */
-const editFormProps = new DFormModalConfig<IPerson>()
+const editFormProps = new DFormModalConfig<IPerson>('gridEditForm')
     .layout('horizontal')
     .addFields(
-        new InputComponentConfig('name').label('Name'),
-        new NumberComponentConfig('age').label('Age'),
-        new InputComponentConfig('col').label('Favourite Color'),
-        new InputComponentConfig('dob').label('Day of Birth')
+        new InputComponentConfig<IPerson>('name').label('Name'),
+        new NumberComponentConfig<IPerson>('age').label('Age'),
+        new InputComponentConfig<IPerson>('col').label('Favourite Color'),
+        new InputComponentConfig<IPerson>('dob').label('Day of Birth')
     )
     .confirmChanges(true)
     .getConfig();
@@ -83,7 +83,7 @@ const formProps = new DFormModalConfig<IUsers>('Test form')
     .apiRef(formApi)
     .confirmChanges(true)
     .addFields(
-        new TabulatorGridComponentConfig('users')
+        new TabulatorGridComponentConfig<IUsers>('users')
             .label('Пользователи')
             .columns(columns)
             .layout('fitColumns')

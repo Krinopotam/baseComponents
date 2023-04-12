@@ -13,7 +13,7 @@ import {DFormModalConfig} from 'baseComponents/dForm/configBuilder/dFormModalCon
 import {InputComponentConfig} from 'baseComponents/dForm/configBuilder/inputComponentConfig';
 import {NumberComponentConfig} from 'baseComponents/dForm/configBuilder/numberComponentConfig';
 
-type Person = {
+type IPerson = {
     id: string;
     name: string;
     age: number;
@@ -53,13 +53,13 @@ const dataSet: IGridRowData[] = [
     {id: '20', name: 'Margret Marmajuke4', age: '16', col: 'yellow', dob: '31/01/1999'},
 ];
 
-const editFormConfig = new DFormModalConfig<Person>('gridEditForm')
+const editFormConfig = new DFormModalConfig<IPerson>('gridEditForm')
     .layout('horizontal')
     .addFields(
-        new InputComponentConfig('name').label('Name'),
-        new NumberComponentConfig('age').label('Age'),
-        new InputComponentConfig('col').label('Favourite Color'),
-        new InputComponentConfig('dob').label('Day of Birth')
+        new InputComponentConfig<IPerson>('name').label('Name'),
+        new NumberComponentConfig<IPerson>('age').label('Age'),
+        new InputComponentConfig<IPerson>('col').label('Favourite Color'),
+        new InputComponentConfig<IPerson>('dob').label('Day of Birth')
     )
     .confirmChanges(true)
     .callbacks({

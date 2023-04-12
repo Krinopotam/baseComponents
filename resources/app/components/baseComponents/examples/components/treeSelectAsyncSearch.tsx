@@ -6,7 +6,7 @@ import {cloneObject} from 'baseComponents/libs/helpers/helpersObjects';
 
 /*Description Start*/
 interface IFields {
-    department: {id: string; title: string};
+    departments: {id: string; title: string};
 }
 
 interface IDataRow {
@@ -153,7 +153,7 @@ const asyncFetch = (search: string) => {
 const formProps = new DFormConfig<IFields>('Test form')
     .confirmChanges(true)
     .addFields(
-        new TreeSelectComponentConfig('departments')
+        new TreeSelectComponentConfig<IFields>('departments')
             .label('Подразделения')
             .fetchMode('onUse')
             .noCacheFetchedData(true)

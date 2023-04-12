@@ -11,7 +11,7 @@ import React from 'react';
 import {TreeSelectComponentConfig} from 'baseComponents/dForm/configBuilder/treeSelectComponentConfig';
 import {DFormConfig} from 'baseComponents/dForm/configBuilder/dFormConfig';
 import {IDFormFieldTreeSelectProps} from 'baseComponents/dForm/components/treeSelectComponent';
-import {IDFormApi} from 'baseComponents/dForm/hooks/api';
+import {IDFormModalApi} from "baseComponents/dFormModal/hooks/api";
 
 interface IFields {
     department: {id: string; title: string};
@@ -128,7 +128,7 @@ const formProps = new DFormConfig<IFields>('Test form')
     .apiRef(formApi)
     .confirmChanges(true)
     .addFields(
-        new TreeSelectComponentConfig('department')
+        new TreeSelectComponentConfig<IFields>('department')
             .label('Департамент')
             .fetchMode('onUse')
             .callbacks({
@@ -141,18 +141,18 @@ const formProps = new DFormConfig<IFields>('Test form')
                     });
                 },
             }),
-        new TreeSelectComponentConfig('division')
+        new TreeSelectComponentConfig<IFields>('division')
             .label('Управления')
             .dependsOn(['department'])
             .fetchMode('onUse')
             .noCacheFetchedData(true)
             .callbacks({
                 onDataFetch: () => {
-                    return new Promise((resolve, reject) => {
+                    return new Promise((resolve) => {
                         setTimeout(() => {
                             const departmentValue = formApi.model.getFieldValue('department') as Record<'id', unknown>; //we can get the current department value and use it for server request
                             
-                            /** the server reques imitation */
+                            /** the server request imitation */
                             let newDataSet: IDFormFieldTreeSelectProps['dataSet'];
                             if (!departmentValue) newDataSet = [];
                             else if (departmentValue.id === '01') newDataSet = divisions1;

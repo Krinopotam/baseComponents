@@ -1,5 +1,13 @@
 {
-    "private": true,
+	"name": "commonComponents",
+	"version": "1.0.0",
+	"description": "Common UI components ",
+    "private": false,
+	"author": "Maxim Zaytsev",
+    "license": "MIT",
+	"publishConfig": {
+		"registry": "http://94.228.112.2:4873/"
+	},
     "scripts": {
         "dev": "webpack --mode development",
         "prod": "webpack --mode production",

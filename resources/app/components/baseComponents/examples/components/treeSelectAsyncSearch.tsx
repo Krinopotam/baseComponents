@@ -1,8 +1,11 @@
-import {DForm} from 'baseComponents/dForm/dForm';
+// noinspection DuplicatedCode
+
 import React from 'react';
-import {TreeSelectComponentConfig} from 'baseComponents/dForm/configBuilder/treeSelectComponentConfig';
-import {DFormConfig} from 'baseComponents/dForm/configBuilder/dFormConfig';
+import {DForm} from '@krinopotam/ui-dynamic-form';
+import {DFormConfig} from '@krinopotam/ui-dynamic-form/configBuilder/dFormConfig';
+import {TreeSelectComponentConfig} from '@krinopotam/ui-dynamic-form/configBuilder/treeSelectComponentConfig';
 import {HelpersObjects}  from "@krinopotam/js-helpers";
+import {ITreeSelectSourcePromise} from "@krinopotam/ui-treeselect/treeSelect";
 
 /*Description Start*/
 interface IFields {
@@ -17,7 +20,7 @@ interface IDataRow {
 
 type IDataSet = IDataRow[];
 
-const dataSet: IDataSet = [
+const dataSet = [
     {
         id: '01',
         title: 'Департамент аналитики данных',
@@ -140,7 +143,7 @@ const filterDataSet = (nodes: IDataSet, search: string) => {
 };
 
 const asyncFetch = (search: string) => {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
         setTimeout(() => {
             const result = filterDataSet(dataSet, search);
             resolve({data: result});
@@ -160,7 +163,7 @@ const formProps = new DFormConfig<IFields>('Test form')
             .minSearchLength(1)
             .callbacks({
                 onDataFetch: (search: string) => {
-                    return asyncFetch(search);
+                    return asyncFetch(search) as ITreeSelectSourcePromise;
                 },
             })
     )

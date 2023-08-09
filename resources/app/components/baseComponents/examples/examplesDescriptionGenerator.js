@@ -51,6 +51,7 @@ function generatePageComponent(componentFileName, componentPath, source, pagesPa
 
     const bodyStr = `
     export const ${pageComponentName} = (props: {darkMode: boolean}): JSX.Element => {
+    // language=text
     const source = \`${source}\`
     return (
         <>

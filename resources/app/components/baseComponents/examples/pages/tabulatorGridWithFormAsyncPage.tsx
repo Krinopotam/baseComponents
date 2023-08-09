@@ -6,12 +6,15 @@
     import {darcula, docco} from 'react-syntax-highlighter/dist/esm/styles/hljs';
 
     export const TabulatorGridWithFormAsyncPage = (props: {darkMode: boolean}): JSX.Element => {
-    const source = `import React from 'react';
-import TabulatorGrid, {IGridRowData} from 'baseComponents/tabulatorGrid/tabulatorGrid';
-import {IReactTabulatorProps} from 'baseComponents/tabulatorGrid/reactTabulator/reactTabulator';
-import {DFormModalConfig} from 'baseComponents/dForm/configBuilder/dFormModalConfig';
-import {InputComponentConfig} from 'baseComponents/dForm/configBuilder/inputComponentConfig';
-import {NumberComponentConfig} from 'baseComponents/dForm/configBuilder/numberComponentConfig';
+    // language=text
+    const source = `// noinspection DuplicatedCode
+
+import React from 'react';
+import {DFormModalConfig} from '@krinopotam/ui-dynamic-form-modal/configBuilder/dFormModalConfig';
+import {InputComponentConfig} from '@krinopotam/ui-dynamic-form/configBuilder/inputComponentConfig';
+import {NumberComponentConfig} from '@krinopotam/ui-dynamic-form/configBuilder/numberComponentConfig';
+import TabulatorGrid, {IReactTabulatorProps} from '@krinopotam/ui-tabulator-grid';
+import {IGridRowData} from "@krinopotam/ui-tabulator-grid/tabulatorGrid";
 
 type IPerson = {
     id: string;

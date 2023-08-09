@@ -6,11 +6,14 @@
     import {darcula, docco} from 'react-syntax-highlighter/dist/esm/styles/hljs';
 
     export const FormBetweenFieldsPage = (props: {darkMode: boolean}): JSX.Element => {
-    const source = `import {DForm} from 'baseComponents/dForm/dForm';
+    // language=text
+    const source = `// noinspection DuplicatedCode
+
+import {DForm} from '@krinopotam/ui-dynamic-form';
+import {DFormConfig} from '@krinopotam/ui-dynamic-form/configBuilder/dFormConfig';
 import React from 'react';
-import {TreeSelectComponentConfig} from 'baseComponents/dForm/configBuilder/treeSelectComponentConfig';
-import {DFormConfig} from 'baseComponents/dForm/configBuilder/dFormConfig';
-import {IDFormFieldTreeSelectProps} from 'baseComponents/dForm/components/treeSelectComponent';
+import {TreeSelectComponentConfig} from '@krinopotam/ui-dynamic-form/configBuilder/treeSelectComponentConfig';
+import {IDFormFieldTreeSelectProps} from '@krinopotam/ui-dynamic-form/components/treeSelectComponent';
 
 interface IFields {
     tip: string;
@@ -64,13 +67,14 @@ const formProps = new DFormConfig<IFields>('Test form')
         onFieldValueChanged: (fieldName, _value, _prevValue, formApi) => {
             if (fieldName !== 'tip') return;
             const tipValue = formApi.model.getFieldValue('tip') as Record<'id', unknown>;
-            let newDataSet: Partial<IDFormFieldTreeSelectProps>;
+            let newDataSet: IDFormFieldTreeSelectProps['dataSet'];
 
             if (!tipValue) newDataSet = [];
             else if (tipValue.id === '1') newDataSet = dataSet2_1;
             else if (tipValue.id === '2') newDataSet = dataSet2_2;
             else newDataSet = [];
 
+            if (!newDataSet) return;
             formApi.model.updateFieldProps('process', {dataSet: newDataSet});
         },
     })

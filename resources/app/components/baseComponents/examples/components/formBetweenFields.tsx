@@ -1,7 +1,9 @@
+// noinspection DuplicatedCode
+
 import {DForm} from '@krinopotam/ui-dynamic-form';
+import {DFormConfig} from '@krinopotam/ui-dynamic-form/configBuilder/dFormConfig';
 import React from 'react';
 import {TreeSelectComponentConfig} from '@krinopotam/ui-dynamic-form/configBuilder/treeSelectComponentConfig';
-import {DFormConfig} from '@krinopotam/ui-dynamic-form/configBuilder/dFormConfig';
 import {IDFormFieldTreeSelectProps} from '@krinopotam/ui-dynamic-form/components/treeSelectComponent';
 
 interface IFields {

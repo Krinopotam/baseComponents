@@ -6,14 +6,16 @@
     import {darcula, docco} from 'react-syntax-highlighter/dist/esm/styles/hljs';
 
     export const ModalFormSubmittingPage = (props: {darkMode: boolean}): JSX.Element => {
-    const source = `import React, {useCallback} from 'react';
+    // language=text
+    const source = `// noinspection DuplicatedCode
 
-import {Button} from 'antd';
-import {DFormModal} from 'baseComponents/dFormModal/dFormModal';
-import {IDFormModalApi} from 'baseComponents/dFormModal/hooks/api';
-import {InputComponentConfig} from 'baseComponents/dForm/configBuilder/inputComponentConfig';
-import {PasswordComponentConfig} from 'baseComponents/dForm/configBuilder/passwordComponentConfig';
-import {DFormModalConfig} from "baseComponents/dForm/configBuilder/dFormModalConfig";
+import React, {useCallback} from 'react';
+import {Button} from '@krinopotam/ui-button';
+import {IDFormModalApi} from '@krinopotam/ui-dynamic-form-modal/hooks/api';
+import {DFormModal} from '@krinopotam/ui-dynamic-form-modal';
+import {DFormModalConfig} from '@krinopotam/ui-dynamic-form-modal/configBuilder/dFormModalConfig';
+import {InputComponentConfig} from '@krinopotam/ui-dynamic-form/configBuilder/inputComponentConfig';
+import {PasswordComponentConfig} from '@krinopotam/ui-dynamic-form/configBuilder/passwordComponentConfig';
 
 interface IFields {
     login: string;

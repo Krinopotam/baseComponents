@@ -6,12 +6,15 @@
     import {darcula, docco} from 'react-syntax-highlighter/dist/esm/styles/hljs';
 
     export const TreeSelectWithFormAsyncPage = (props: {darkMode: boolean}): JSX.Element => {
-    const source = `import {DForm} from 'baseComponents/dForm/dForm';
+    // language=text
+    const source = `// noinspection DuplicatedCode
+
 import React from 'react';
-import {DFormConfig} from 'baseComponents/dForm/configBuilder/dFormConfig';
-import {DFormModalConfig} from 'baseComponents/dForm/configBuilder/dFormModalConfig';
-import {InputComponentConfig} from 'baseComponents/dForm/configBuilder/inputComponentConfig';
-import {TreeSelectComponentConfig} from 'baseComponents/dForm/configBuilder/treeSelectComponentConfig';
+import {DForm} from '@krinopotam/ui-dynamic-form';
+import {DFormConfig} from '@krinopotam/ui-dynamic-form/configBuilder/dFormConfig';
+import {TreeSelectComponentConfig} from '@krinopotam/ui-dynamic-form/configBuilder/treeSelectComponentConfig';
+import {InputComponentConfig} from '@krinopotam/ui-dynamic-form/configBuilder/inputComponentConfig';
+import {DFormModalConfig} from '@krinopotam/ui-dynamic-form-modal/configBuilder/dFormModalConfig';
 
 const dataSet = [
     {

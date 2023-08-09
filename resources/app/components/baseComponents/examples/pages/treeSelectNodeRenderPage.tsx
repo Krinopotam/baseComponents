@@ -6,11 +6,14 @@
     import {darcula, docco} from 'react-syntax-highlighter/dist/esm/styles/hljs';
 
     export const TreeSelectNodeRenderPage = (props: {darkMode: boolean}): JSX.Element => {
-    const source = `import {DForm} from 'baseComponents/dForm/dForm';
+    // language=text
+    const source = `// noinspection DuplicatedCode
+
 import React from 'react';
-import {TreeSelectComponentConfig} from 'baseComponents/dForm/configBuilder/treeSelectComponentConfig';
-import {DFormConfig} from 'baseComponents/dForm/configBuilder/dFormConfig';
-import {ITreeSelectNode, ITreeSelectProps} from 'baseComponents/treeSelect/treeSelect';
+import {DForm} from '@krinopotam/ui-dynamic-form';
+import {DFormConfig} from '@krinopotam/ui-dynamic-form/configBuilder/dFormConfig';
+import {TreeSelectComponentConfig} from '@krinopotam/ui-dynamic-form/configBuilder/treeSelectComponentConfig';
+import {ITreeSelectNode, ITreeSelectProps} from "@krinopotam/ui-treeselect";
 
 interface IFields {
     department: {id: string; title: string};
@@ -125,7 +128,7 @@ const dataSet = [
     },
 ];
 
-const titleRender: ITreeSelectProps['titleRender'] = (treeNode: ITreeSelectNode | unknown) => {
+const titleRender: ITreeSelectProps['titleRender'] = (treeNode: ITreeSelectNode) => {
     return (
         <>
             {treeNode.title}
@@ -135,7 +138,7 @@ const titleRender: ITreeSelectProps['titleRender'] = (treeNode: ITreeSelectNode 
     );
 };
 
-const labelRender: ITreeSelectProps['labelRender'] = (treeNode: ITreeSelectNode | unknown) => {
+const labelRender: ITreeSelectProps['labelRender'] = (treeNode: ITreeSelectNode) => {
     return (
         <>
             {treeNode.title} <small style={{color: '#808080'}}>{treeNode.head ? '(' + treeNode.head+')' : ''}</small>
@@ -143,7 +146,7 @@ const labelRender: ITreeSelectProps['labelRender'] = (treeNode: ITreeSelectNode 
     );
 };
 
-const filterTreeNode: ITreeSelectProps['filterTreeNode'] = (inputValue: string, treeNode: ITreeSelectNode | unknown) => {
+const filterTreeNode: ITreeSelectProps['filterTreeNode'] = (inputValue: string, treeNode: ITreeSelectNode) => {
     const nodeString = (treeNode.title + ' (' + treeNode.head + ')').toLowerCase();
     return nodeString.indexOf(inputValue.toLowerCase()) >= 0;
 };

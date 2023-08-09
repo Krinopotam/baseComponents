@@ -6,9 +6,12 @@
     import {darcula, docco} from 'react-syntax-highlighter/dist/esm/styles/hljs';
 
     export const TabulatorGridSimplePage = (props: {darkMode: boolean}): JSX.Element => {
-    const source = `import React from 'react';
-import TabulatorGrid, {IGridRowData} from 'baseComponents/tabulatorGrid/tabulatorGrid';
-import {IReactTabulatorProps} from 'baseComponents/tabulatorGrid/reactTabulator/reactTabulator';
+    // language=text
+    const source = `// noinspection DuplicatedCode
+
+import React from 'react';
+import TabulatorGrid, {IReactTabulatorProps} from '@krinopotam/ui-tabulator-grid';
+import {IGridRowData} from "@krinopotam/ui-tabulator-grid/tabulatorGrid";
 
 const columns: IReactTabulatorProps['columns'] = [
     {title: 'Name', field: 'name'},

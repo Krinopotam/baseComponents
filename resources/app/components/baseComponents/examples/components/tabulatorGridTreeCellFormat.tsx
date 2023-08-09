@@ -1,7 +1,9 @@
+// noinspection DuplicatedCode
+
 import React from 'react';
-import TabulatorGrid, {IGridRowData} from 'baseComponents/tabulatorGrid/tabulatorGrid';
-import {IReactTabulatorProps} from 'baseComponents/tabulatorGrid/reactTabulator/reactTabulator';
 import {ColumnDefinition} from 'tabulator-tables';
+import TabulatorGrid, {IReactTabulatorProps} from '@krinopotam/ui-tabulator-grid';
+import {IGridRowData} from "@krinopotam/ui-tabulator-grid/tabulatorGrid";
 
 const data: IGridRowData[] = [
     {id: '01', surname: 'Иванов', name: 'Иван', patronymic: 'Иванович', email: 'ivanov@mail.ru', birthday: '11.01.1980', children:[

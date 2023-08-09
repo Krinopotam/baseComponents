@@ -1,8 +1,10 @@
-import {DForm} from 'baseComponents/dForm/dForm';
-import {DFormConfig} from 'baseComponents/dForm/configBuilder/dFormConfig';
-import {InputComponentConfig} from 'baseComponents/dForm/configBuilder/inputComponentConfig';
-import {PasswordComponentConfig} from 'baseComponents/dForm/configBuilder/passwordComponentConfig';
+// noinspection DuplicatedCode
+
 import React from 'react';
+import {DForm} from '@krinopotam/ui-dynamic-form';
+import {DFormConfig} from '@krinopotam/ui-dynamic-form/configBuilder/dFormConfig';
+import {InputComponentConfig} from '@krinopotam/ui-dynamic-form/configBuilder/inputComponentConfig';
+import {PasswordComponentConfig} from '@krinopotam/ui-dynamic-form/configBuilder/passwordComponentConfig';
 
 interface IFields {
     name: string;

@@ -1,7 +1,9 @@
-import {DForm} from 'baseComponents/dForm/dForm';
+// noinspection DuplicatedCode
+
 import React from 'react';
-import {TreeSelectComponentConfig} from 'baseComponents/dForm/configBuilder/treeSelectComponentConfig';
-import {DFormConfig} from 'baseComponents/dForm/configBuilder/dFormConfig';
+import {DForm} from '@krinopotam/ui-dynamic-form';
+import {DFormConfig} from '@krinopotam/ui-dynamic-form/configBuilder/dFormConfig';
+import {TreeSelectComponentConfig} from '@krinopotam/ui-dynamic-form/configBuilder/treeSelectComponentConfig';
 
 interface IFields {
     department: {id: string; title: string};

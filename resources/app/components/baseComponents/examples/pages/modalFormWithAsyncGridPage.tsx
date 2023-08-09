@@ -6,17 +6,19 @@
     import {darcula, docco} from 'react-syntax-highlighter/dist/esm/styles/hljs';
 
     export const ModalFormWithAsyncGridPage = (props: {darkMode: boolean}): JSX.Element => {
-    const source = `import React, {useCallback} from 'react';
+    // language=text
+    const source = `// noinspection DuplicatedCode
 
-import {Button} from 'baseComponents/button';
-import {DFormModal} from 'baseComponents/dFormModal/dFormModal';
-import {IDFormModalApi} from 'baseComponents/dFormModal/hooks/api';
-import {DFormModalConfig} from 'baseComponents/dForm/configBuilder/dFormModalConfig';
-import {IReactTabulatorProps} from 'baseComponents/tabulatorGrid/reactTabulator/reactTabulator';
-import {IGridRowData} from 'baseComponents/tabulatorGrid/tabulatorGrid';
-import {InputComponentConfig} from 'baseComponents/dForm/configBuilder/inputComponentConfig';
-import {NumberComponentConfig} from 'baseComponents/dForm/configBuilder/numberComponentConfig';
-import {TabulatorGridComponentConfig} from 'baseComponents/dForm/configBuilder/tabulatorGridComponentConfig';
+import React, {useCallback} from 'react';
+
+import {Button} from '@krinopotam/ui-button';
+import {IDFormModalApi} from '@krinopotam/ui-dynamic-form-modal/hooks/api';
+import {DFormModal} from '@krinopotam/ui-dynamic-form-modal';
+import {DFormModalConfig} from '@krinopotam/ui-dynamic-form-modal/configBuilder/dFormModalConfig';
+import {InputComponentConfig} from '@krinopotam/ui-dynamic-form/configBuilder/inputComponentConfig';
+import {NumberComponentConfig} from '@krinopotam/ui-dynamic-form/configBuilder/numberComponentConfig';
+import {IReactTabulatorProps, IGridRowData} from "@krinopotam/ui-tabulator-grid";
+import {TabulatorGridComponentConfig} from '@krinopotam/ui-dynamic-form/configBuilder/tabulatorGridComponentConfig';
 
 /** Tabulator grid edit form type */
 type IPerson = {

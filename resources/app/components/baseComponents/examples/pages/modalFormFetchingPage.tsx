@@ -6,13 +6,15 @@
     import {darcula, docco} from 'react-syntax-highlighter/dist/esm/styles/hljs';
 
     export const ModalFormFetchingPage = (props: {darkMode: boolean}): JSX.Element => {
-    const source = `import React, {useCallback} from 'react';
+    // language=text
+    const source = `// noinspection DuplicatedCode
 
-import {Button} from 'antd';
-import {DFormConfig} from 'baseComponents/dForm/configBuilder/dFormConfig';
-import {DFormModal} from 'baseComponents/dFormModal/dFormModal';
-import {IDFormModalApi} from 'baseComponents/dFormModal/hooks/api';
-import {InputComponentConfig} from 'baseComponents/dForm/configBuilder/inputComponentConfig';
+import React, {useCallback} from 'react';
+import {Button} from '@krinopotam/ui-button';
+import {IDFormModalApi} from '@krinopotam/ui-dynamic-form-modal/hooks/api';
+import {DFormModal} from '@krinopotam/ui-dynamic-form-modal';
+import {DFormConfig} from '@krinopotam/ui-dynamic-form/configBuilder/dFormConfig';
+import {InputComponentConfig} from '@krinopotam/ui-dynamic-form/configBuilder/inputComponentConfig';
 
 interface IFields {
     position: string;

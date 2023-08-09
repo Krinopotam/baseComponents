@@ -1,6 +1,8 @@
+// noinspection DuplicatedCode
+
 import React from 'react';
-import TabulatorGrid, {IGridRowData} from 'baseComponents/tabulatorGrid/tabulatorGrid';
-import {IReactTabulatorProps} from 'baseComponents/tabulatorGrid/reactTabulator/reactTabulator';
+import TabulatorGrid, {IReactTabulatorProps} from '@krinopotam/ui-tabulator-grid';
+import {IGridRowData} from "@krinopotam/ui-tabulator-grid/tabulatorGrid";
 
 const columns: IReactTabulatorProps['columns'] = [
     {title: 'Name', field: 'name'},

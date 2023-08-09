@@ -6,14 +6,16 @@
     import {darcula, docco} from 'react-syntax-highlighter/dist/esm/styles/hljs';
 
     export const ModalFormWithTabsPage = (props: {darkMode: boolean}): JSX.Element => {
-    const source = `import React, {useCallback} from 'react';
+    // language=text
+    const source = `// noinspection DuplicatedCode
 
-import {Button} from 'baseComponents/button';
-import {DFormModal} from 'baseComponents/dFormModal/dFormModal';
-import {IDFormModalApi} from 'baseComponents/dFormModal/hooks/api';
-import {DFormModalConfig} from 'baseComponents/dForm/configBuilder/dFormModalConfig';
-import {InputComponentConfig} from 'baseComponents/dForm/configBuilder/inputComponentConfig';
-import {DateTimeComponentConfig} from 'baseComponents/dForm/configBuilder/dateTimeComponentConfig';
+import React, {useCallback} from 'react';
+import {Button} from '@krinopotam/ui-button';
+import {IDFormModalApi} from '@krinopotam/ui-dynamic-form-modal/hooks/api';
+import {DFormModal} from '@krinopotam/ui-dynamic-form-modal';
+import {DFormModalConfig} from '@krinopotam/ui-dynamic-form-modal/configBuilder/dFormModalConfig';
+import {InputComponentConfig} from '@krinopotam/ui-dynamic-form/configBuilder/inputComponentConfig';
+import {DateTimeComponentConfig} from '@krinopotam/ui-dynamic-form/configBuilder/dateTimeComponentConfig';
 
 interface IFields {
     nameIn: string;

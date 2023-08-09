@@ -1,10 +1,12 @@
+// noinspection DuplicatedCode
+
 import React from 'react';
-import TabulatorGrid, {IGridRowData} from 'baseComponents/tabulatorGrid/tabulatorGrid';
-import {IReactTabulatorProps} from 'baseComponents/tabulatorGrid/reactTabulator/reactTabulator';
-import {DFormModalConfig} from 'baseComponents/dForm/configBuilder/dFormModalConfig';
-import {InputComponentConfig} from 'baseComponents/dForm/configBuilder/inputComponentConfig';
-import {NumberComponentConfig} from 'baseComponents/dForm/configBuilder/numberComponentConfig';
-import {TreeSelectComponentConfig} from 'baseComponents/dForm/configBuilder/treeSelectComponentConfig';
+import {DFormModalConfig} from '@krinopotam/ui-dynamic-form-modal/configBuilder/dFormModalConfig';
+import {InputComponentConfig} from '@krinopotam/ui-dynamic-form/configBuilder/inputComponentConfig';
+import {TreeSelectComponentConfig} from '@krinopotam/ui-dynamic-form/configBuilder/treeSelectComponentConfig';
+import {NumberComponentConfig} from '@krinopotam/ui-dynamic-form/configBuilder/numberComponentConfig';
+import TabulatorGrid, {IReactTabulatorProps} from '@krinopotam/ui-tabulator-grid';
+import {IGridRowData} from "@krinopotam/ui-tabulator-grid/tabulatorGrid";
 
 const columns: IReactTabulatorProps['columns'] = [
     {title: 'Name', field: 'name'},

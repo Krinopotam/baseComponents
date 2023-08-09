@@ -1,13 +1,13 @@
-import {AutoSizedTextArea, copyStyles} from 'baseComponents/autoSizedTextArea/autoSizedTextArea';
+import {AutoSizedTextArea, copyStyles} from '@krinopotam/ui-autosized-textarea';
 import {EditOutlined, EnterOutlined} from '@ant-design/icons/lib';
 import React, {CSSProperties, ChangeEvent, useEffect, useMemo, useRef, useState} from 'react';
 import {RuleType, validateValue} from './validator';
 import {Tooltip, Typography, message} from 'antd';
 import dayjs, {Dayjs} from 'dayjs';
 
-import {DatePicker} from 'baseComponents/datePicker';
+import {DatePicker} from '@krinopotam/ui-datepicker';
 import {IFetchResult} from '../agGrid/services/webServices';
-import {IFormButton} from '../buttonsRow/buttonsRow';
+import {IFormButton} from '@krinopotam/ui-buttons-row';
 import {LinkProps} from 'antd/lib/typography/Link';
 import {ParagraphProps} from 'antd/es/typography/Paragraph';
 import {PopConfirm} from 'baseComponents/popConfirm';

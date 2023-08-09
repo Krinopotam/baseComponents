@@ -6,11 +6,14 @@
     import {darcula, docco} from 'react-syntax-highlighter/dist/esm/styles/hljs';
 
     export const FormSimplePage = (props: {darkMode: boolean}): JSX.Element => {
-    const source = `import {DForm} from 'baseComponents/dForm/dForm';
+    // language=text
+    const source = `// noinspection DuplicatedCode
+
 import React from 'react';
-import {PasswordComponentConfig} from "baseComponents/dForm/configBuilder/passwordComponentConfig";
-import {InputComponentConfig} from "baseComponents/dForm/configBuilder/inputComponentConfig";
-import {DFormConfig} from "baseComponents/dForm/configBuilder/dFormConfig";
+import {DForm} from '@krinopotam/ui-dynamic-form';
+import {DFormConfig} from '@krinopotam/ui-dynamic-form/configBuilder/dFormConfig';
+import {InputComponentConfig} from '@krinopotam/ui-dynamic-form/configBuilder/inputComponentConfig';
+import {PasswordComponentConfig} from '@krinopotam/ui-dynamic-form/configBuilder/passwordComponentConfig';
 
 interface IFields {
     login: string;

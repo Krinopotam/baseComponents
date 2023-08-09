@@ -4,7 +4,7 @@ const webpack = require('webpack');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
 const {WebpackManifestPlugin} = require('webpack-manifest-plugin');
-const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+//const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const WebpackShellPluginNext = require('webpack-shell-plugin-next');
 
 const localReactAssetsUpdate = require('./localReactAssetsUpdate');
@@ -86,7 +86,6 @@ module.exports = (env, argv) => {
                 Pages: path.resolve(__dirname, 'resources/app/pages'),
                 components: path.resolve(__dirname, 'resources/app/components'),
 				baseComponents: path.resolve(__dirname, 'resources/app/components/baseComponents'),
-				helpers: path.resolve(__dirname, 'resources/app/components/baseComponents/libs/helpers'),
             },
         },
 

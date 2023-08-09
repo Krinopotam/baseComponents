@@ -3,8 +3,7 @@ import {PopconfirmProps, Popover} from 'antd';
 import React, {useEffect, useRef, useState} from 'react';
 
 import {IFormType} from 'baseComponents/modal/modal';
-import {getUuid} from 'helpers/helpersString';
-import {mergeObjects} from 'helpers/helpersObjects';
+import {HelpersStrings, HelpersObjects} from '@krinopotam/js-helpers';
 import {useInitFormDispatcher} from 'baseComponents/modal/hooks/useInitFormDispatcher';
 
 export interface IPopConfirmProps extends Omit<PopconfirmProps, 'okType' | 'okButtonProps' | 'cancelButtonProps'> {
@@ -15,7 +14,7 @@ export interface IPopConfirmProps extends Omit<PopconfirmProps, 'okType' | 'okBu
 }
 
 export const PopConfirm = ({content, ...props}: IPopConfirmProps): JSX.Element => {
-    const [formId] = useState(getUuid);
+    const [formId] = useState(HelpersStrings.getUuid);
 
     useInitFormDispatcher(formId, props.open || false);
 
@@ -70,7 +69,7 @@ const useInitButtons = ({okText, cancelText, onConfirm, onCancel, okButtonProps,
             },
         };
 
-        const resultButtons = mergeObjects(defaultButtons, {ok: okButtonProps, cancel: cancelButtonProps});
+        const resultButtons = HelpersObjects.mergeObjects(defaultButtons, {ok: okButtonProps, cancel: cancelButtonProps});
         setFormButtons(resultButtons);
     }, [okText, cancelText, onConfirm, onCancel, okButtonProps, cancelButtonProps]);
 

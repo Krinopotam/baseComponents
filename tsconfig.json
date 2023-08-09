@@ -10,7 +10,6 @@
             "Pages/*": ["resources/app/pages/*"],
 			"components/*": ["resources/app/components/*"],
 			"baseComponents/*": ["resources/app/components/baseComponents/*"],
-			"helpers/*": ["resources/app/components/baseComponents/libs/helpers/*"]
         },
         "allowJs": true, // Allow JavaScript files to be compiled
         "skipLibCheck": true, // Skip type checking of all declaration files

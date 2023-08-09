@@ -2,7 +2,7 @@ import {DForm} from 'baseComponents/dForm/dForm';
 import React from 'react';
 import {TreeSelectComponentConfig} from 'baseComponents/dForm/configBuilder/treeSelectComponentConfig';
 import {DFormConfig} from 'baseComponents/dForm/configBuilder/dFormConfig';
-import {cloneObject} from 'baseComponents/libs/helpers/helpersObjects';
+import {HelpersObjects}  from "@krinopotam/js-helpers";
 
 /*Description Start*/
 interface IFields {
@@ -123,7 +123,7 @@ const filterDataSet = (nodes: IDataSet, search: string) => {
     const result: IDataSet = [];
     let resultChildren: IDataSet = [];
     for (const node of nodes) {
-        const nodeClone = cloneObject(node);
+        const nodeClone = HelpersObjects.cloneObject(node);
         if (node.children && node.children.length > 0) resultChildren = filterDataSet(node.children, search);
 
         if (resultChildren.length > 0) {

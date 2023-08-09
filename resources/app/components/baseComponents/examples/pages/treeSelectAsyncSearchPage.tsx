@@ -10,7 +10,6 @@
 import React from 'react';
 import {TreeSelectComponentConfig} from 'baseComponents/dForm/configBuilder/treeSelectComponentConfig';
 import {DFormConfig} from 'baseComponents/dForm/configBuilder/dFormConfig';
-import {cloneObject} from 'baseComponents/libs/helpers/helpersObjects';
 
 const formProps = new DFormConfig<IFields>('Test form')
     .confirmChanges(true)

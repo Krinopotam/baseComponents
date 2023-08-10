@@ -1,11 +1,8 @@
 // noinspection DuplicatedCode
 
 import React from 'react';
-import {DFormModalConfig} from '@krinopotam/ui-dynamic-form-modal/configBuilder/dFormModalConfig';
-import {InputComponentConfig} from '@krinopotam/ui-dynamic-form/configBuilder/inputComponentConfig';
-import {NumberComponentConfig} from '@krinopotam/ui-dynamic-form/configBuilder/numberComponentConfig';
-import TabulatorGrid, {IReactTabulatorProps} from '@krinopotam/ui-tabulator-grid';
-import {IGridRowData} from "@krinopotam/ui-tabulator-grid/tabulatorGrid";
+import {DFormModalConfig, NumberComponentConfig, InputComponentConfig} from '@krinopotam/ui-dynamic-form-modal/configBuilder';
+import TabulatorGrid, {IReactTabulatorProps, IGridRowData} from '@krinopotam/ui-tabulator-grid';
 
 type IPerson = {
     id: string;

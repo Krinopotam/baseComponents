@@ -2,11 +2,8 @@
 
 import React, {useCallback} from 'react';
 import {Button} from '@krinopotam/ui-button';
-import {IDFormModalApi} from '@krinopotam/ui-dynamic-form-modal/hooks/api';
-import {DFormModal} from '@krinopotam/ui-dynamic-form-modal';
-import {DFormModalConfig} from '@krinopotam/ui-dynamic-form-modal/configBuilder/dFormModalConfig';
-import {InputComponentConfig} from '@krinopotam/ui-dynamic-form/configBuilder/inputComponentConfig';
-import {DateTimeComponentConfig} from '@krinopotam/ui-dynamic-form/configBuilder/dateTimeComponentConfig';
+import {IDFormModalApi, DFormModal} from '@krinopotam/ui-dynamic-form-modal';
+import {DFormModalConfig, DateTimeComponentConfig, InputComponentConfig} from '@krinopotam/ui-dynamic-form-modal/configBuilder';
 
 
 interface IFields {

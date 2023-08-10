@@ -2,13 +2,9 @@
 
 import React, {useCallback} from 'react';
 import {Button} from '@krinopotam/ui-button';
-import {IDFormModalApi} from '@krinopotam/ui-dynamic-form-modal/hooks/api';
-import {DFormModal} from '@krinopotam/ui-dynamic-form-modal';
-import {DFormModalConfig} from '@krinopotam/ui-dynamic-form-modal/configBuilder/dFormModalConfig';
-import {InputComponentConfig} from '@krinopotam/ui-dynamic-form/configBuilder/inputComponentConfig';
-import {NumberComponentConfig} from '@krinopotam/ui-dynamic-form/configBuilder/numberComponentConfig';
-import {IReactTabulatorProps, IGridRowData} from "@krinopotam/ui-tabulator-grid";
-import {TabulatorGridComponentConfig} from '@krinopotam/ui-dynamic-form/configBuilder/tabulatorGridComponentConfig';
+import {IDFormModalApi, DFormModal} from '@krinopotam/ui-dynamic-form-modal';
+import {DFormModalConfig, NumberComponentConfig, TabulatorGridComponentConfig, InputComponentConfig} from '@krinopotam/ui-dynamic-form-modal/configBuilder';
+import {IGridRowData, IDFormFieldTabulatorGridProps} from "@krinopotam/ui-dynamic-form-modal/components";
 
 /** Tabulator grid edit form type */
 type IPerson = {
@@ -24,7 +20,7 @@ interface IUsers {
     users: Record<string, unknown>[];
 }
 
-const columns: IReactTabulatorProps['columns'] = [
+const columns: IDFormFieldTabulatorGridProps['columns'] = [
     {title: 'Name', field: 'name'},
     {title: 'Age', field: 'age', hozAlign: 'left', formatter: 'progress'},
     {title: 'Favourite Color', field: 'col'},

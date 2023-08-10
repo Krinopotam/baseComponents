@@ -3,11 +3,8 @@
 import React, {useCallback} from 'react';
 
 import {Button} from '@krinopotam/ui-button';
-import {IDFormModalApi} from '@krinopotam/ui-dynamic-form-modal/hooks/api';
-import {DFormModal} from '@krinopotam/ui-dynamic-form-modal';
-import {DFormModalConfig} from '@krinopotam/ui-dynamic-form-modal/configBuilder/dFormModalConfig';
-import {InputComponentConfig} from '@krinopotam/ui-dynamic-form/configBuilder/inputComponentConfig';
-import {PasswordComponentConfig} from '@krinopotam/ui-dynamic-form/configBuilder/passwordComponentConfig';
+import {IDFormModalApi, DFormModal} from '@krinopotam/ui-dynamic-form-modal';
+import {DFormModalConfig, InputComponentConfig, PasswordComponentConfig} from '@krinopotam/ui-dynamic-form-modal/configBuilder';
 
 interface IFields {
     login: string;

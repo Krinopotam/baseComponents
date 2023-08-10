@@ -4,13 +4,13 @@ import React from 'react';
 import {DForm} from '@krinopotam/ui-dynamic-form';
 import {DFormConfig} from '@krinopotam/ui-dynamic-form/configBuilder/dFormConfig';
 import {TreeSelectComponentConfig} from '@krinopotam/ui-dynamic-form/configBuilder/treeSelectComponentConfig';
-import {ITreeSelectNode, ITreeSelectProps} from "@krinopotam/ui-treeselect";
+import {ITreeSelectNode, IDFormFieldTreeSelectProps} from "@krinopotam/ui-dynamic-form/components/treeSelectComponent";
 
 interface IFields {
     department: {id: string; title: string};
 }
 
-const dataSet = [
+const dataSet:ITreeSelectNode[] = [
     {
         id: '01',
         title: 'Департамент аналитики данных',
@@ -119,7 +119,7 @@ const dataSet = [
     },
 ];
 
-const titleRender: ITreeSelectProps['titleRender'] = (treeNode: ITreeSelectNode) => {
+const titleRender: IDFormFieldTreeSelectProps['titleRender'] = (treeNode: ITreeSelectNode) => {
     return (
         <>
             {treeNode.title}
@@ -129,7 +129,7 @@ const titleRender: ITreeSelectProps['titleRender'] = (treeNode: ITreeSelectNode)
     );
 };
 
-const labelRender: ITreeSelectProps['labelRender'] = (treeNode: ITreeSelectNode) => {
+const labelRender: IDFormFieldTreeSelectProps['labelRender'] = (treeNode: ITreeSelectNode) => {
     return (
         <>
             {treeNode.title} <small style={{color: '#808080'}}>{treeNode.head ? '(' + treeNode.head+')' : ''}</small>
@@ -137,7 +137,7 @@ const labelRender: ITreeSelectProps['labelRender'] = (treeNode: ITreeSelectNode)
     );
 };
 
-const filterTreeNode: ITreeSelectProps['filterTreeNode'] = (inputValue: string, treeNode: ITreeSelectNode) => {
+const filterTreeNode: IDFormFieldTreeSelectProps['filterTreeNode'] = (inputValue: string, treeNode: ITreeSelectNode) => {
     const nodeString = (treeNode.title + ' (' + treeNode.head + ')').toLowerCase();
     return nodeString.indexOf(inputValue.toLowerCase()) >= 0;
 };

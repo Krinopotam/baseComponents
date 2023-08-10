@@ -4,8 +4,9 @@ import React from 'react';
 import {DForm} from '@krinopotam/ui-dynamic-form';
 import {DFormConfig} from '@krinopotam/ui-dynamic-form/configBuilder/dFormConfig';
 import {TreeSelectComponentConfig} from '@krinopotam/ui-dynamic-form/configBuilder/treeSelectComponentConfig';
+import {ITreeSelectSourcePromise} from '@krinopotam/ui-dynamic-form/components/treeSelectComponent'
 import {HelpersObjects}  from "@krinopotam/js-helpers";
-import {ITreeSelectSourcePromise} from "@krinopotam/ui-treeselect/treeSelect";
+
 
 /*Description Start*/
 interface IFields {

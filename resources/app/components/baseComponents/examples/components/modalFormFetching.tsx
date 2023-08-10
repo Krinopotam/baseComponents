@@ -2,10 +2,8 @@
 
 import React, {useCallback} from 'react';
 import {Button} from '@krinopotam/ui-button';
-import {IDFormModalApi} from '@krinopotam/ui-dynamic-form-modal/hooks/api';
-import {DFormModal} from '@krinopotam/ui-dynamic-form-modal';
-import {DFormConfig} from '@krinopotam/ui-dynamic-form/configBuilder/dFormConfig';
-import {InputComponentConfig} from '@krinopotam/ui-dynamic-form/configBuilder/inputComponentConfig';
+import {IDFormModalApi, DFormModal} from '@krinopotam/ui-dynamic-form-modal';
+import {DFormModalConfig, InputComponentConfig} from '@krinopotam/ui-dynamic-form-modal/configBuilder';
 
 interface IFields {
     position: string;
@@ -14,7 +12,7 @@ interface IFields {
 
 const formApi = {} as IDFormModalApi;
 
-const formProps = new DFormConfig<IFields>('Test form')
+const formProps = new DFormModalConfig<IFields>('Test form')
     .apiRef(formApi)
     .confirmChanges(true)
     .addFields(
@@ -41,7 +39,7 @@ export const ModalFormFetching = (): JSX.Element => {
     return (
         <>
             {/*Description Start*/}
-            <h1>Пример загрузки данных при открытии формы</h1>
+            <h1>Пример загрузки данных при открытии формы1111</h1>
             <p>Для обеспечения загрузки необходимо в калбэк onDataFetch передать функцию, возвращающую Promise, который при успешном ответе сервера (resolve) возвращает объект вида:</p>
             <code>{`data:{имя_поля1: "значение", имя_поля2: "значение 2"...}`}</code>
             <p>а при ошибке (reject)</p>

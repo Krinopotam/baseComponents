@@ -4,8 +4,7 @@ import React from 'react';
 import {DForm} from '@krinopotam/ui-dynamic-form';
 import {DFormConfig} from '@krinopotam/ui-dynamic-form/configBuilder/dFormConfig';
 import {TreeSelectComponentConfig} from '@krinopotam/ui-dynamic-form/configBuilder/treeSelectComponentConfig';
-import {InputComponentConfig} from '@krinopotam/ui-dynamic-form/configBuilder/inputComponentConfig';
-import {DFormModalConfig} from '@krinopotam/ui-dynamic-form-modal/configBuilder/dFormModalConfig';
+import {InputComponentConfig, DFormModalConfig} from '@krinopotam/ui-dynamic-form-modal/configBuilder';
 
 const dataSet = [
     {

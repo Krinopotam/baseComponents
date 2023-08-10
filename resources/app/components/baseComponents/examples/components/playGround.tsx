@@ -6,15 +6,16 @@ import React, {useCallback} from 'react';
 
 import dayjs from 'dayjs';
 import {Button} from '@krinopotam/ui-button';
-import {IDFormModalApi} from '@krinopotam/ui-dynamic-form-modal/hooks/api';
-import {DFormModal} from '@krinopotam/ui-dynamic-form-modal';
-import {DFormModalConfig} from '@krinopotam/ui-dynamic-form-modal/configBuilder/dFormModalConfig';
-import {InputComponentConfig} from '@krinopotam/ui-dynamic-form/configBuilder/inputComponentConfig';
-import {PasswordComponentConfig} from '@krinopotam/ui-dynamic-form/configBuilder/passwordComponentConfig';
-import {SwitchComponentConfig} from '@krinopotam/ui-dynamic-form/configBuilder/switchComponentConfig';
-import {TreeSelectComponentConfig} from '@krinopotam/ui-dynamic-form/configBuilder/treeSelectComponentConfig';
-import {TabulatorGridComponentConfig} from '@krinopotam/ui-dynamic-form/configBuilder/tabulatorGridComponentConfig';
-import {DateTimeComponentConfig} from '@krinopotam/ui-dynamic-form/configBuilder/dateTimeComponentConfig';
+import {IDFormModalApi, DFormModal} from '@krinopotam/ui-dynamic-form-modal';
+import {
+    DFormModalConfig,
+    DateTimeComponentConfig,
+    TreeSelectComponentConfig,
+    InputComponentConfig,
+    SwitchComponentConfig,
+    TabulatorGridComponentConfig,
+    PasswordComponentConfig
+} from '@krinopotam/ui-dynamic-form-modal/configBuilder';
 import {IRuleType} from '@krinopotam/ui-dynamic-form/validators/baseValidator';
 
 dayjs.locale('ru');

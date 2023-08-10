@@ -5,7 +5,7 @@ import React, {useCallback} from 'react';
 import {Button} from '@krinopotam/ui-button';
 import {IDFormModalApi} from '@krinopotam/ui-dynamic-form-modal/hooks/api';
 import {DFormModal} from '@krinopotam/ui-dynamic-form-modal';
-import {DFormModalConfig} from '@krinopotam/ui-dynamic-form-modal/configBuilder/dFormModalConfig';
+import {DFormModalConfig} from '@krinopotam/ui-dynamic-form-modal/configBuilder';
 import {InputComponentConfig} from '@krinopotam/ui-dynamic-form/configBuilder/inputComponentConfig';
 import {NumberComponentConfig} from '@krinopotam/ui-dynamic-form/configBuilder/numberComponentConfig';
 import {IReactTabulatorProps, IGridRowData} from "@krinopotam/ui-tabulator-grid";
